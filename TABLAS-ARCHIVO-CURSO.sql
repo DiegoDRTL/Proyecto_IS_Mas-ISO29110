@@ -6,7 +6,7 @@ CREATE TABLE Curso (
     estado VARCHAR(50),
     profesorId INT NOT NULL
     
-    FOREIGN KEY (profesorId) REFERENCES Profesor(id)
+    FOREIGN KEY (profesorId) REFERENCES Profesor(id_Profesor)
 );
 
 CREATE TABLE Archivo (
