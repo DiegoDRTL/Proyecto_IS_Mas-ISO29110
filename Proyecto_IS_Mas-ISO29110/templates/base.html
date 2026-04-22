@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Cursos{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-lightest: #f0faf2;
+            --green-light:    #d4edda;
+            --green-soft:     #b7dfc0;
+            --green-mid:      #7ec89a;
+            --green-main:     #4caf70;
+            --green-dark:     #2d7a4f;
+            --green-deep:     #1a5235;
+            --cream:          #fafdf8;
+            --text-dark:      #1e3a2a;
+            --text-mid:       #3d6b4f;
+            --text-light:     #6b9a7e;
+            --white:          #ffffff;
+            --shadow-soft:    0 4px 24px rgba(76,175,112,0.13);
+            --shadow-card:    0 8px 40px rgba(45,122,79,0.12);
+            --radius:         18px;
+            --radius-sm:      10px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--text-dark);
+            min-height: 100vh;
+            background-image:
+                radial-gradient(ellipse at 10% 20%, rgba(180,225,195,0.3) 0%, transparent 55%),
+                radial-gradient(ellipse at 90% 80%, rgba(126,200,154,0.18) 0%, transparent 50%);
+        }
+
+        /* ── NAV ── */
+        nav {
+            background: var(--white);
+            border-bottom: 2px solid var(--green-light);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            box-shadow: 0 2px 12px rgba(76,175,112,0.08);
+        }
+
+        .nav-brand {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.4rem;
+            color: var(--green-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-brand span { color: var(--green-main); }
+
+        .nav-links { display: flex; align-items: center; gap: 1rem; }
+
+        .nav-links a {
+            color: var(--text-mid);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover { background: var(--green-light); color: var(--green-dark); }
+
+        .btn-logout {
+            background: var(--green-main) !important;
+            color: var(--white) !important;
+            font-weight: 600 !important;
+        }
+
+        .btn-logout:hover { background: var(--green-dark) !important; }
+
+        /* ── FLASH MESSAGES ── */
+        .flash-container {
+            max-width: 480px;
+            margin: 1.5rem auto 0;
+            padding: 0 1rem;
+        }
+
+        .flash {
+            padding: 0.9rem 1.2rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.88rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            animation: slideDown 0.35s ease;
+        }
+
+        .flash.error {
+            background: #fde8e8;
+            color: #c0392b;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .flash.success {
+            background: var(--green-light);
+            color: var(--green-deep);
+            border-left: 4px solid var(--green-main);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── MAIN CONTENT ── */
+        main {
+            padding: 2rem 1rem;
+        }
+
+        /* ── CARD ── */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-card);
+            border: 1.5px solid var(--green-light);
+            padding: 2.5rem 2rem;
+        }
+
+        /* ── FORM ELEMENTS ── */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-mid);
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1.8px solid var(--green-light);
+            border-radius: var(--radius-sm);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            background: var(--green-lightest);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--green-main);
+            box-shadow: 0 0 0 3px rgba(76,175,112,0.15);
+            background: var(--white);
+        }
+
+        select { cursor: pointer; }
+
+        .btn-primary {
+            width: 100%;
+            padding: 0.85rem;
+            background: linear-gradient(135deg, var(--green-main), var(--green-dark));
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.2s;
+            box-shadow: 0 4px 14px rgba(76,175,112,0.35);
+            letter-spacing: 0.01em;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(76,175,112,0.45);
+        }
+
+        .btn-primary:active { transform: translateY(0); }
+
+        .link-subtle {
+            color: var(--green-dark);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dotted var(--green-mid);
+            transition: color 0.2s;
+        }
+
+        .link-subtle:hover { color: var(--green-main); }
+
+        /* ── BADGE ROL ── */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .badge-usuario {
+            background: var(--green-light);
+            color: var(--green-deep);
+            border: 1.5px solid var(--green-soft);
+        }
+
+        .badge-admin {
+            background: var(--green-deep);
+            color: var(--green-lightest);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% block nav %}{% endblock %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <main>{% block content %}{% endblock %}</main>
+</body>
+</html>
