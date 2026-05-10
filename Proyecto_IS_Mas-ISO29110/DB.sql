@@ -1,0 +1,54 @@
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('juanperez', 'pass123', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('maria_lopez', 'abc123', 'administrador');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('carlos88', 'qwerty', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('ana.garcia', '123456', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('luis_99', 'password', 'administrador');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('sofiaM', 'sofia123', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('pedro_h', 'pedro123', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('luciaR', 'lucia456', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('miguel23', 'miguel789', 'administrador');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('andreaV', 'andrea321', 'usuario');
+
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('fernandoX', 'fer123', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('lauraK', 'laura456', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('jorgeT', 'jorge789', 'administrador');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('paolaM', 'paola111', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('ricardoZ', 'rico222', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('valeriaC', 'vale333', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('danielB', 'daniel444', 'administrador');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('elenaD', 'elena555', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('oscarF', 'oscar666', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('patriciaG', 'paty777', 'usuario');
+
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('raulH', 'raul888', 'administrador');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('monicaI', 'moni999', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('sergioJ', 'sergio000', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('claudiaK', 'claudia123', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('adrianL', 'adrian234', 'administrador');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('karlaM', 'karla345', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('hugoN', 'hugo456', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('ireneO', 'irene567', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('victorP', 'victor678', 'administrador');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('robertoQ', 'roberto789', 'usuario');
+
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('silviaR', 'silvia890', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('tomasS', 'tomas901', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('ulisesT', 'ulises012', 'administrador');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('veronicaU', 'vero1234', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('walterV', 'walter2345', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('ximenaW', 'ximena3456', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('yolandaX', 'yola4567', 'administrador');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('zairaY', 'zaira5678', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('brunoZ', 'bruno6789', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('cesarA', 'cesar7890', 'usuario');
+
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('dianaB', 'diana8901', 'administrador');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('eduardoC', 'eduardo9012', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('fabianD', 'fabian0123', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('gabrielaE', 'gaby1234', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('hectorF', 'hector2345', 'administrador');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('isabelG', 'isabel3456', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('julioH', 'julio4567', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('karenI', 'karen5678', 'usuario');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('leoJ', 'leo6789', 'administrador');
+INSERT INTO Usuario (nombre_usuario, contrasena, rol) VALUES ('marcoK', 'marco7890', 'usuario');
