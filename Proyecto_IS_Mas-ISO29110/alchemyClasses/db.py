@@ -9,5 +9,5 @@ def get_connection():
         host='localhost',
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
-        database='login'
+        database='BD_CURSO_IDIOMAS'
     )
