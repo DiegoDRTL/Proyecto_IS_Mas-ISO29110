@@ -1,0 +1,28 @@
+CAMBIOS A ARCHIVOS:
+
+db.py: 
+load_dotenv() -> load_dotenv(dotenv_path=".env" (este cambio me dice chat que si debe de quedarse porque hace mas explicita la carga del archivo .env donde viene el usuario y la contraseña
+
+db.py:
+Se agregó:
+print("USUARIO:", os.getenv("DB_USER"))
+print("PASSWORD:", os.getenv("DB_PASSWORD"))
+Estos se quitan solo es para depuración.
+
+usuario.py:
+Se sustituyo:
+id = cursor.fetchone -> id = cursor.fetchone()[0]  
+Este cambio si se queda, es un bug si se deja como estaba.
+
+usuario.py:
+Se sustituyó: 
+(user['id_usuario']) -> (user['id_usuario'],) en la funcion def assign_rol
+Este cambio también debe de quedarse
+
+usuario.py: 
+Se agregó:
+print("ERROR:", e) en la exception de la funcion def create_user
+
+Finalmente se agregó el archivo de prueba.py
+
+
