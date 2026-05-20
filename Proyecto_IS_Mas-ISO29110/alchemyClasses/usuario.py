@@ -10,6 +10,23 @@ def get_user(id_usuario):
     conn.close()
     return user
 
+def get_correo(id_usuario):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT correo FROM CORREO_USUARIO WHERE id_usuario = %s", (id_usuario,))
+    correo = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return correo
+
+def get_telefono(id_usuario):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT telefono FROM TELEFONO_USUARIO WHERE id_usuario = %s", (id_usuario,))
+    telefono = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return telefono
 
 def verify_user(id_usuario, contrasena):
     user = get_user(id_usuario)
@@ -39,6 +56,23 @@ def create_user(nombre_usuario, a_paterno, a_materno, contrasena, f_nacimiento, 
             (id, telefono)
         )
         conn.commit()
+        return id
+    except Exception as e:
+        conn.rollback()
+        return -1
+    finally:
+        cursor.close()
+        conn.close()
+
+def deleate_user(id_usuario):
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "DELETE FROM USUARIO WHERE id_usuario='%s'",
+            (id_usuario)
+        )
+        conn.commit()
         return True
     except Exception as e:
         conn.rollback()
@@ -47,10 +81,10 @@ def create_user(nombre_usuario, a_paterno, a_materno, contrasena, f_nacimiento, 
         cursor.close()
         conn.close()
 
-def assign_rol(nombre_usuario, rol):
+def assign_rol(id_usuario, rol):
     conn = get_connection()
     cursor = conn.cursor()
-    user = get_user(nombre_usuario)
+    user = get_user(id_usuario)
     try:
         if (rol=="alumno"):
             cursor.execute(
@@ -81,6 +115,3 @@ def assign_rol(nombre_usuario, rol):
 def user_exists(id_usuario):
     return get_user(id_usuario) is not None
 
-
-def user_exists(nombre_usuario):
-    return get_user(nombre_usuario) is not None

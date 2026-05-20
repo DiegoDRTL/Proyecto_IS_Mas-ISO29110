@@ -75,7 +75,7 @@ CREATE TABLE SESION (
 -- CURSO (1:N con PROFESOR)
 -- =====================
 CREATE TABLE CURSO (
-  id_curso INT PRIMARY KEY,
+  id_curso INT AUTO_INCREMENT PRIMARY KEY,
   id_usuario INT NOT NULL,
   estado VARCHAR(20),
   nombre VARCHAR(100),
@@ -89,7 +89,7 @@ CREATE TABLE CURSO (
 -- ARCHIVO
 -- =====================
 CREATE TABLE ARCHIVO (
-  id_archivo INT PRIMARY KEY,
+  id_archivo INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(100),
   tipo_extension VARCHAR(10),
   fecha_subida DATE
