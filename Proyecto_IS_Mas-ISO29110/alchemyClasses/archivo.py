@@ -8,4 +8,46 @@ def get_archivo(id_archivo):
     cursor.close()
     conn.close()
     return archivo
+from alchemyClasses.db import get_connection 
+
+
+
+def obtener_por_curso(id_curso):
+    """Se obtienen los archivos de un curso seleccionado"""
+    conn = get_connection()
+    coursor = conn.cursor(dictionary=True)
+    coursor.execute("""
+        SELECT a.* FROM ARCHIVO a
+        JOIN CURSO_ARCHIVO ca ON a.id_archivo = ca.id_archivo
+        WHERE ca.id_curso = %s
+    """, (id_curso,))
+
+    archivos = cursor.fetchall()
+    conn.close()
+    return archivos
+
+def obtener_por_id(id_archivo):
+    """Detalles de un archivo seleccionado"""
+    conn = get_connection()
+    coursor = conn.cursor(dictionary=True)
+    coursor.execute("""
+        SELECT a.* FROM ARCHIVO a
+        WHERE a.id_archivo = %s
+    """, (id_archivo,))
+    archivo = cursor.fetchone()
+    conn.close()
+    return archivo
+
+def verifica_pertenece_curso(id_archivo, id_curso):
+    """Verifica pertenencia de un archivo en un curso"""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT * FROM CURSO_ARCHIVO
+        WHERE id_archivo = %s AND id_curso = %s
+    """, (id_archivo, id_curso))
+    resultado = cursor.fetchone()
+    conn.close()
+    return resultado is not None
+
 
