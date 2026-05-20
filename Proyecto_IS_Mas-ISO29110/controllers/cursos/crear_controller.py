@@ -1,16 +1,15 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from pydantic import ValidationError
 
-# Importaciones simuladas de tu arquitectura para cursos
 from alchemyClasses.curso import curso_exists, create_course
 from Schemas.curso.curso_schemas import Curso_form
 
-# Definimos el blueprint para la gestión de cursos
+# Definimos el blueprint
 curso_bp = Blueprint('curso', __name__)
 
 @curso_bp.route('/curso/crear', methods=['GET', 'POST'])
 def curso_route_handler():
-    # Protección de ruta: Solo usuarios autorizados (ej. profesores o administradores)
+    # Protección de ruta: Solo usuarios autorizados (profesores o administradores)
     if 'usuario' not in session or session.get('rol') not in ['profesor', 'administrador']:
         flash('Acceso no autorizado.', 'error')
         return redirect(url_for('auth.login'))
@@ -48,7 +47,6 @@ def procesarCreacion(datosCurso, accionBoton):
             return manejarErroresValidacion('El nombre del curso ya se encuentra registrado.')
 
         # Inserción en la base de datos mediante la función del modelo
-        # Se asume que create_course maneja la conexión, cursor y commits correspondientes
         creacion_exitosa = create_course(
             nombre=datos_validados.nombre,
             descripcion=datos_validados.descripcion,
@@ -58,7 +56,7 @@ def procesarCreacion(datosCurso, accionBoton):
         if not creacion_exitosa:
             return manejarErroresValidacion('Error al guardar el curso en la base de datos. Intente nuevamente.')
 
-        # Mensaje de éxito consistente con el estilo de la aplicación ('realizado')
+        # Mensaje de éxito (realizar revision)
         flash('Curso creado exitosamente.', 'realizado')
         return redirect(url_for('profesor.gestionar_profesores'))
 

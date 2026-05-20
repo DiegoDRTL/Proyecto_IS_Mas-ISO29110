@@ -2,11 +2,10 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from werkzeug.security import generate_password_hash
 from pydantic import ValidationError
 
-# Importamos las funciones de tu modelo (Ajusta 'alchemyClasses.usuario' si tu archivo se llama distinto)
+# Importacion de las funciones
 from alchemyClasses.usuario import user_exists, create_user
 from Schemas.usuario.user_schemas import User_form
 
-# Definimos el blueprint
 register_bp = Blueprint('register', __name__)
 
 @register_bp.route('/register', methods=['GET', 'POST'])
