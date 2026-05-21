@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, session, flash
-from alchemyClasses.usuario import obtener_profesores, eliminar_usuario
+from alchemyClasses.usuario import obtener_profesor, eliminar_usuario
 
 profesor_bp = Blueprint('profesor', __name__)
 
@@ -9,12 +9,12 @@ def gestionar_profesores():
         flash('Acceso no autorizado', 'error')
         return redirect(url_for('auth.login'))
 
-    profesores = obtener_profesores()
+    profesores = obtener_profesor()
     return render_template('profesores.html', profesores=profesores)
 
 @profesor_bp.route('/profesores/<int:id_usuario>/eliminar', methods=['POST'])
 def eliminar_profesor(id_usuario):
-    if 'usuario' not in session or session.get('rol') =! 'administrador':
+    if 'usuario' not in session or session.get('rol') != 'administrador':
         flash('Acceso no autorizado', 'error')
         return redirect(url_for('auth.login'))
 

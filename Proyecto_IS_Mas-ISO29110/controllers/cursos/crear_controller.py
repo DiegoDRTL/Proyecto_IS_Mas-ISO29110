@@ -5,9 +5,9 @@ from alchemyClasses.curso import curso_exists, create_course
 from Schemas.curso.curso_schemas import Curso_form
 
 # Definimos el blueprint
-curso_bp = Blueprint('curso', __name__)
+crearCurso_bp = Blueprint('curso', __name__)
 
-@curso_bp.route('/curso/crear', methods=['GET', 'POST'])
+@crearCurso_bp.route('/curso/crear', methods=['GET', 'POST'])
 def curso_route_handler():
     # Protección de ruta: Solo usuarios autorizados (profesores o administradores)
     if 'usuario' not in session or session.get('rol') not in ['profesor', 'administrador']:

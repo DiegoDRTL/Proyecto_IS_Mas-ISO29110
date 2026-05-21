@@ -4,9 +4,9 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from alchemyClasses.archivo import get_archivo, delete_archivo_db
 
 # Definimos el blueprint para la gestión de archivos
-archivo_bp = Blueprint('archivo', __name__)
+eliminarArchivo_bp = Blueprint('archivo', __name__)
 
-@archivo_bp.route('/archivo/eliminar/<int:id_archivo>', methods=['GET', 'POST'])
+@eliminarArchivo_bp.route('/archivo/eliminar/<int:id_archivo>', methods=['GET', 'POST'])
 def archivo_route_handler(id_archivo):
     """
     Manejador de ruta principal que deriva el flujo según el método HTTP.

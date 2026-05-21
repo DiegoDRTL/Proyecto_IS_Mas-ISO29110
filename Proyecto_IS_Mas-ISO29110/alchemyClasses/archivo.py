@@ -22,7 +22,7 @@ def obtener_por_curso(id_curso):
         WHERE ca.id_curso = %s
     """, (id_curso,))
 
-    archivos = cursor.fetchall()
+    archivos = coursor.fetchall()
     conn.close()
     return archivos
 
@@ -34,7 +34,7 @@ def obtener_por_id(id_archivo):
         SELECT a.* FROM ARCHIVO a
         WHERE a.id_archivo = %s
     """, (id_archivo,))
-    archivo = cursor.fetchone()
+    archivo = coursor.fetchone()
     conn.close()
     return archivo
 

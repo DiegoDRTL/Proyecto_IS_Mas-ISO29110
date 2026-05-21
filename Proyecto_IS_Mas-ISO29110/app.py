@@ -1,8 +1,13 @@
 from flask import Flask
-from controllers.usuarios.auth_controller import auth_bp
-from controllers.usuarios.dashboard_controller import dashboard_bp
-from controllers.usuarios.register_controller import register_bp
-from controller.profesor_controller import profesor_bp
+from controllers.usuarios.auth_controller import auth_bp # iniciar sesion
+from controllers.usuarios.dashboard_controller import dashboard_bp # tipo de usuario
+from controllers.usuarios.register_controller import register_bp # Registrar usuario
+from controllers.usuarios.profesor_controller import profesor_bp # Eliminar profesor
+from controllers.archivos.visualizar_controller import visualizarArchivo_bp # Visualizar archivos subidos
+from controllers.cursos.visualizar_controller import visualizarCurso_bp # Visualizar cursos disponibles
+from controllers.cursos.crear_controller import crearCurso_bp # Crear cursos
+from controllers.archivos.eliminar_controller import eliminarArchivo_bp # Eliminar archivos subidos
+# from controllers.cursos.inscribir_controller import inscribirCurso_bp # Inscribirse a cursos disponibles
 
 
 app = Flask(__name__)
@@ -12,6 +17,11 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(register_bp)
 app.register_blueprint(profesor_bp)
+app.register_blueprint(visualizarArchivo_bp)
+app.register_blueprint(visualizarCurso_bp)
+app.register_blueprint(crearCurso_bp)
+app.register_blueprint(eliminarArchivo_bp)
+
 
 
 if __name__ == '__main__':
