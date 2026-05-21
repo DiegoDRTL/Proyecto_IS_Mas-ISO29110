@@ -6,9 +6,9 @@ from pydantic import ValidationError
 from alchemyClasses.usuario import user_exists, create_user
 from Schemas.usuario.user_schemas import User_form
 
-register_bp = Blueprint('register', __name__)
+registrarUsuario_bp = Blueprint('register', __name__)
 
-@register_bp.route('/register', methods=['GET', 'POST'])
+@registrarUsuario_bp.route('/register', methods=['GET', 'POST'])
 def register():
     # Si el usuario ya está logueado, redirigir al inicio/dashboard
     if 'usuario' in session:

@@ -1,7 +1,7 @@
 from flask import Flask
 from controllers.usuarios.auth_controller import auth_bp # iniciar sesion
 from controllers.usuarios.dashboard_controller import dashboard_bp # tipo de usuario
-from controllers.usuarios.register_controller import register_bp # Registrar usuario
+from controllers.usuarios.register_controller import registrarUsuario_bp # Registrar usuario
 from controllers.usuarios.profesor_controller import profesor_bp # Eliminar profesor
 from controllers.archivos.visualizar_controller import visualizarArchivo_bp # Visualizar archivos subidos
 from controllers.cursos.visualizar_controller import visualizarCurso_bp # Visualizar cursos disponibles
@@ -15,7 +15,7 @@ app.secret_key = 'clave_secreta_curso_2024'
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)
-app.register_blueprint(register_bp)
+app.register_blueprint(registrarUsuario_bp)
 app.register_blueprint(profesor_bp)
 app.register_blueprint(visualizarArchivo_bp)
 app.register_blueprint(visualizarCurso_bp)
