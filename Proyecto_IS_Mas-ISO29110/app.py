@@ -3,6 +3,9 @@ from controllers.usuarios.auth_controller import auth_bp
 from controllers.usuarios.dashboard_controller import dashboard_bp
 from controllers.usuarios.register_controller import register_bp
 from controller.profesor_controller import profesor_bp
+from controllers.cursos.inscribir_controller import inscribir_bp
+
+
 
 
 app = Flask(__name__)
@@ -12,7 +15,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(register_bp)
 app.register_blueprint(profesor_bp)
-
+app.register_blueprint(inscribir_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)
