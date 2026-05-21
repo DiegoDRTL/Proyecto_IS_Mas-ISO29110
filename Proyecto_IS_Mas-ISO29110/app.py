@@ -7,7 +7,7 @@ from controllers.archivos.visualizar_controller import visualizarArchivo_bp # Vi
 from controllers.cursos.visualizar_controller import visualizarCurso_bp # Visualizar cursos disponibles
 from controllers.cursos.crear_controller import crearCurso_bp # Crear cursos
 from controllers.archivos.eliminar_controller import eliminarArchivo_bp # Eliminar archivos subidos
-# from controllers.cursos.inscribir_controller import inscribirCurso_bp # Inscribirse a cursos disponibles
+from controllers.cursos.inscribir_controller import inscribir_bp # Inscribirse a cursos disponibles
 
 
 app = Flask(__name__)
@@ -21,6 +21,7 @@ app.register_blueprint(visualizarArchivo_bp)
 app.register_blueprint(visualizarCurso_bp)
 app.register_blueprint(crearCurso_bp)
 app.register_blueprint(eliminarArchivo_bp)
+app.register_blueprint(inscribir_bp)
 
 
 
