@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, session, redirect, url_for
+from alchemyClasses.curso import obtener_todos
 
 dashboard_bp = Blueprint('dashboard', __name__)
 
@@ -23,9 +24,15 @@ def home():
 def usuario():
     if session.get('rol') != 'usuario':
         return redirect(url_for('dashboard.admin'))
-    return render_template('dashboard_usuario.html',
-                           nombre=session['usuario'],
-                           rol=session['rol'])
+
+    cursos = obtener_todos()
+
+    return render_template(
+        'dashboard_usuario.html',
+        nombre=session['usuario'],
+        rol=session['rol'],
+        cursos=cursos
+    )
 
 @dashboard_bp.route('/dashboard/admin')
 @login_required

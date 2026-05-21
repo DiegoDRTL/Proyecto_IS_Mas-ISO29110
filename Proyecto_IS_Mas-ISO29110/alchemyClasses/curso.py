@@ -314,3 +314,4 @@ def inscribir_alumno(id_usuario, identificador_curso):
     finally:
         cursor.close()
         conn.close()
+        

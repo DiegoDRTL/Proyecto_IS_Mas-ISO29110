@@ -6,7 +6,9 @@
 <nav>
     <div class="nav-brand">🎓 <span>EduCursos</span></div>
     <div class="nav-links">
-        <span style="color:var(--text-light);font-size:0.85rem;">Sesión activa como <strong style="color:var(--green-dark)">{{ nombre }}</strong></span>
+        <span style="color:var(--text-light);font-size:0.85rem;">
+            Sesión activa como <strong style="color:var(--green-dark)">{{ nombre }}</strong>
+        </span>
         <a href="{{ url_for('auth.logout') }}" class="btn-logout">Cerrar sesión</a>
     </div>
 </nav>
@@ -128,7 +130,9 @@
         transition: transform 0.2s;
     }
 
-    .course-card:hover { transform: translateY(-2px); }
+    .course-card:hover {
+        transform: translateY(-2px);
+    }
 
     .course-card .tag {
         display: inline-block;
@@ -169,7 +173,7 @@
     <div class="info-card">
         <div class="info-card-icon">📚</div>
         <h3>Cursos inscritos</h3>
-        <p>3 cursos activos</p>
+        <p>Se actualizará pronto</p>
     </div>
     <div class="info-card">
         <div class="info-card-icon">✅</div>
@@ -183,24 +187,30 @@
     </div>
 </div>
 
+<!-- 🔥 AQUÍ VA EL BACKEND DINÁMICO -->
 <div class="courses-section">
-    <h2 class="section-title">📖 Mis Cursos</h2>
+    <h2 class="section-title">📖 Cursos disponibles</h2>
+
     <div class="course-list">
+
+        {% for curso in cursos %}
         <div class="course-card">
-            <span class="tag">Programación</span>
-            <h4>Introducción a Python</h4>
-            <p>Bases de programación con Python moderno.</p>
+            <span class="tag">Curso</span>
+
+            <h4>{{ curso.nombre }}</h4>
+
+            <p>
+                Profesor: {{ curso.nombre }} {{ curso.apellido_paterno }} {{ curso.apellido_materno }}
+            </p>
+
+            <p style="font-size:0.75rem; color:var(--text-light);">
+                ID Curso: {{ curso.id_curso }}
+            </p>
+
         </div>
-        <div class="course-card">
-            <span class="tag">Bases de datos</span>
-            <h4>MySQL Esencial</h4>
-            <p>Diseño y consultas en bases de datos relacionales.</p>
-        </div>
-        <div class="course-card">
-            <span class="tag">Web</span>
-            <h4>Flask para principiantes</h4>
-            <p>Desarrollo de aplicaciones web con Flask.</p>
-        </div>
+        {% endfor %}
+
     </div>
 </div>
+
 {% endblock %}
