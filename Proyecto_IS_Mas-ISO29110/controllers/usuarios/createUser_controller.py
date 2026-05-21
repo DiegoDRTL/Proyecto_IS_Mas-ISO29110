@@ -40,7 +40,4 @@ def crear_usuario(id_usuario, rol_as):
     
     else:
         flash('No tienes acceso a esta opcion', 'error')
-        if rol == 'alumno':
-            return render_template('dashboard_alumno.html')
-        else:
-            return render_template('dashboard_profesor.html')
+        redirect(url_for('auth.login'))
