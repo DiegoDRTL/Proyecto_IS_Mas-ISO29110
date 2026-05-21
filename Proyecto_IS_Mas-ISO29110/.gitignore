@@ -1,6 +1,6 @@
 # Entorno virtual
-.venv/
 venv/
+.venv/
 
 # Variables de entorno
 .env
@@ -10,8 +10,12 @@ __pycache__/
 *.pyc
 *.pyo
 
-# PyCharm
+# IDEs
 .idea/
-
-# VS Code
 .vscode/
+
+# Archivos de sistema
+.DS_Store
+
+# Archivos de prueba
+prueba.py
