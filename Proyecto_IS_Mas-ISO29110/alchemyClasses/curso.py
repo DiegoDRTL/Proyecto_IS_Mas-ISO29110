@@ -81,7 +81,8 @@ def obtener_todos():
     """)
 
     cursos = cursor.fetchall()
-
+    
+    cursor.close()
     conn.close()
 
     return cursos
