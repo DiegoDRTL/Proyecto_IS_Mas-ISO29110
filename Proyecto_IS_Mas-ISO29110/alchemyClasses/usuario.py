@@ -28,6 +28,15 @@ def get_telefono(id_usuario):
     conn.close()
     return telefono
 
+def get_rol_usuarios():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM USUARIO WHERE rol = usuario")
+    usuarios = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return usuarios
+
 def verify_user(id_usuario, contrasena):
     user = get_user(id_usuario)
     if user and user['contraseña'] == contrasena:
