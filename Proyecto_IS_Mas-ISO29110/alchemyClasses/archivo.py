@@ -8,9 +8,6 @@ def get_archivo(id_archivo):
     cursor.close()
     conn.close()
     return archivo
-from alchemyClasses.db import get_connection 
-
-
 
 def obtener_por_curso(id_curso):
     """Se obtienen los archivos de un curso seleccionado"""
@@ -64,6 +61,25 @@ def delete_archivo_db(id_archivo):
     except Exception as e:
         conn.rollback()
         return False
+    finally:
+        cursor.close()
+        conn.close()
+
+def create_archivo(nombre, tipo_extension, fecha_subida):
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "INSERT INTO ARCHIVO (nombre, tipo_extension, fecha_subida) VALUES (%s, %s, %s)",
+            (nombre, tipo_extension, fecha_subida)
+        )
+        conn.commit()
+        cursor.execute("SELECT LAST_INSERT_ID()")
+        id = cursor.fetchone
+        return id
+    except Exception as e:
+        conn.rollback()
+        return -1
     finally:
         cursor.close()
         conn.close()

@@ -82,7 +82,6 @@ def obtener_todos():
 
     cursos = cursor.fetchall()
 
-    cursor.close()
     conn.close()
 
     return cursos
@@ -315,3 +314,19 @@ def inscribir_alumno(id_usuario, identificador_curso):
         cursor.close()
         conn.close()
         
+def deleate_curso(id_curso):
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "DELETE FROM CURSO WHERE id_curso='%s'",
+            (id_curso)
+        )
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        return False
+    finally:
+        cursor.close()
+        conn.close()
