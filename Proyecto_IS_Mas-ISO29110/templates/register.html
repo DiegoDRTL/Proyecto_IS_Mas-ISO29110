@@ -79,22 +79,28 @@
 </div>
 
 <div class="card">
-    <form method="POST" action="{{ url_for('auth.register') }}">
+    <form method="POST" action="{{ url_for('register.register') }}">
         <div class="form-group">
-            <label for="nombre_usuario">Nombre de Usuario</label>
-            <input type="text" id="nombre_usuario" name="nombre_usuario"
+            <label for="username">Nombre de Usuario</label>
+            <input type="text" id="username" name="username"
                    placeholder="Elige un nombre único" autocomplete="username" required>
         </div>
 
         <div class="form-group">
+            <label for="correo">Correo electrónico</label>
+            <input type="email" id="correo" name="correo"
+                   placeholder="tu_correo@ejemplo.com" autocomplete="email" required>
+        </div>
+
+        <div class="form-group">
             <label for="contrasena">Contraseña</label>
-            <input type="password" id="contrasena" name="contrasena"
+            <input type="password" id="contrasena" name="password"
                    placeholder="Mínimo 6 caracteres" required>
         </div>
 
         <div class="form-group">
-            <label for="confirmar_contrasena">Confirmar Contraseña</label>
-            <input type="password" id="confirmar_contrasena" name="confirmar_contrasena"
+            <label for="confirm_password">Confirmar Contraseña</label>
+            <input type="password" id="confirm_password" name="confirm_password"
                    placeholder="Repite tu contraseña" required>
         </div>
 

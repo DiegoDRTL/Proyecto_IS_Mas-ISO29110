@@ -53,22 +53,24 @@ def create_user(nombre_usuario, a_paterno, a_materno, contrasena, f_nacimiento, 
             (nombre_usuario, a_paterno, a_materno, contrasena, f_nacimiento, rol)
         )
         conn.commit()
-        cursor.execute("SELECT LAST_INSERT_ID()")
-        id = cursor.fetchone
+
+        id_usuario = cursor.lastrowid
+
         cursor.execute(
-            "Insert INTO CORREO_USUARIO (id_usuario, correo) VALUES (%s, %s)",
-            (id, correo)
+            "INSERT INTO CORREO_USUARIO (id_usuario, correo) VALUES (%s, %s)",
+            (id_usuario, correo)
         )
         conn.commit()
+
         cursor.execute(
-            "Insert INTO TELEFONO_USUARIO (id_usuario, telefono) VALUES (%s, %s)",
-            (id, telefono)
+            "INSERT INTO TELEFONO_USUARIO (id_usuario, telefono) VALUES (%s, %s)",
+            (id_usuario, telefono)
         )
         conn.commit()
-        return id
+        return id_usuario
     except Exception as e:
         conn.rollback()
-        return -1
+        return False
     finally:
         cursor.close()
         conn.close()
@@ -121,12 +123,16 @@ def assign_rol(id_usuario, rol):
         conn.close()
 
 
-def user_exists(id_usuario):
-    return get_user(id_usuario) is not None
-
-
 def user_exists(nombre_usuario):
-    return get_user(nombre_usuario) is not None
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT id_usuario FROM USUARIO WHERE nombre = %s", (nombre_usuario,))
+        user = cursor.fetchone()
+        return user is not None
+    finally:
+        cursor.close()
+        conn.close()
 
 
 #Parte para Caso Uso: Eliminar Profesor

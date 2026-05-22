@@ -20,7 +20,7 @@ def usuarios_sr():
         flash('No tienes acceso a esta opcion', 'error')
         redirect(url_for('auth.login'))
     
-@create_bp.route('/usuarios_sr/<int:id_usuario>/<str:rol>/crear', methods=['POST'])
+@create_bp.route('/usuarios_sr/<int:id_usuario>/<string:rol_as>/crear', methods=['POST'])
 def crear_usuario(id_usuario, rol_as):
     #en caso de no haberse iniciado aun sesion
     if 'user_id' not in session:

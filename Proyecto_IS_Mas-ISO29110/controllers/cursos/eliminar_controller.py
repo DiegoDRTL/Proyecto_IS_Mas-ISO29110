@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from alchemyClasses.curso import deleate_curso
 
 #definicion del blueprint
-eliminar_curso_bp = Blueprint('create', __name__)
+eliminar_curso_bp = Blueprint('eliminar_curso', __name__)
 
 @eliminar_curso_bp.route('/cursos/<int:id_curso>/eliminar')
 def eliminar_curso(id_curso):
