@@ -37,40 +37,78 @@ def get_rol_usuarios():
     conn.close()
     return usuarios
 
-def verify_user(id_usuario, contrasena):
-    user = get_user(id_usuario)
-    if user and user['contraseña'] == contrasena:
-        return user
-    return None
+def verify_user(id_usuario, contrasena_ingresada):
+    """
+    Busca al usuario en la base de datos y compara la contraseña
+    en texto plano directamente para evitar el error de tamaño.
+    """
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True) # Usamos dictionary=True para acceder por nombre de columna
+    try:
+        # Buscamos al usuario por su ID o por su nombre de usuario en la tabla USUARIO
+        # AJUSTAR el formato de id_usuario si es alfanumerico o string
+        query = "SELECT id_usuario, contraseña, rol FROM USUARIO WHERE id_usuario = %s"
+        cursor.execute(query, (id_usuario,))
+        user = cursor.fetchone()
 
+        # Si el usuario existe y la contraseña de la BD coincide con la ingresada
+        if user and user['contraseña'] == contrasena_ingresada:
+            return user  # Retorna el diccionario con los datos del usuario para la sesión
+
+        return None
+    except Exception as e:
+        print(f"❌ Error al verificar usuario: {e}")
+        return None
+    finally:
+        cursor.close()
+        conn.close()
 
 def create_user(nombre_usuario, a_paterno, a_materno, contrasena, f_nacimiento, rol, correo, telefono):
     conn = get_connection()
     cursor = conn.cursor()
     try:
+        # 1. Insertar en la tabla principal: USUARIO
         cursor.execute(
             "INSERT INTO USUARIO (nombre, apellido_paterno, apellido_materno, contraseña, fecha_nacimiento, rol) VALUES (%s, %s, %s, %s, %s, %s)",
             (nombre_usuario, a_paterno, a_materno, contrasena, f_nacimiento, rol)
         )
-        conn.commit()
 
+        # Recuperamos el ID que la base de datos le asignó automáticamente a este usuario
         id_usuario = cursor.lastrowid
 
+        # 2. Insertar en la tabla multivaluada: CORREO_USUARIO
         cursor.execute(
             "INSERT INTO CORREO_USUARIO (id_usuario, correo) VALUES (%s, %s)",
             (id_usuario, correo)
         )
-        conn.commit()
 
+        # 3. Insertar en la tabla multivaluada: TELEFONO_USUARIO
         cursor.execute(
             "INSERT INTO TELEFONO_USUARIO (id_usuario, telefono) VALUES (%s, %s)",
             (id_usuario, telefono)
         )
+
+        # SI TODO SALIÓ BIEN, HACEMOS UN SOLO COMMIT PARA GUARDAR TODO JUNTO
         conn.commit()
         return id_usuario
+
     except Exception as e:
+        # ¡ESTA LÍNEA ES VITAL! Te dirá exactamente en la terminal de PyCharm qué falló
+        print("❌ ERROR DE SQL EN create_user:", e)
         conn.rollback()
         return False
+
+    finally:
+        cursor.close()
+        conn.close()
+
+def correo_exists(correo):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT id_usuario FROM CORREO_USUARIO WHERE correo = %s", (correo,))
+        user = cursor.fetchone()
+        return user is not None
     finally:
         cursor.close()
         conn.close()

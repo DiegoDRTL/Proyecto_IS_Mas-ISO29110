@@ -1,30 +1,34 @@
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, field_validator, ValidationInfo
+from datetime import date
 
 class User_form(BaseModel):
-    # Validaciones para los datos ingresados en el formulario del usuario
-    username: str = Field(..., min_length=3, max_length=50, description="Nombre de usuario")
-    correo: EmailStr = Field(..., description="Correo de usuario")
-    password: str = Field(..., min_length=8, description="Contrasena de al menos 8 caracteres")
+    nombre: str
+    apellido_paterno: str
+    apellido_materno: str
+    contrasena: str
+    confirmar_contrasena: str
+    fecha_nacimiento: date  # Pydantic parseará los strings 'YYYY-MM-DD' automáticamente
+    correo: EmailStr        # Valida que sea un correo real
+    telefono: str
 
-    confirm_password: str
-
-    @field_validator('confirm_password')
+    @field_validator('confirmar_contrasena')
     @classmethod
-    def confirm_pswd_validator(cls, v, info):
+    def confirm_pswd_validator(cls, value: str, info: ValidationInfo) -> str:
         """
-        'v' contrasena guardada en confirm_password
-        'info.data' contiene todos los datos del formulario, incluyendo la contrasena guardada en 'password'
-         - Se compara 'v' con 'info.data['password']' para verificar que ambas contrasenas coincidan
-         - Si no coinciden, se lanza un error de validacion indicando que las contrasenas no coinciden
-         - Si coinciden, se retorna 'v', lo que permite que la validacion continue sin problemas
+        'value' contiene lo que se escribió en confirmar_contrasena.
+        'info.data' contiene todos los datos ya procesados del formulario, como 'contrasena'.
         """
-        if 'password' in info.data and v != info.data['password']:
+        # Cambiado 'password' por 'contrasena'
+        if 'contrasena' in info.data and value != info.data['contrasena']:
             raise ValueError('Las contraseñas no coinciden')
-        return v
+        return value
 
-    @field_validator('password')
+    @field_validator('contrasena')
     @classmethod
-    def password_fuerte(cls, v):
-        if not any(char.isdigit() for char in v):
+    def password_fuerte(cls, value: str) -> str:
+        """
+        Valida que la contraseña tenga al menos un número.
+        """
+        if not any(char.isdigit() for char in value):
             raise ValueError('La contraseña debe de incluir al menos un número')
-        return v
+        return value

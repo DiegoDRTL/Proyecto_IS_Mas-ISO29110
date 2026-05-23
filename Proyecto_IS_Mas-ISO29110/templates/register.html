@@ -3,125 +3,161 @@
 {% block title %}Crear Cuenta — Sistema de Cursos{% endblock %}
 
 {% block extra_css %}
-<style>
-    body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+    <style>
+        body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
 
-    main {
-        width: 100%;
-        max-width: 460px;
-        animation: fadeUp 0.5s ease both;
-    }
+        main {
+            width: 100%;
+            max-width: 480px; /* Ajustado ligeramente para acomodar campos paralelos */
+            animation: fadeUp 0.5s ease both;
+        }
 
-    @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
 
-    .register-header {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
+        .register-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
 
-    .register-icon {
-        width: 64px;
-        height: 64px;
-        background: linear-gradient(135deg, var(--green-soft), var(--green-mid));
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
-        font-size: 2rem;
-        border: 3px solid var(--green-mid);
-    }
+        .register-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--green-soft), var(--green-mid));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            border: 3px solid var(--green-mid);
+        }
 
-    h1 {
-        font-family: 'DM Serif Display', serif;
-        font-size: 1.9rem;
-        color: var(--green-deep);
-        margin-bottom: 0.3rem;
-    }
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.9rem;
+            color: var(--green-deep);
+            margin-bottom: 0.3rem;
+        }
 
-    .subtitle {
-        color: var(--text-light);
-        font-size: 0.9rem;
-    }
+        .subtitle {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
 
-    .divider {
-        border: none;
-        border-top: 1.5px solid var(--green-light);
-        margin: 1.5rem 0;
-    }
+        /* Diseño en filas para apellidos y datos secundarios */
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
 
-    .login-link {
-        text-align: center;
-        margin-top: 1.4rem;
-        font-size: 0.88rem;
-        color: var(--text-light);
-    }
+        .form-row .form-group {
+            flex: 1;
+        }
 
-    .rol-hint {
-        font-size: 0.78rem;
-        color: var(--text-light);
-        margin-top: 0.3rem;
-        font-style: italic;
-    }
+        .divider {
+            border: none;
+            border-top: 1.5px solid var(--green-light);
+            margin: 1.5rem 0;
+        }
 
-    .flash-container { max-width: 460px; }
-</style>
+        .login-link {
+            text-align: center;
+            margin-top: 1.4rem;
+            font-size: 0.88rem;
+            color: var(--text-light);
+        }
+
+        .rol-hint {
+            font-size: 0.78rem;
+            color: var(--text-light);
+            margin-top: 0.3rem;
+            font-style: italic;
+        }
+
+        .flash-container { max-width: 480px; }
+    </style>
 {% endblock %}
 
 {% block content %}
-<div class="register-header">
-    <div class="register-icon">✨</div>
-    <h1>Crear Cuenta</h1>
-    <p class="subtitle">Completa el formulario para registrarte</p>
-</div>
+    <div class="register-header">
+        <div class="register-icon">✨</div>
+        <h1>Crear Cuenta</h1>
+        <p class="subtitle">Completa el formulario para registrarte</p>
+    </div>
 
-<div class="card">
-    <form method="POST" action="{{ url_for('register.register') }}">
-        <div class="form-group">
-            <label for="username">Nombre de Usuario</label>
-            <input type="text" id="username" name="username"
-                   placeholder="Elige un nombre único" autocomplete="username" required>
-        </div>
+    <div class="card">
+        <form method="POST" action="{{ url_for('register.register') }}">
 
-        <div class="form-group">
-            <label for="correo">Correo electrónico</label>
-            <input type="email" id="correo" name="correo"
-                   placeholder="tu_correo@ejemplo.com" autocomplete="email" required>
-        </div>
+            <div class="form-group">
+                <label for="nombre">Nombre de Usuario</label>
+                <input type="text" id="nombre" name="nombre"
+                       placeholder="Elige un nombre único" autocomplete="username" required>
+            </div>
 
-        <div class="form-group">
-            <label for="contrasena">Contraseña</label>
-            <input type="password" id="contrasena" name="password"
-                   placeholder="Mínimo 6 caracteres" required>
-        </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="apellido_paterno">Apellido Paterno</label>
+                    <input type="text" id="apellido_paterno" name="apellido_paterno"
+                           placeholder="Paterno" required>
+                </div>
+                <div class="form-group">
+                    <label for="apellido_materno">Apellido Materno</label>
+                    <input type="text" id="apellido_materno" name="apellido_materno"
+                           placeholder="Materno (Opcional)">
+                </div>
+            </div>
 
-        <div class="form-group">
-            <label for="confirm_password">Confirmar Contraseña</label>
-            <input type="password" id="confirm_password" name="confirm_password"
-                   placeholder="Repite tu contraseña" required>
-        </div>
+            <div class="form-group">
+                <label for="correo">Correo electrónico</label>
+                <input type="email" id="correo" name="correo"
+                       placeholder="tu_correo@ejemplo.com" autocomplete="email" required>
+            </div>
 
-        <div class="form-group">
-            <label for="rol">Rol</label>
-            <select id="rol" name="rol" required>
-                <option value="" disabled selected>Selecciona un rol…</option>
-                <option value="usuario">👤 Usuario</option>
-                <option value="administrador">🛡️ Administrador</option>
-            </select>
-            <p class="rol-hint">El rol determina las funciones a las que tendrás acceso.</p>
-        </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="tel" id="telefono" name="telefono"
+                           placeholder="10 dígitos" required>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_nacimiento">F. de Nacimiento</label>
+                    <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
+                </div>
+            </div>
 
-        <hr class="divider">
+            <div class="form-group">
+                <label for="contrasena">Contraseña</label>
+                <input type="password" id="contrasena" name="contrasena"
+                       placeholder="Mínimo 6 caracteres" required>
+            </div>
 
-        <button type="submit" class="btn-primary">Crear Cuenta</button>
-    </form>
+            <div class="form-group">
+                <label for="confirmar_contrasena">Confirmar Contraseña</label>
+                <input type="password" id="confirmar_contrasena" name="confirmar_contrasena"
+                       placeholder="Repite tu contraseña" required>
+            </div>
 
-    <p class="login-link">
-        ¿Ya tienes cuenta?
-        <a href="{{ url_for('auth.login') }}" class="link-subtle">Inicia sesión</a>
-    </p>
-</div>
+            <div class="form-group">
+                <label for="rol">Rol</label>
+                <select id="rol" name="rol" required>
+                    <option value="" disabled selected>Selecciona un rol…</option>
+                    <option value="usuario">👤 Usuario</option>
+                    <option value="administrador">🛡️ Administrador</option>
+                </select>
+                <p class="rol-hint">El rol determina las funciones a las que tendrás acceso.</p>
+            </div>
+
+            <hr class="divider">
+
+            <button type="submit" class="btn-primary">Crear Cuenta</button>
+        </form>
+
+        <p class="login-link">
+            ¿Ya tienes cuenta?
+            <a href="{{ url_for('auth.login') }}" class="link-subtle">Inicia sesión</a>
+        </p>
+    </div>
 {% endblock %}
