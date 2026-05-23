@@ -57,7 +57,7 @@ def verify_user(id_usuario, contrasena_ingresada):
 
         return None
     except Exception as e:
-        print(f"❌ Error al verificar usuario: {e}")
+        print(f"Error al verificar usuario: {e}")
         return None
     finally:
         cursor.close()
@@ -67,7 +67,7 @@ def create_user(nombre_usuario, a_paterno, a_materno, contrasena, f_nacimiento, 
     conn = get_connection()
     cursor = conn.cursor()
     try:
-        # 1. Insertar en la tabla principal: USUARIO
+        # Insertar en la tabla principal: USUARIO
         cursor.execute(
             "INSERT INTO USUARIO (nombre, apellido_paterno, apellido_materno, contraseña, fecha_nacimiento, rol) VALUES (%s, %s, %s, %s, %s, %s)",
             (nombre_usuario, a_paterno, a_materno, contrasena, f_nacimiento, rol)
@@ -76,25 +76,24 @@ def create_user(nombre_usuario, a_paterno, a_materno, contrasena, f_nacimiento, 
         # Recuperamos el ID que la base de datos le asignó automáticamente a este usuario
         id_usuario = cursor.lastrowid
 
-        # 2. Insertar en la tabla multivaluada: CORREO_USUARIO
+        # CORREO_USUARIO
         cursor.execute(
             "INSERT INTO CORREO_USUARIO (id_usuario, correo) VALUES (%s, %s)",
             (id_usuario, correo)
         )
 
-        # 3. Insertar en la tabla multivaluada: TELEFONO_USUARIO
+        # TELEFONO_USUARIO
         cursor.execute(
             "INSERT INTO TELEFONO_USUARIO (id_usuario, telefono) VALUES (%s, %s)",
             (id_usuario, telefono)
         )
 
-        # SI TODO SALIÓ BIEN, HACEMOS UN SOLO COMMIT PARA GUARDAR TODO JUNTO
         conn.commit()
         return id_usuario
 
     except Exception as e:
-        # ¡ESTA LÍNEA ES VITAL! Te dirá exactamente en la terminal de PyCharm qué falló
-        print("❌ ERROR DE SQL EN create_user:", e)
+        # Indica en terminal cual fue el error en la BD
+        print("ERROR DE SQL EN create_user:", e)
         conn.rollback()
         return False
 
