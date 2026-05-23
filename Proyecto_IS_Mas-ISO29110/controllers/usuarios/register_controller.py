@@ -1,15 +1,29 @@
+"""Módulo de autenticación para el registro de nuevos usuarios en la aplicación.
+
+Este módulo define el Blueprint 'register' y gestiona el flujo de registro,
+incluyendo la validación de datos con Pydantic, la verificación de correos
+duplicados y la persistencia en la base de datos a través de SQLAlchemy.
+"""
+
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from werkzeug.security import generate_password_hash
+# from werkzeug.security import generate_password_hash | Para fines practicos descartamos esta paqueteria
 from pydantic import ValidationError
 
-# Importación de las funciones del modelo (Cambiamos user_exists por correo_exists)
+# Importación de las funciones del modelo
 from alchemyClasses.usuario import correo_exists, create_user
 from Schemas.usuario.user_schemas import User_form
 
 registrarUsuario_bp = Blueprint('register', __name__)
 
+
 @registrarUsuario_bp.route('/register', methods=['GET', 'POST'])
 def register():
+    """Gestiona la ruta principal de registro de usuarios.
+
+    Redirige al dashboard si el usuario ya está autenticado. Si la petición
+    es POST, evalúa si se canceló la acción o si se debe procesar el formulario.
+    Si es GET, inicia el renderizado del formulario.
+    """
     if 'usuario' in session:
         return redirect(url_for('dashboard.home'))
 
@@ -23,10 +37,20 @@ def register():
 
 
 def iniciarProcesoRegistro():
+    """Renderiza la plantilla del formulario de registro para peticiones GET."""
     return render_template('register.html')
 
 
 def procesarRegistro():
+    """Procesa, valida y almacena los datos enviados en el formulario de registro.
+
+    Pasa los datos crudos del formulario a un esquema de Pydantic (User_form)
+    para su validación. Verifica que el correo no esté registrado y crea
+    el usuario en la base de datos con la contraseña en texto plano.
+
+    Maneja excepciones de validación de Pydantic y errores generales del servidor
+    notificándolos a través de mensajes flash.
+    """
     try:
         datos_raw = request.form.to_dict()
         datos_validados = User_form(**datos_raw)
@@ -34,15 +58,14 @@ def procesarRegistro():
         if correo_exists(datos_validados.correo):
             return manejarErrorValidacion('El correo electrónico ya está registrado.')
 
-        # 1. COMENTAMOS LA ENCRIPCIÓN PARA EVITAR EL TEXTO LARGO
-        # password_encriptada = generate_password_hash(datos_validados.contrasena)
+        # password_encriptada = generate_password_hash(datos_validados.contrasena) | Encriptacion comentada para evitar que rebase el espacio asignado en la BD
 
-        # 2. ENVIAMOS LA CONTRASEÑA EN TEXTO PLANO DIRECTAMENTE
+        # La contrasena se guarda en texto plano
         registro_exitoso = create_user(
             nombre_usuario=datos_validados.nombre,
             a_paterno=datos_validados.apellido_paterno,
             a_materno=datos_validados.apellido_materno,
-            contrasena=datos_validados.contrasena,  # <-- Usamos la variable directa aquí
+            contrasena=datos_validados.contrasena,
             f_nacimiento=datos_validados.fecha_nacimiento,
             rol='usuario',
             correo=datos_validados.correo,
@@ -64,11 +87,18 @@ def procesarRegistro():
         print(f"❌ Error interno en el controlador: {e}")
         return manejarErrorValidacion("Error interno del servidor al procesar el registro.")
 
+
 def manejarErrorValidacion(mensaje):
+    """Muestra un mensaje de error mediante flash y vuelve a renderizar el registro.
+
+    Args:
+        mensaje (str): El texto explicativo del error que se le mostrará al usuario.
+    """
     flash(mensaje, 'error')
     return render_template('register.html')
 
 
 def cancelarRegistro():
+    """Cancela el proceso actual de registro y redirige a la pantalla de login."""
     flash('Registro cancelado.', 'info')
     return redirect(url_for('auth.login'))
