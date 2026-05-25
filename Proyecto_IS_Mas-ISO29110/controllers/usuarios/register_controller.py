@@ -6,7 +6,7 @@ duplicados y la persistencia en la base de datos a través de SQLAlchemy.
 """
 
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-# from werkzeug.security import generate_password_hash | Para fines practicos descartamos esta paqueteria
+# from werkzeug.security import generate_password_hash | Para fines practicos descartamos esta paqueteria y dejamos la contrasena como un string simple
 from pydantic import ValidationError
 
 # Importación de las funciones del modelo
