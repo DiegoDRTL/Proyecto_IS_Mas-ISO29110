@@ -12,7 +12,7 @@ def archivo_route_handler(id_archivo):
     Manejador de ruta principal que deriva el flujo según el método HTTP.
     """
     # Protección de ruta: Validar sesión activa
-    if 'usuario' not in session:
+    if 'id_usuario' not in session:
         flash('Acceso no autorizado. Por favor inicia sesión.', 'error')
         return redirect(url_for('auth.login'))
 

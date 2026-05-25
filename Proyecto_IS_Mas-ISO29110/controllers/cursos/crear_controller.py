@@ -10,7 +10,7 @@ crearCurso_bp = Blueprint('curso', __name__)
 @crearCurso_bp.route('/curso/crear', methods=['GET', 'POST'])
 def curso_route_handler():
     # Protección de ruta: Solo usuarios autorizados (profesores o administradores)
-    if 'usuario' not in session or session.get('rol') not in ['profesor', 'administrador']:
+    if 'id_usuario' not in session or session.get('rol') not in ['profesor', 'administrador']:
         flash('Acceso no autorizado.', 'error')
         return redirect(url_for('auth.login'))
 

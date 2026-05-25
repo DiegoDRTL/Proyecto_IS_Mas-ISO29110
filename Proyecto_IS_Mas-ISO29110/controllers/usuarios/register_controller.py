@@ -24,7 +24,7 @@ def register():
     es POST, evalúa si se canceló la acción o si se debe procesar el formulario.
     Si es GET, inicia el renderizado del formulario.
     """
-    if 'usuario' in session:
+    if 'id_usuario' in session:
         return redirect(url_for('dashboard.home'))
 
     if request.method == 'POST':

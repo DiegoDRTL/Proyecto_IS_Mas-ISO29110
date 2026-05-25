@@ -5,7 +5,7 @@ profesor_bp = Blueprint('profesor', __name__)
 
 @profesor_bp.route('/profesores')
 def gestionar_profesores():
-    if 'usuario' not in session or session.get('rol') != 'administrador':
+    if 'id_usuario' not in session or session.get('rol') != 'administrador':
         flash('Acceso no autorizado', 'error')
         return redirect(url_for('auth.login'))
 
@@ -14,7 +14,7 @@ def gestionar_profesores():
 
 @profesor_bp.route('/profesores/<int:id_usuario>/eliminar', methods=['POST'])
 def eliminar_profesor(id_usuario):
-    if 'usuario' not in session or session.get('rol') != 'administrador':
+    if 'id_usuario' not in session or session.get('rol') != 'administrador':
         flash('Acceso no autorizado', 'error')
         return redirect(url_for('auth.login'))
 
