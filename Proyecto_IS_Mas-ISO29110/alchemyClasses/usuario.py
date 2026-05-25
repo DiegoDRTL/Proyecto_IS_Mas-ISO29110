@@ -47,7 +47,7 @@ def verify_user(id_usuario, contrasena_ingresada):
     try:
         # Buscamos al usuario por su ID o por su nombre de usuario en la tabla USUARIO
         # AJUSTAR el formato de id_usuario si es alfanumerico o string
-        query = "SELECT id_usuario, contraseña, rol FROM USUARIO WHERE id_usuario = %s"
+        query = "SELECT id_usuario, nombre, contraseña, rol FROM USUARIO WHERE id_usuario = %s"
         cursor.execute(query, (id_usuario,))
         user = cursor.fetchone()
 

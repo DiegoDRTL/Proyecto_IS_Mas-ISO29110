@@ -6,11 +6,11 @@ inscribir_bp = Blueprint('inscribir', __name__)
 
 @inscribir_bp.route('/inscribir', methods=['POST'])
 def inscribir():
-    if 'usuario' not in session:
+    if 'id_usuario' not in session:
         return redirect(url_for('auth.login'))
 
     try:
-        id_usuario = session['usuario']  # 👈 SALE DE SESIÓN
+        id_usuario = session['id_usuario']  # SALE DE SESIÓN
         identificador_curso = request.form.get('id_curso')
 
         if not identificador_curso:

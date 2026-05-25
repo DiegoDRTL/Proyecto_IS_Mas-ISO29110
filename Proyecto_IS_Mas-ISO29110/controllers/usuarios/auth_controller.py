@@ -9,10 +9,12 @@ def index():
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if 'usuario' in session:
+
+    if 'id_usuario' in session:
         return redirect(url_for('dashboard.home'))
 
     if request.method == 'POST':
+
         id_usuario = request.form.get('id_usuario', '').strip()
         contrasena = request.form.get('contrasena', '').strip()
 
@@ -21,10 +23,23 @@ def login():
             return render_template('login.html')
 
         user = verify_user(id_usuario, contrasena)
+
         if user:
+
+            # 🔥 SESIÓN PRINCIPAL
             session['id_usuario'] = user['id_usuario']
+
+            # 🔥 ESTO SOLO ES PARA MOSTRAR EL NOMBRE EN EL DASHBOARD
+            session['usuario'] = user['nombre']
+
+            # 🔥 ROL
             session['rol'] = user['rol']
+
+            print('LOGIN EXITOSO')
+            print(session)
+            
             return redirect(url_for('dashboard.home'))
+
         else:
             flash('Usuario o contraseña incorrectos.', 'error')
             return render_template('login.html')
