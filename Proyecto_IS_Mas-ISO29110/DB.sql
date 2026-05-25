@@ -51,4 +51,4 @@ INSERT INTO USUARIO (nombre, contraseña, rol) VALUES ('isabelG', 'isabel3456', 
 INSERT INTO USUARIO (nombre, contraseña, rol) VALUES ('julioH', 'julio4567', 'usuario');
 INSERT INTO USUARIO (nombre, contraseña, rol) VALUES ('karenI', 'karen5678', 'usuario');
 INSERT INTO USUARIO (nombre, contraseña, rol) VALUES ('leoJ', 'leo6789', 'administrador');
-INSERT INTO USUARIO (nombre, contraseña, rol) VALUES ('marcoK', 'marco7890', 'usuario');
+INSERT INTO USUARIO (nombre, contraseña, rol) VALUES ('marcoK', 'marco7890', 'administrador');
