@@ -15,7 +15,7 @@ def inscribir():
 
         if not identificador_curso:
             flash("Selecciona un curso", "error")
-            return redirect(url_for('dashboard.usuario'))
+            return redirect(url_for('dashboard.home'))
 
         # convertir si es número
         try:
@@ -34,4 +34,4 @@ def inscribir():
         print(e)
         flash("Error interno", "error")
 
-    return redirect(url_for('dashboard.usuario'))
+    return redirect(url_for('dashboard.home'))
