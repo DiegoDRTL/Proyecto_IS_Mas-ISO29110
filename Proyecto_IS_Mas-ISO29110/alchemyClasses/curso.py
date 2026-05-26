@@ -1,6 +1,5 @@
 from alchemyClasses.db import get_connection
 
-
 def get_curso_by_id(id_curso):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -159,26 +158,33 @@ def obtener_por_id(id_curso):
     return curso
 
 
-def obtener_disponibles():
+def obtener_disponibles(id_alumno):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
-    cursor.execute("""
-        SELECT c.*,
-               u.nombre,
+    # Añadimos una subconsulta para excluir los cursos donde el alumno ya está inscrito
+    query = """
+        SELECT c.id_curso,
+               c.nombre AS curso_nombre,
+               c.descripcion,
+               c.estado,
+               u.nombre AS profe_nombre,
                u.apellido_paterno,
                u.apellido_materno
         FROM CURSO c
-        JOIN USUARIO u
-        ON c.id_usuario = u.id_usuario
-        WHERE c.estado = 'Disponible'
-    """)
+        JOIN USUARIO u ON c.id_usuario = u.id_usuario
+        WHERE (c.estado = 'Disponible' OR c.estado = 'Abierto')
+            AND c.id_curso NOT IN (
+                SELECT id_curso
+                FROM INSCRIBE
+                WHERE id_usuario = %s
+            )
+    """
 
+    cursor.execute(query, (id_alumno,))
     cursos = cursor.fetchall()
-
     cursor.close()
     conn.close()
-
     return cursos
 
 
