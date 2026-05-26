@@ -25,7 +25,7 @@ def home():
 
     # 1. Panel de Administración
     if rol == 'administrador':
-        return render_template(
+         return render_template(
             'dashboard_admin.html',
             nombre=nombre_usuario,
             rol=rol
