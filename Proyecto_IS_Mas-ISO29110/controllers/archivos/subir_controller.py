@@ -10,7 +10,7 @@ subirArchivo_bp = Blueprint('archivo', __name__)
 CARPETA_DESTINO = os.path.join(os.getcwd(), 'subidas')
 os.makedirs(CARPETA_DESTINO, exist_ok=True) #En caso de no existir la carpeta
 
-subirArchivo_bp.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 #Limite de 16MB
+# subirArchivo_bp.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # Esta linea va en app.py
 
 modelo_gestor = ArchivoModelo(CARPETA_DESTINO)
 
