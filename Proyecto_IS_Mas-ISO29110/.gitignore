@@ -1,10 +1,12 @@
 # Entorno virtual
-venv/
+
 .venv/
+.idea/
+.env
 
 # Variables de entorno
 .env
-
+secretos.env.txt
 # Python
 __pycache__/
 *.pyc

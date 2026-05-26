@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, session, flash
 from alchemyClasses.archivo import obtener_por_curso, obtener_por_id
 from alchemyClasses.curso import obtener_por_id as obtener_curso_por_id
 
-visualizarArchivo_bp = Blueprint('archivo', __name__)
+visualizarArchivo_bp = Blueprint('visualizar_archivo', __name__)
 
 @visualizarArchivo_bp.route('/cursos/<int:id_curso>/archivos')
 def visualizar_archivos(id_curso):

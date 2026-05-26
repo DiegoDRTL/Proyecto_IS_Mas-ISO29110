@@ -5,7 +5,7 @@ from alchemyClasses.archivo import archivo_exists
 from Schemas.archivos.archivos_schemas import ArchivoModelo
 
 # Definimos el blueprint
-subirArchivo_bp = Blueprint('archivo', __name__)
+subirArchivo_bp = Blueprint('subir_archivo', __name__)
 
 CARPETA_DESTINO = os.path.join(os.getcwd(), 'subidas')
 os.makedirs(CARPETA_DESTINO, exist_ok=True) #En caso de no existir la carpeta
