@@ -64,7 +64,7 @@ def procesarCreacion(datosCurso):
         if curso_exists(datos_validados.nombre):
             return manejarErroresValidacion('El nombre del curso ya se encuentra registrado.')
 
-        # 🌟 PASAMOS EL CAMPO VALIDADO AL MODELO DE DATA
+        # CAMPO VALIDADO AL MODELO DE DATA
         id_curso_nuevo = create_course(
             nombre=datos_validados.nombre,
             capacidad=datos_validados.capacidad,
@@ -73,17 +73,16 @@ def procesarCreacion(datosCurso):
             id_usuario=session.get('id_usuario')
         )
 
-        # 🌟 AJUSTE: Captura de manera segura si la inserción devuelve False o None
+        # Captura de manera segura si la inserción devuelve False o None
         if not id_curso_nuevo:
             return manejarErroresValidacion('Error al guardar el curso en la base de datos. Intente nuevamente.')
 
-        # Si tu función retorna True en lugar de un ID numérico, personalizamos el mensaje
         if id_curso_nuevo is True:
             flash('Curso creado exitosamente.', 'realizado')
         else:
             flash(f'Curso creado exitosamente con el ID: {id_curso_nuevo}.', 'realizado')
 
-        return redirect(url_for('dashboard.usuario'))
+        return redirect(url_for('dashboard.home'))
 
     except ValidationError as e:
         error_detalle = e.errors()[0]
@@ -102,7 +101,6 @@ def manejarErroresValidacion(codigoError):
     nombre_usuario = session.get('nombre') or session.get('usuario')
     return render_template('crear_curso.html', nombre=nombre_usuario)
 
-
 def cancelarCreacion():
     flash('Creación del curso cancelada.', 'success')
-    return redirect(url_for('dashboard.usuario'))
+    return redirect(url_for('dashboard.home'))
