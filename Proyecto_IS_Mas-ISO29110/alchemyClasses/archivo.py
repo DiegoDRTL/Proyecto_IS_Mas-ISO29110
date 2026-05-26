@@ -65,13 +65,13 @@ def delete_archivo_db(id_archivo):
         cursor.close()
         conn.close()
 
-def create_archivo(nombre, tipo_extension, fecha_subida):
+def create_archivo(nombre, tipo_extension, fecha_subida, ruta):
     conn = get_connection()
     cursor = conn.cursor()
     try:
         cursor.execute(
-            "INSERT INTO ARCHIVO (nombre, tipo_extension, fecha_subida) VALUES (%s, %s, %s)",
-            (nombre, tipo_extension, fecha_subida)
+            "INSERT INTO ARCHIVO (nombre, tipo_extension, fecha_subida, ruta) VALUES (%s, %s, %s)",
+            (nombre, tipo_extension, fecha_subida, ruta)
         )
         conn.commit()
         cursor.execute("SELECT LAST_INSERT_ID()")
@@ -83,3 +83,23 @@ def create_archivo(nombre, tipo_extension, fecha_subida):
     finally:
         cursor.close()
         conn.close()
+
+def get_archivo_by_name(nombre):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute(
+        "SELECT * FROM ARCHIVO WHERE nombre = %s",
+        (nombre,)
+    )
+
+    archivo = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return archivo
+
+
+def archivo_exists(nombre):
+    return get_archivo_by_name(nombre) is not None

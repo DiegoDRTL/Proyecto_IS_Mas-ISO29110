@@ -92,7 +92,8 @@ CREATE TABLE ARCHIVO (
   id_archivo INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(100),
   tipo_extension VARCHAR(10),
-  fecha_subida DATE
+  fecha_subida DATE,
+  ruta VARCHAR(1000)
 );
 
 -- =====================
