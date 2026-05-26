@@ -93,29 +93,35 @@ def obtener_por_usuario(id_usuario, rol):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
-    if rol == 'Profesor':
+    rol_normalizado = str(rol).strip().lower()
+
+    if rol_normalizado == 'profesor':
         cursor.execute("""
-            SELECT c.*,
-                   u.nombre,
-                   u.apellido_paterno,
-                   u.apellido_materno
+            SELECT c.id_curso,
+                c.nombre AS curso_nombre,
+                c.estado,
+                c.capacidad,
+                c.descripcion,
+                COUNT(i.id_usuario) AS total_inscritos,
+                u.nombre,
+                u.apellido_paterno,
+                u.apellido_materno
             FROM CURSO c
-            JOIN USUARIO u
-            ON c.id_usuario = u.id_usuario
+            JOIN USUARIO u ON c.id_usuario = u.id_usuario
+            LEFT JOIN INSCRIBE i ON c.id_curso = i.id_curso
             WHERE c.id_usuario = %s
+            GROUP BY c.id_curso
         """, (id_usuario,))
 
-    elif rol == 'Alumno':
+    elif rol_normalizado == 'alumno':
         cursor.execute("""
             SELECT c.*,
-                   u.nombre,
-                   u.apellido_paterno,
-                   u.apellido_materno
+                u.nombre,
+                u.apellido_paterno,
+                u.apellido_materno
             FROM CURSO c
-            JOIN INSCRIBE i
-            ON c.id_curso = i.id_curso
-            JOIN USUARIO u
-            ON c.id_usuario = u.id_usuario
+            JOIN INSCRIBE i ON c.id_curso = i.id_curso
+            JOIN USUARIO u ON c.id_usuario = u.id_usuario
             WHERE i.id_usuario = %s
         """, (id_usuario,))
 
@@ -126,12 +132,9 @@ def obtener_por_usuario(id_usuario, rol):
         return cursos
 
     cursos = cursor.fetchall()
-
     cursor.close()
     conn.close()
-
     return cursos
-
 
 def obtener_por_id(id_curso):
     conn = get_connection()
@@ -322,7 +325,7 @@ def deleate_curso(id_curso):
     try:
         cursor.execute(
             "DELETE FROM CURSO WHERE id_curso='%s'",
-            (id_curso)
+            (id_curso,)
         )
         conn.commit()
         return True
