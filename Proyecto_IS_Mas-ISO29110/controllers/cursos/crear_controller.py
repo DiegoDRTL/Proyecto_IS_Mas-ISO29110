@@ -4,83 +4,105 @@ from pydantic import ValidationError
 from alchemyClasses.curso import curso_exists, create_course
 from Schemas.curso.curso_schemas import Curso_form
 
-# Definimos el blueprint
 crearCurso_bp = Blueprint('curso', __name__)
 
 @crearCurso_bp.route('/curso/crear', methods=['GET', 'POST'])
 def curso_route_handler():
-    # Protección de ruta: Solo usuarios autorizados (profesores o administradores)
     if 'id_usuario' not in session or session.get('rol') not in ['profesor', 'administrador']:
         flash('Acceso no autorizado.', 'error')
         return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
         accionBoton = request.form.get('accion')
-        datosCurso = request.form.to_dict()
-        return procesarCreacion(datosCurso, accionBoton)
+
+        if accionBoton == 'cancelar':
+            return cancelarCreacion()
+
+        # 🛠️ EXTRACCIÓN EXPLÍCITA Y LIMPIEZA DE CAMPOS
+        nombre = (request.form.get('nombre') or '').strip()
+        capacidad_raw = (request.form.get('capacidad') or '').strip()
+        estado = (request.form.get('estado') or '').strip()
+        descripcion = (request.form.get('descripcion') or '').strip()
+
+        # 📋 IMPRESIÓN DE DEPURACIÓN EN TERMINAL
+        print("======== DATOS RECIBIDOS DEL FORMULARIO ========")
+        print(f"Nombre extraído: '{nombre}'")
+        print(f"Capacidad extraída: '{capacidad_raw}'")
+        print(f"Estado extraído: '{estado}'")
+        print(f"Descripción extraída: '{descripcion}'")
+        print("=================================================")
+
+        # Conversión explícita a entero para evitar problemas de tipado estricto en Pydantic
+        try:
+            capacidad = int(capacidad_raw) if capacidad_raw.isdigit() else None
+        except ValueError:
+            capacidad = None
+
+        # Construimos el diccionario final incluyendo el nuevo campo requerido
+        datos_procesados = {
+            'nombre': nombre if nombre != '' else None,
+            'capacidad': capacidad,
+            'estado': estado if estado != '' else None,
+            'descripcion': descripcion if descripcion != '' else None
+        }
+
+        return procesarCreacion(datos_procesados)
 
     return iniciarCreacionCurso()
 
 
 def iniciarCreacionCurso():
-    """
-    Muestra la vista del formulario de creación de curso.
-    """
-    return render_template('crear_curso.html')
+    nombre_usuario = session.get('nombre') or session.get('usuario')
+    return render_template('crear_curso.html', nombre=nombre_usuario)
 
 
-def procesarCreacion(datosCurso, accionBoton):
-    """
-    Procesa los datos enviados, aplica validaciones de Pydantic,
-    verifica duplicados e interactúa con la base de datos.
-    """
-    # Manejar el botón de cancelar dentro del formulario antes de validar
-    if accionBoton == 'cancelar':
-        return cancelarCreacion()
-
+def procesarCreacion(datosCurso):
     try:
-        # Validación de los datos recibidos mediante el esquema de Pydantic
+        # Alimentamos a Pydantic con los campos explícitamente limpios y tipados
         datos_validados = Curso_form(**datosCurso)
 
-        # Verificar si el curso ya existe en la base de datos utilizando el nombre
         if curso_exists(datos_validados.nombre):
             return manejarErroresValidacion('El nombre del curso ya se encuentra registrado.')
 
-        # Inserción en la base de datos mediante la función del modelo
-        creacion_exitosa = create_course(
+        # 🌟 PASAMOS EL CAMPO VALIDADO AL MODELO DE DATA
+        id_curso_nuevo = create_course(
             nombre=datos_validados.nombre,
+            capacidad=datos_validados.capacidad,
+            estado=datos_validados.estado,
             descripcion=datos_validados.descripcion,
-            id_profesor=session.get('id_usuario')  # Vincula el curso al profesor logueado
+            id_usuario=session.get('id_usuario')
         )
 
-        if not creacion_exitosa:
+        # 🌟 AJUSTE: Captura de manera segura si la inserción devuelve False o None
+        if not id_curso_nuevo:
             return manejarErroresValidacion('Error al guardar el curso en la base de datos. Intente nuevamente.')
 
-        # Mensaje de éxito (realizar revision)
-        flash('Curso creado exitosamente.', 'realizado')
-        return redirect(url_for('profesor.gestionar_profesores'))
+        # Si tu función retorna True en lugar de un ID numérico, personalizamos el mensaje
+        if id_curso_nuevo is True:
+            flash('Curso creado exitosamente.', 'realizado')
+        else:
+            flash(f'Curso creado exitosamente con el ID: {id_curso_nuevo}.', 'realizado')
+
+        return redirect(url_for('dashboard.usuario'))
 
     except ValidationError as e:
-        # Extraer el mensaje de error de Pydantic y pasarlo como codigoError
-        codigoError = e.errors()[0]['msg']
-        return manejarErroresValidacion(f"Error de validación: {codigoError}")
+        error_detalle = e.errors()[0]
+        campo_afectado = error_detalle.get('loc')[0]
+        mensaje_error = error_detalle.get('msg')
+
+        return manejarErroresValidacion(f"Error en campo '{campo_afectado}': {mensaje_error}")
 
     except Exception as e:
+        print(f"Error detectado en el controlador de cursos: {e}")
         return manejarErroresValidacion("Error interno del servidor al procesar la creación del curso.")
 
 
 def manejarErroresValidacion(codigoError):
-    """
-    Centraliza las alertas de error y vuelve a pintar el formulario
-    manteniendo la consistencia visual de tu app ('error').
-    """
     flash(codigoError, 'error')
-    return render_template('crear_curso.html')
+    nombre_usuario = session.get('nombre') or session.get('usuario')
+    return render_template('crear_curso.html', nombre=nombre_usuario)
 
 
 def cancelarCreacion():
-    """
-    Aborta el proceso de creación de manera limpia y redirige al panel principal.
-    """
-    flash('Creación del curso cancelada.', 'info')
-    return redirect(url_for('profesor.gestionar_profesores'))
+    flash('Creación del curso cancelada.', 'success')
+    return redirect(url_for('dashboard.usuario'))

@@ -1,10 +1,12 @@
 from flask import Blueprint, render_template, session, redirect, url_for
-from alchemyClasses.curso import obtener_todos
-from alchemyClasses.curso import obtener_por_usuario
+from alchemyClasses.curso import obtener_todos, obtener_por_usuario
+
+from flask import Blueprint, render_template, session, redirect, url_for
 
 dashboard_bp = Blueprint('dashboard', __name__)
 
 def login_required(f):
+    """Decorador personalizado para proteger rutas que requieren autenticación."""
     from functools import wraps
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -13,37 +15,41 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated
 
+
 @dashboard_bp.route('/dashboard')
 @login_required
 def home():
-    if session.get('rol') == 'administrador':
-        return redirect(url_for('dashboard.admin'))
-    return redirect(url_for('dashboard.usuario'))
-
-@dashboard_bp.route('/dashboard/usuario')
-@login_required
-def usuario():
-
+    """Ruta única que carga el panel de control correspondiente según el rol del usuario."""
     rol = session.get('rol')
+    nombre_usuario = session.get('nombre') or session.get('usuario')
 
-    # Roles permitidos
-    if rol not in ['usuario', 'alumno', 'profesor']:
-        return redirect(url_for('dashboard.admin'))
+    # 1. Panel de Administración
+    if rol == 'administrador':
+        return render_template(
+            'dashboard_admin.html',
+            nombre=nombre_usuario,
+            rol=rol
+        )
 
-    cursos = obtener_todos()
+    # 2. Panel del Profesor
+    if rol == 'profesor':
+        id_profesor = session.get('id_usuario')
+        # Se obtienen los cursos específicos asignados a este docente
+        cursos_docente = obtener_por_usuario(id_profesor, rol)
 
+        return render_template(
+            'dashboard_profesor.html',
+            nombre=nombre_usuario,
+            rol=rol,
+            cursos=cursos_docente
+        )
+
+    # 3. Panel del Alumno o Usuario general
+    # Si no es admin ni profesor, cae aquí automáticamente por defecto
+    cursos_totales = obtener_todos()
     return render_template(
-        'dashboard_usuario.html',
-        nombre=session['usuario'],
+        'dashboard_alumno.html',
+        nombre=nombre_usuario,
         rol=rol,
-        cursos=cursos
+        cursos=cursos_totales
     )
-
-@dashboard_bp.route('/dashboard/admin')
-@login_required
-def admin():
-    if session.get('rol') != 'administrador':
-        return redirect(url_for('dashboard.usuario'))
-    return render_template('dashboard_admin.html',
-                           nombre=session['usuario'],
-                           rol=session['rol'])

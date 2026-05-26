@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Curso — Sistema de Cursos{% endblock %}
+
+{% block nav %}
+    <nav>
+        <div class="nav-brand">🎓 <span>EduCursos</span></div>
+        <div class="nav-links">
+        <span style="color:var(--text-light);font-size:0.85rem;">
+            Sesión activa como: <strong style="color:var(--green-dark)">{{ nombre }}</strong>
+        </span>
+            <a href="{{ url_for('auth.logout') }}" class="btn-logout">Cerrar sesión</a>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .form-wrapper {
+            max-width: 540px;
+            margin: 1.5rem auto 0;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-header h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2rem;
+            color: var(--green-deep);
+            margin-bottom: 0.4rem;
+        }
+
+        .form-header p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1.2rem;
+            margin-top: 2rem;
+        }
+
+        .btn-cancel {
+            background: none;
+            border: none;
+            color: var(--text-mid);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .btn-cancel:hover {
+            color: var(--green-dark);
+        }
+
+        /* 🌟 OPTIMIZACIÓN: Compartir estilos con el nuevo textarea */
+        input[type="number"], textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1.8px solid var(--green-light);
+            border-radius: var(--radius-sm);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            background: var(--green-lightest);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="number"]:focus, textarea:focus {
+            border-color: var(--green-main);
+            box-shadow: 0 0 0 3px rgba(76,175,112,0.15);
+            background: var(--white);
+        }
+
+        /* Estilo específico para ajustar la caja de texto */
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="form-wrapper">
+
+        <div class="form-header">
+            <h1>Crear Nuevo Curso</h1>
+            <p>Completa los detalles para dar de alta la materia en la plataforma.</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div style="padding: 1rem; margin-bottom: 1.5rem; border-radius: var(--radius); text-align: center; font-size: 0.9rem;
+                            background-color: {% if category == 'realizado' or category == 'success' %}#E8F5E9{% else %}#FFEBEE{% endif %};
+                            color: {% if category == 'realizado' or category == 'success' %}#2E7D32{% else %}#C62828{% endif %};">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card">
+            <form action="{{ url_for('curso.curso_route_handler') }}" method="POST">
+
+                <div class="form-group">
+                    <label for="nombre">Nombre del Curso</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ej. Inglés Intermedio B2" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="capacidad">Capacidad Alumnos</label>
+                        <input type="number" id="capacidad" name="capacidad" placeholder="Máx. Alumnos" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="estado">Estado Inicial</label>
+                        <select id="estado" name="estado" required>
+                            <option value="" disabled selected>Selecciona un estado</option>
+                            <option value="Abierto">Abierto</option>
+                            <option value="Cerrado">Cerrado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1.2rem;">
+                    <label for="descripcion">Descripción del Curso</label>
+                    <textarea id="descripcion"
+                              name="descripcion"
+                              placeholder="Escribe un resumen detallado sobre el contenido u objetivos del curso..."
+                              minlength="10"
+                              maxlength="500"
+                              required></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" name="accion" value="cancelar" class="btn-cancel" formnovalidate>
+                        Cancelar
+                    </button>
+                    <button type="submit" name="accion" value="guardar" class="btn-primary" style="width: auto; padding: 0.75rem 2rem;">
+                        Guardar Curso
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+{% endblock %}

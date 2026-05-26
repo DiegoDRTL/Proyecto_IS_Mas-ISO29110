@@ -38,8 +38,7 @@ def get_curso_by_name(nombre):
 def curso_exists(nombre):
     return get_curso_by_name(nombre) is not None
 
-
-def create_course(id_curso, id_profesor, estado, nombre, capacidad):
+def create_course(nombre, capacidad, estado, descripcion, id_usuario):
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -47,24 +46,26 @@ def create_course(id_curso, id_profesor, estado, nombre, capacidad):
         cursor.execute(
             """
             INSERT INTO CURSO
-            (id_curso, id_usuario, estado, nombre, capacidad)
+                (id_usuario, estado, nombre, capacidad, descripcion)
             VALUES (%s, %s, %s, %s, %s)
             """,
-            (id_curso, id_profesor, estado, nombre, capacidad)
+            (id_usuario, estado, nombre, capacidad, descripcion)
         )
 
+        id_generado = cursor.lastrowid
+
         conn.commit()
-        return True
+
+        return id_generado if id_generado else True
 
     except Exception as e:
         conn.rollback()
-        print("ERROR:", e)
-        return False
+        print("ERROR EN BASE DE DATOS:", e)
+        return None
 
     finally:
         cursor.close()
         conn.close()
-
 
 def obtener_todos():
     conn = get_connection()
