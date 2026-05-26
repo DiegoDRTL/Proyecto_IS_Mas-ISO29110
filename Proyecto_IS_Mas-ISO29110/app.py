@@ -8,12 +8,15 @@ from controllers.archivos.visualizar_controller import visualizarArchivo_bp # Vi
 from controllers.cursos.visualizar_controller import visualizarCurso_bp # Visualizar cursos disponibles
 from controllers.cursos.crear_controller import crearCurso_bp # Crear cursos
 from controllers.cursos.eliminar_controller import eliminar_curso_bp #eliminar curso
-from controllers.archivos.subir_controller import subirArchivo_bp #sube un archivo localmente
+from controllers.archivos.subir_controller import subirArchivo_bp # Subir archivos
 from controllers.archivos.eliminar_controller import eliminarArchivo_bp # Eliminar archivos subidos
 from controllers.cursos.inscribir_controller import inscribir_bp # Inscribirse a cursos disponibles
 
 app = Flask(__name__)
 app.secret_key = 'clave_secreta_curso_2024'
+
+# Configuracion global del tamano maximo de archivos (16mb)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 # 1. Autenticación y Usuarios
 app.register_blueprint(auth_bp)
