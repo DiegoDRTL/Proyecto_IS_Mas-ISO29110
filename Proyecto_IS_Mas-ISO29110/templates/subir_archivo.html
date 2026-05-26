@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir Archivos - Flask MVC</title>
+</head>
+<body>
+
+    <h2>Subir Documentos o Imágenes</h2>
+
+    <!-- Bloque para mostrar alertas enviadas desde el controlador -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div style="background-color: #f4f4f4; padding: 10px; border-left: 5px solid #007BFF;">
+          {% for message in messages %}
+            <p style="margin: 0;">{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <br>
+
+    <!-- El enctype es obligatorio para enviar archivos -->
+    <form action="{{ url_for('controlador_subir') }}" method="POST" enctype="multipart/form-data">
+        
+        <label for="archivo_usuario">Selecciona un archivo (PDF, DOC, JPG, PNG - Máx 16MB):</label>
+        <br><br>
+        
+        <!-- El atributo accept ayuda a filtrar desde el buscador de archivos del cliente -->
+        <input type="file" 
+               id="archivo_usuario" 
+               name="archivo_usuario" 
+               accept=".pdf, .doc, .docx, .jpg, .jpeg, .png" 
+               required>
+        
+        <br><br>
+        <button type="submit">Subir Archivo</button>
+    </form>
+
+</body>
+</html>
