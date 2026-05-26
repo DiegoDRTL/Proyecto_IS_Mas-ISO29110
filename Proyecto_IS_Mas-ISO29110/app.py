@@ -8,6 +8,7 @@ from controllers.archivos.visualizar_controller import visualizarArchivo_bp # Vi
 from controllers.cursos.visualizar_controller import visualizarCurso_bp # Visualizar cursos disponibles
 from controllers.cursos.crear_controller import crearCurso_bp # Crear cursos
 from controllers.cursos.eliminar_controller import eliminar_curso_bp #eliminar curso
+from controllers.archivos.subir_controller import subirArchivo_bp #sube un archivo localmente
 from controllers.archivos.eliminar_controller import eliminarArchivo_bp # Eliminar archivos subidos
 from controllers.cursos.inscribir_controller import inscribir_bp # Inscribirse a cursos disponibles
 
@@ -22,6 +23,7 @@ app.register_blueprint(create_bp)
 app.register_blueprint(profesor_bp)
 
 # 2. Gestión de Archivos
+app.register_blueprint(subirArchivo_bp)
 app.register_blueprint(visualizarArchivo_bp)
 app.register_blueprint(eliminarArchivo_bp)
 
