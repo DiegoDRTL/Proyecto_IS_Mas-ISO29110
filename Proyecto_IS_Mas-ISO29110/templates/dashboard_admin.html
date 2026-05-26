@@ -3,240 +3,256 @@
 {% block title %}Panel Administrador — Sistema de Cursos{% endblock %}
 
 {% block nav %}
-<nav>
-    <div class="nav-brand">🎓 <span>EduCursos</span></div>
-    <div class="nav-links">
-        <span style="color:var(--text-light);font-size:0.85rem;">Admin: <strong style="color:var(--green-dark)">{{ nombre }}</strong></span>
-        <a href="{{ url_for('auth.logout') }}" class="btn-logout">Cerrar sesión</a>
-    </div>
-</nav>
+    <nav>
+        <div class="nav-brand">🎓 <span>EduCursos</span></div>
+        <div class="nav-links">
+            <span style="color:var(--text-light);font-size:0.85rem;">Admin: <strong style="color:var(--green-dark)">{{ nombre }}</strong></span>
+            <a href="{{ url_for('auth.logout') }}" class="btn-logout">Cerrar sesión</a>
+        </div>
+    </nav>
 {% endblock %}
 
 {% block extra_css %}
-<style>
-    main {
-        max-width: 960px;
-        margin: 0 auto;
-    }
+    <style>
+        main {
+            max-width: 960px;
+            margin: 0 auto;
+        }
 
-    @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(18px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
 
-    .admin-hero {
-        background: linear-gradient(135deg, var(--green-deep), var(--green-dark));
-        border-radius: var(--radius);
-        padding: 2rem 2.5rem;
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-        color: var(--white);
-        margin-bottom: 1.5rem;
-        animation: fadeUp 0.5s ease both;
-        box-shadow: 0 8px 30px rgba(29,83,53,0.3);
-    }
+        .admin-hero {
+            background: linear-gradient(135deg, var(--green-deep), var(--green-dark));
+            border-radius: var(--radius);
+            padding: 2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            color: var(--white);
+            margin-bottom: 1.5rem;
+            animation: fadeUp 0.5s ease both;
+            box-shadow: 0 8px 30px rgba(29,83,53,0.3);
+        }
 
-    .admin-avatar {
-        width: 72px;
-        height: 72px;
-        background: rgba(255,255,255,0.15);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.2rem;
-        flex-shrink: 0;
-        border: 2px solid rgba(255,255,255,0.25);
-    }
+        .admin-avatar {
+            width: 72px;
+            height: 72px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            flex-shrink: 0;
+            border: 2px solid rgba(255,255,255,0.25);
+        }
 
-    .admin-hero h1 {
-        font-family: 'DM Serif Display', serif;
-        font-size: 1.8rem;
-        margin-bottom: 0.25rem;
-    }
+        .admin-hero h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.25rem;
+        }
 
-    .admin-hero p {
-        opacity: 0.8;
-        font-size: 0.9rem;
-    }
+        .admin-hero p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
 
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-        animation: fadeUp 0.5s ease both 0.1s;
-    }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            animation: fadeUp 0.5s ease both 0.1s;
+        }
 
-    .stat-card {
-        background: var(--white);
-        border-radius: var(--radius);
-        border: 1.5px solid var(--green-light);
-        padding: 1.3rem 1.5rem;
-        box-shadow: var(--shadow-soft);
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            border: 1.5px solid var(--green-light);
+            padding: 1.3rem 1.5rem;
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
 
-    .stat-card:hover {
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-card);
-    }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-card);
+        }
 
-    .stat-icon { font-size: 1.6rem; margin-bottom: 0.5rem; }
+        .stat-icon { font-size: 1.6rem; margin-bottom: 0.5rem; }
 
-    .stat-label {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: var(--text-light);
-        font-weight: 600;
-        margin-bottom: 0.2rem;
-    }
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
 
-    .stat-value {
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: var(--green-deep);
-        font-family: 'DM Serif Display', serif;
-    }
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--green-deep);
+            font-family: 'DM Serif Display', serif;
+        }
 
-    .panels-grid {
-        display: grid;
-        grid-template-columns: 1.4fr 1fr;
-        gap: 1.2rem;
-        animation: fadeUp 0.6s ease both 0.2s;
-    }
+        .panels-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 1.2rem;
+            animation: fadeUp 0.6s ease both 0.2s;
+        }
 
-    @media (max-width: 680px) { .panels-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 680px) { .panels-grid { grid-template-columns: 1fr; } }
 
-    .panel {
-        background: var(--white);
-        border-radius: var(--radius);
-        border: 1.5px solid var(--green-light);
-        padding: 1.5rem;
-        box-shadow: var(--shadow-soft);
-    }
+        .panel {
+            background: var(--white);
+            border-radius: var(--radius);
+            border: 1.5px solid var(--green-light);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-soft);
+        }
 
-    .panel-title {
-        font-family: 'DM Serif Display', serif;
-        font-size: 1.1rem;
-        color: var(--green-deep);
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        border-bottom: 1.5px solid var(--green-light);
-        padding-bottom: 0.7rem;
-    }
+        .panel-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.1rem;
+            color: var(--green-deep);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1.5px solid var(--green-light);
+            padding-bottom: 0.7rem;
+        }
 
-    .user-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0.6rem 0;
-        border-bottom: 1px solid var(--green-lightest);
-        font-size: 0.88rem;
-    }
+        .user-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--green-lightest);
+            font-size: 0.88rem;
+        }
 
-    .user-row:last-child { border-bottom: none; }
+        .user-row:last-child { border-bottom: none; }
 
-    .user-name { font-weight: 600; color: var(--text-dark); }
+        .user-name { font-weight: 600; color: var(--text-dark); } Jung
 
-    .action-list { list-style: none; }
+                                                                  .action-list { list-style: none; padding: 0; margin: 0; }
 
-    .action-list li {
-        padding: 0.6rem 0;
-        border-bottom: 1px solid var(--green-lightest);
-        font-size: 0.88rem;
-        color: var(--text-mid);
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        cursor: pointer;
-        transition: color 0.2s;
-    }
+        .action-list a { text-decoration: none; color: inherit; }
 
-    .action-list li:hover { color: var(--green-main); }
-    .action-list li:last-child { border-bottom: none; }
+        .action-list li {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--green-lightest);
+            font-size: 0.88rem;
+            color: var(--text-mid);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
 
-    .action-list .icon {
-        width: 28px;
-        height: 28px;
-        background: var(--green-lightest);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.9rem;
-        flex-shrink: 0;
-    }
-</style>
+        .action-list li:hover { color: var(--green-main); }
+        .action-list li:last-child { border-bottom: none; }
+
+        .action-list .icon {
+            width: 28px;
+            height: 28px;
+            background: var(--green-lightest);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-<div class="admin-hero">
-    <div class="admin-avatar">🛡️</div>
-    <div>
-        <h1>Panel de Administración</h1>
-        <p>Bienvenido, <strong>{{ nombre }}</strong>. Gestiona el sistema desde aquí.</p>
-        <span class="badge badge-admin" style="margin-top:0.6rem; display:inline-flex;">● Administrador</span>
-    </div>
-</div>
-
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-icon">👥</div>
-        <div class="stat-label">Usuarios registrados</div>
-        <div class="stat-value">24</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon">📚</div>
-        <div class="stat-label">Cursos activos</div>
-        <div class="stat-value">8</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon">📝</div>
-        <div class="stat-label">Inscripciones</div>
-        <div class="stat-value">61</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon">🏅</div>
-        <div class="stat-label">Certificados emitidos</div>
-        <div class="stat-value">15</div>
-    </div>
-</div>
-
-<div class="panels-grid">
-    <div class="panel">
-        <div class="panel-title">👥 Usuarios recientes</div>
-        <div class="user-row">
-            <span class="user-name">mariana_lopez</span>
-            <span class="badge badge-usuario">usuario</span>
-        </div>
-        <div class="user-row">
-            <span class="user-name">carlos_m</span>
-            <span class="badge badge-usuario">usuario</span>
-        </div>
-        <div class="user-row">
-            <span class="user-name">admin_juan</span>
-            <span class="badge badge-admin">admin</span>
-        </div>
-        <div class="user-row">
-            <span class="user-name">sofia_r</span>
-            <span class="badge badge-usuario">usuario</span>
+    <div class="admin-hero">
+        <div class="admin-avatar">🛡️</div>
+        <div>
+            <h1>Panel de Administración</h1>
+            <p>Bienvenido, <strong>{{ nombre }}</strong>. Gestiona el sistema desde aquí.</p>
+            <span class="badge badge-admin" style="margin-top:0.6rem; display:inline-flex;">● Administrador</span>
         </div>
     </div>
 
-    <div class="panel">
-        <div class="panel-title">⚡ Acciones rápidas</div>
-        <ul class="action-list">
-            <li><span class="icon">➕</span> Agregar nuevo curso</li>
-            <li><span class="icon">👤</span> Gestionar usuarios</li>
-            <li><span class="icon">📊</span> Ver reportes</li>
-            <li><span class="icon">⚙️</span> Configuración del sistema</li>
-            <li><span class="icon">📧</span> Enviar notificaciones</li>
-        </ul>
+    {# Contenedor de Alertas Globales #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div style="padding: 1rem; margin-bottom: 1.5rem; border-radius: var(--radius); text-align: center; font-size: 0.9rem; font-weight: 500;
+                        background-color: {% if category == 'realizado' or category == 'success' %}#E8F5E9{% else %}#FFEBEE{% endif %};
+                        color: {% if category == 'realizado' or category == 'success' %}#2E7D32{% else %}#C62828{% endif %};
+                        border: 1.5px solid {% if category == 'realizado' or category == 'success' %}#A5D6A7{% else %}#FFCDD2{% endif %};">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-label">Usuarios registrados</div>
+            <div class="stat-value">24</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-label">Cursos activos</div>
+            <div class="stat-value">8</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📝</div>
+            <div class="stat-label">Inscripciones</div>
+            <div class="stat-value">61</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🏅</div>
+            <div class="stat-label">Certificados emitidos</div>
+            <div class="stat-value">15</div>
+        </div>
     </div>
-</div>
+
+    <div class="panels-grid">
+        <div class="panel">
+            <div class="panel-title">👥 Usuarios recientes</div>
+            <div class="user-row">
+                <span class="user-name">mariana_lopez</span>
+                <span class="badge badge-usuario">usuario</span>
+            </div>
+            <div class="user-row">
+                <span class="user-name">carlos_m</span>
+                <span class="badge badge-usuario">usuario</span>
+            </div>
+            <div class="user-row">
+                <span class="user-name">admin_juan</span>
+                <span class="badge badge-admin">admin</span>
+            </div>
+            <div class="user-row">
+                <span class="user-name">sofia_r</span>
+                <span class="badge badge-usuario">usuario</span>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">⚡ Acciones rápidas</div>
+            <ul class="action-list">
+                {# El botón de agregar curso ha sido removido de aquí #}
+                <li><span class="icon">👤</span> Gestionar usuarios</li>
+                <li><span class="icon">📊</span> Ver reportes</li>
+                <li><span class="icon">⚙️</span> Configuración del sistema</li>
+                <li><span class="icon">📧</span> Enviar notificaciones</li>
+            </ul>
+        </div>
+    </div>
 {% endblock %}

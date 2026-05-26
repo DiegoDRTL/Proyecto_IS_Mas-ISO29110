@@ -80,6 +80,7 @@ CREATE TABLE CURSO (
   estado VARCHAR(20),
   nombre VARCHAR(100),
   capacidad INT,
+  descripcion VARCHAR(500),
   FOREIGN KEY (id_usuario) REFERENCES PROFESOR(id_usuario)
   ON DELETE CASCADE
   ON UPDATE CASCADE
