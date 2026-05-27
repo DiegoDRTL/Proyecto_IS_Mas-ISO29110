@@ -227,7 +227,7 @@
                         <p style="font-size:0.75rem; color:var(--text-light);"><strong>ID Curso:</strong> #{{ curso['id_curso'] }}</p>
                     </div>
 
-                    <a href="{{ url_for('archivo.visualizar_archivos', id_curso=curso['id_curso']) }}"
+                    <a href="{{ url_for('visualizar_archivo.visualizar_archivos', id_curso=curso['id_curso']) }}"
                        style="display:block; margin-top:0.8rem; padding:0.45rem 0.8rem; background:var(--green-deep); color:white; border-radius:8px; text-decoration:none; font-size:0.8rem; font-weight:600; text-align: center; width: 100%; box-sizing: border-box;">
                         📁 Ver archivos
                     </a>
@@ -268,12 +268,12 @@
                     </div>
 
                     {% if curso['id_curso'] in inscritos_ids %}
-                        <a href="{{ url_for('archivo.visualizar_archivos', id_curso=curso['id_curso']) }}"
+                        <a href="{{ url_for('visualizar_archivo.visualizar_archivos', id_curso=curso['id_curso']) }}"
                            style="display:block; margin-top:0.8rem; padding:0.45rem 0.8rem; background:var(--green-deep); color:white; border-radius:8px; text-decoration:none; font-size:0.8rem; font-weight:600; text-align: center; width: 100%; box-sizing: border-box;">
                             📁 Ver archivos
                         </a>
                     {% else %}
-                        <form action="{{ url_for('inscribir_curso.inscribir') }}" method="POST" style="margin-top: 0.8rem; width: 100%;">
+                        <form action="{{ url_for('inscribir.inscribir') }}" method="POST" style="margin-top: 0.8rem; width: 100%;">
                             <input type="hidden" name="id_curso" value="{{ curso['id_curso'] }}">
                             <button type="submit"
                                     style="
