@@ -273,7 +273,7 @@
                             📁 Ver archivos
                         </a>
                     {% else %}
-                        <form action="{{ url_for('inscribir_curso.inscribir') }}" method="POST" style="margin-top: 0.8rem; width: 100%;">
+                        <form action="{{ url_for('inscribir.inscribir') }}" method="POST" style="margin-top: 0.8rem; width: 100%;">
                             <input type="hidden" name="id_curso" value="{{ curso['id_curso'] }}">
                             <button type="submit"
                                     style="

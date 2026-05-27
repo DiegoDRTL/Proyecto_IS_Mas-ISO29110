@@ -25,12 +25,14 @@ def home():
 
     # 1. Panel de Administración
     if rol == 'administrador':
+
         datos_admin = obtener_metricas_admin()
 
         # Consulta dinámica de las últimas 4 sesiones de usuarios en la base de datos
         lista_recientes = obtener_usuarios_recientes(limite=4)
 
         return render_template(
+
             'dashboard_admin.html',
             nombre=nombre_usuario,
             rol=rol,
