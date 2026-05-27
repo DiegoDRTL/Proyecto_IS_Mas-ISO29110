@@ -217,17 +217,18 @@
                     <div>
                         <span class="tag" style="background: #E8F5E9; color: #2E7D32;">Inscrito</span>
 
-                        <h4>{{ curso.curso_nombre if curso.curso_nombre else (curso.nombre_curso if curso.nombre_curso else curso.nombre) }}</h4>
+                        <h4>{{ curso['curso_nombre'] }}</h4>
 
-                        <p><strong>Docente asignado:</strong> {{ curso.profe_nombre if curso.profe_nombre else (curso.nombre if not curso.curso_nombre else 'Docente Asignado') }} {{ curso.apellido_paterno }} {{ curso.apellido_materno }}</p>
+                        <p><strong>Docente asignado:</strong> {{ curso['profe_nombre'] }} {{ curso['apellido_paterno'] if curso['apellido_paterno'] else '' }} {{ curso['apellido_materno'] if curso['apellido_materno'] else '' }}</p>
+
                         <p style="color: var(--text-light); font-style: italic; margin: 0.5rem 0;">
-                            {{ curso.descripcion if curso.descripcion else 'Sin descripción disponible.' }}
+                            {{ curso['descripcion'] if curso['descripcion'] else 'Sin descripción disponible.' }}
                         </p>
-                        <p style="font-size:0.75rem; color:var(--text-light);"><strong>ID Curso:</strong> #{{ curso.id_curso }}</p>
+                        <p style="font-size:0.75rem; color:var(--text-light);"><strong>ID Curso:</strong> #{{ curso['id_curso'] }}</p>
                     </div>
 
-                    <a href="{{ url_for('archivo.visualizar_archivos', id_curso=curso.id_curso) }}"
-                       style="display:inline-block; margin-top:0.8rem; padding:0.45rem 0.8rem; background:var(--green-deep); color:white; border-radius:8px; text-decoration:none; font-size:0.8rem; font-weight:600; text-align: center;">
+                    <a href="{{ url_for('archivo.visualizar_archivos', id_curso=curso['id_curso']) }}"
+                       style="display:block; margin-top:0.8rem; padding:0.45rem 0.8rem; background:var(--green-deep); color:white; border-radius:8px; text-decoration:none; font-size:0.8rem; font-weight:600; text-align: center; width: 100%; box-sizing: border-box;">
                         📁 Ver archivos
                     </a>
                 </div>
@@ -247,43 +248,54 @@
             {% for curso in cursos %}
                 <div class="course-card">
                     <div>
-                        <span class="tag">Oportunidad</span>
+                        {% if curso['id_curso'] in inscritos_ids %}
+                            <span class="tag" style="background: #E8F5E9; color: #2E7D32;">Inscrito</span>
+                        {% else %}
+                            <span class="tag">Oportunidad</span>
+                        {% endif %}
 
-                        <h4>{{ curso.curso_nombre if curso.curso_nombre else curso.nombre }}</h4>
+                        <h4>{{ curso['curso_nombre'] }}</h4>
 
-                        <p><strong>Docente asignado:</strong> {{ curso.profe_nombre if curso.profe_nombre else curso.nombre }} {{ curso.apellido_paterno }} {{ curso.apellido_materno }}</p>
+                        <p><strong>Docente asignado:</strong> {{ curso['profe_nombre'] }} {{ curso['apellido_paterno'] if curso['apellido_paterno'] else '' }} {{ curso['apellido_materno'] if curso['apellido_materno'] else '' }}</p>
 
                         <p style="color: var(--text-light); font-style: italic; margin: 0.5rem 0;">
-                            {{ curso.descripcion if curso.descripcion else 'Sin descripción disponible.' }}
+                            {{ curso['descripcion'] if curso['descripcion'] else 'Sin descripción disponible.' }}
                         </p>
 
                         <p style="font-size:0.75rem; color:var(--text-light);">
-                            <strong>ID Curso:</strong> #{{ curso.id_curso }}
+                            <strong>ID Curso:</strong> #{{ curso['id_curso'] }}
                         </p>
                     </div>
 
-                    <form action="{{ url_for('inscribir_curso.inscribir') }}" method="POST" style="margin-top: 0.8rem; width: 100%;">
-                        <input type="hidden" name="id_curso" value="{{ curso.id_curso }}">
-                        <button type="submit"
-                                style="
-                            display:block;
-                            width: 100%;
-                            padding:0.45rem 0.8rem;
-                            background:var(--green-main);
-                            color:white;
-                            border: none;
-                            border-radius:8px;
-                            font-size:0.8rem;
-                            font-weight:600;
-                            text-align: center;
-                            cursor: pointer;
-                            transition: background 0.2s;
-                        "
-                                onmouseover="this.style.background='var(--green-dark)'"
-                                onmouseout="this.style.background='var(--green-main)'">
-                            ✍️ Inscribir curso
-                        </button>
-                    </form>
+                    {% if curso['id_curso'] in inscritos_ids %}
+                        <a href="{{ url_for('archivo.visualizar_archivos', id_curso=curso['id_curso']) }}"
+                           style="display:block; margin-top:0.8rem; padding:0.45rem 0.8rem; background:var(--green-deep); color:white; border-radius:8px; text-decoration:none; font-size:0.8rem; font-weight:600; text-align: center; width: 100%; box-sizing: border-box;">
+                            📁 Ver archivos
+                        </a>
+                    {% else %}
+                        <form action="{{ url_for('inscribir_curso.inscribir') }}" method="POST" style="margin-top: 0.8rem; width: 100%;">
+                            <input type="hidden" name="id_curso" value="{{ curso['id_curso'] }}">
+                            <button type="submit"
+                                    style="
+                                display:block;
+                                width: 100%;
+                                padding:0.45rem 0.8rem;
+                                background:var(--green-main);
+                                color:white;
+                                border: none;
+                                border-radius:8px;
+                                font-size:0.8rem;
+                                font-weight:600;
+                                text-align: center;
+                                cursor: pointer;
+                                transition: background 0.2s;
+                            "
+                                    onmouseover="this.style.background='var(--green-dark)'"
+                                    onmouseout="this.style.background='var(--green-main)'">
+                                ✍️ Inscribir curso
+                            </button>
+                        </form>
+                    {% endif %}
                 </div>
             {% else %}
                 <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-light);">
