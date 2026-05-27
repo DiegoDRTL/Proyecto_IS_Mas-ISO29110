@@ -101,6 +101,13 @@
             font-family: 'DM Serif Display', serif;
         }
 
+        .stat-value span {
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         .panels-grid {
             display: grid;
             grid-template-columns: 1.4fr 1fr;
@@ -141,9 +148,9 @@
 
         .user-row:last-child { border-bottom: none; }
 
-        .user-name { font-weight: 600; color: var(--text-dark); } Jung
+        .user-name { font-weight: 600; color: var(--text-dark); }
 
-                                                                  .action-list { list-style: none; padding: 0; margin: 0; }
+        .action-list { list-style: none; padding: 0; margin: 0; }
 
         .action-list a { text-decoration: none; color: inherit; }
 
@@ -186,7 +193,7 @@
         </div>
     </div>
 
-    {# Contenedor de Alertas Globales #}
+    {# Contenedor de Alertas Globales de Flask (Flashed Messages) #}
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
@@ -204,55 +211,63 @@
         <div class="stat-card">
             <div class="stat-icon">👥</div>
             <div class="stat-label">Usuarios registrados</div>
-            <div class="stat-value">24</div>
+            <div class="stat-value">{{ total_usuarios }}</div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">📚</div>
             <div class="stat-label">Cursos activos</div>
-            <div class="stat-value">8</div>
+            <div class="stat-value">{{ cursos_activos }} <span>/ de {{ total_cursos }}</span></div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">📝</div>
             <div class="stat-label">Inscripciones</div>
-            <div class="stat-value">61</div>
+            <div class="stat-value">{{ total_inscripciones }}</div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon">🏅</div>
-            <div class="stat-label">Certificados emitidos</div>
-            <div class="stat-value">15</div>
+            <div class="stat-icon">👨‍🏫</div>
+            <div class="stat-label">Profesores registrados</div>
+            <div class="stat-value">{{ total_profesores }}</div>
         </div>
     </div>
 
     <div class="panels-grid">
+
         <div class="panel">
             <div class="panel-title">👥 Usuarios recientes</div>
-            <div class="user-row">
-                <span class="user-name">mariana_lopez</span>
-                <span class="badge badge-usuario">usuario</span>
-            </div>
-            <div class="user-row">
-                <span class="user-name">carlos_m</span>
-                <span class="badge badge-usuario">usuario</span>
-            </div>
-            <div class="user-row">
-                <span class="user-name">admin_juan</span>
-                <span class="badge badge-admin">admin</span>
-            </div>
-            <div class="user-row">
-                <span class="user-name">sofia_r</span>
-                <span class="badge badge-usuario">usuario</span>
-            </div>
+
+            {% if usuarios_recientes %}
+                {% for user in usuarios_recientes %}
+                    <div class="user-row">
+                        <span class="user-name">{{ user.nombre }}</span>
+
+                        {# Evaluamos el rol para asignar las clases o los estilos correspondientes #}
+                        {% if user.rol | lower == 'administrador' or user.rol | lower == 'admin' %}
+                            <span class="badge badge-admin">admin</span>
+                        {% elif user.rol | lower == 'profesor' %}
+                            <span class="badge" style="background-color: #E0F7FA; color: #006064; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; padding: 0.3rem 0.8rem; border-radius: 15px;">profesor</span>
+                        {% elif user.rol | lower == 'alumno' %}
+                            <span class="badge" style="background-color: #E8F5E9; color: #2E7D32; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; padding: 0.3rem 0.8rem; border-radius: 15px;">alumno</span>
+                        {% else %}
+                            <span class="badge badge-usuario">{{ user.rol | lower }}</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; padding: 1.5rem 0; color: var(--text-light); font-size: 0.88rem;">
+                    📌 No hay inicios de sesión registrados recientemente.
+                </div>
+            {% endif %}
         </div>
 
         <div class="panel">
             <div class="panel-title">⚡ Acciones rápidas</div>
             <ul class="action-list">
-                {# El botón de agregar curso ha sido removido de aquí #}
                 <li><span class="icon">👤</span> Gestionar usuarios</li>
                 <li><span class="icon">📊</span> Ver reportes</li>
                 <li><span class="icon">⚙️</span> Configuración del sistema</li>
                 <li><span class="icon">📧</span> Enviar notificaciones</li>
             </ul>
         </div>
+
     </div>
 {% endblock %}
