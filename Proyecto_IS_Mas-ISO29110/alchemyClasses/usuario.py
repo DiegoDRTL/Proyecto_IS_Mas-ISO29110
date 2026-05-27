@@ -31,7 +31,7 @@ def get_telefono(id_usuario):
 def get_rol_usuarios():
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM USUARIO WHERE rol = usuario")
+    cursor.execute("SELECT * FROM USUARIO WHERE rol = 'usuario'")
     usuarios = cursor.fetchone()
     cursor.close()
     conn.close()
@@ -118,7 +118,7 @@ def deleate_user(id_usuario):
     try:
         cursor.execute(
             "DELETE FROM USUARIO WHERE id_usuario='%s'",
-            (id_usuario)
+            (id_usuario,)
         )
         conn.commit()
         return True
@@ -205,3 +205,62 @@ def eliminar_usuario(id_usuario):
     finally: 
         cursor.close()
         conn.close()
+
+# Control de historial
+def registrar_inicio_sesion(id_usuario):
+    """Crea o actualiza el estado de la sesión de un usuario a 'activo'."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        query = """
+                INSERT INTO SESION (id_usuario, status)
+                VALUES (%s, 'activo')
+                    ON DUPLICATE KEY UPDATE status = 'activo' \
+                """
+        cursor.execute(query, (id_usuario,))
+        conn.commit()
+        return True
+    except Exception as e:
+        print("❌ ERROR EN registrar_inicio_sesion:", e)
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+def registrar_cierre_sesion(id_usuario):
+    """Cambia el estado de la sesión de un usuario a 'inactivo' al desloguearse."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        query = "UPDATE SESION SET status = 'inactivo' WHERE id_usuario = %s"
+        cursor.execute(query, (id_usuario,))
+        conn.commit()
+        return True
+    except Exception as e:
+        print("ERROR EN registrar_cierre_sesion:", e)
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+def obtener_usuarios_recientes(limite=4):
+    """Recupera los últimos usuarios registrados que interactuaron con el sistema."""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    try:
+        query = """
+                SELECT u.nombre, u.rol, s.ultima_conexion
+                FROM SESION s
+                         JOIN USUARIO u ON s.id_usuario = u.id_usuario
+                ORDER BY s.ultima_conexion DESC
+                    LIMIT %s \
+                """
+        cursor.execute(query, (limite,))
+        return cursor.fetchall()
+    except Exception as e:
+        print("ERROR EN obtener_usuarios_recientes:", e)
+        return []
+    finally:
+        cursor.close()
+        conn.close()
+

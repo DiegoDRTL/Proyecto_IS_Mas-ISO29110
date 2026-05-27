@@ -1,6 +1,5 @@
 from alchemyClasses.db import get_connection
 
-
 def get_curso_by_id(id_curso):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -115,8 +114,12 @@ def obtener_por_usuario(id_usuario, rol):
 
     elif rol_normalizado == 'alumno':
         cursor.execute("""
-            SELECT c.*,
-                u.nombre,
+            SELECT c.id_curso,
+                c.nombre AS curso_nombre,
+                c.descripcion,
+                c.estado, 
+                c.capacidad,
+                u.nombre AS profe_nombre,
                 u.apellido_paterno,
                 u.apellido_materno
             FROM CURSO c
@@ -159,26 +162,33 @@ def obtener_por_id(id_curso):
     return curso
 
 
-def obtener_disponibles():
+def obtener_disponibles(id_alumno):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
-    cursor.execute("""
-        SELECT c.*,
-               u.nombre,
+    # Añadimos una subconsulta para excluir los cursos donde el alumno ya está inscrito
+    query = """
+        SELECT c.id_curso,
+               c.nombre AS curso_nombre,
+               c.descripcion,
+               c.estado,
+               u.nombre AS profe_nombre,
                u.apellido_paterno,
                u.apellido_materno
         FROM CURSO c
-        JOIN USUARIO u
-        ON c.id_usuario = u.id_usuario
-        WHERE c.estado = 'Disponible'
-    """)
+        JOIN USUARIO u ON c.id_usuario = u.id_usuario
+        WHERE (c.estado = 'Disponible' OR c.estado = 'Abierto')
+            AND c.id_curso NOT IN (
+                SELECT id_curso
+                FROM INSCRIBE
+                WHERE id_usuario = %s
+            )
+    """
 
+    cursor.execute(query, (id_alumno,))
     cursos = cursor.fetchall()
-
     cursor.close()
     conn.close()
-
     return cursos
 
 
@@ -335,3 +345,54 @@ def deleate_curso(id_curso):
     finally:
         cursor.close()
         conn.close()
+
+def obtener_metricas_admin():
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    metricas = {
+        'total_usuarios': 0,
+        'total_cursos': 0,
+        'cursos_activos': 0,
+        'total_inscripciones': 0,
+        'total_profesores': 0,
+    }
+
+    try:
+        cursor.execute("SELECT COUNT(*) AS total FROM USUARIO")
+        metricas['total_usuarios'] = cursor.fetchone()['total']
+    except Exception as e:
+        print("Error al contar usuarios:", e)
+
+    try:
+        cursor.execute("SELECT COUNT(*) AS total FROM CURSO")
+        metricas['total_cursos'] = cursor.fetchone()['total']
+    except Exception as e:
+        print("Error al contar cursos:", e)
+
+    try:
+        cursor.execute("""
+                       SELECT COUNT(*) AS total
+                       FROM CURSO
+                       WHERE estado IN ('Disponible', 'Abierto', 'Activo')
+                       """)
+        metricas['cursos_activos'] = cursor.fetchone()['total']
+    except Exception as e:
+        print("Error al contar cursos activos:", e)
+
+    try:
+        cursor.execute("SELECT COUNT(*) AS total FROM INSCRIBE")
+        metricas['total_inscripciones'] = cursor.fetchone()['total']
+    except Exception as e:
+        print("Error al contar inscripciones:", e)
+
+    # NUEVA CONSULTA: Contar cuántos usuarios tienen asignado el rol de profesor
+    try:
+        cursor.execute("SELECT COUNT(*) AS total FROM USUARIO WHERE LOWER(rol) = 'profesor'")
+        metricas['total_profesores'] = cursor.fetchone()['total']
+    except Exception as e:
+        print("Error al contar profesores:", e)
+
+    cursor.close()
+    conn.close()
+    return metricas
