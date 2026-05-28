@@ -71,5 +71,5 @@ def home():
         rol=rol,
         mis_cursos=cursos_inscritos_alumno,  # Se mapea con el panel 1 del HTML
         cursos=cursos_disponibles_plataforma,  # Se mapea con el panel 2 del HTML
-        inscritos_alumno=inscritos_ids
+        inscritos_ids=inscritos_ids
     )

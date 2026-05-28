@@ -163,34 +163,50 @@ def obtener_por_id(id_curso):
 
 
 def obtener_disponibles(id_alumno):
+
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # Añadimos una subconsulta para excluir los cursos donde el alumno ya está inscrito
     query = """
-        SELECT c.id_curso,
-               c.nombre AS curso_nombre,
-               c.descripcion,
-               c.estado,
-               u.nombre AS profe_nombre,
-               u.apellido_paterno,
-               u.apellido_materno
+        SELECT 
+            c.id_curso,
+            c.nombre AS curso_nombre,
+            c.descripcion,
+            c.estado,
+            c.capacidad,
+
+            COUNT(i.id_usuario) AS total_inscritos,
+
+            u.nombre AS profe_nombre,
+            u.apellido_paterno,
+            u.apellido_materno
+
         FROM CURSO c
-        JOIN USUARIO u ON c.id_usuario = u.id_usuario
+
+        JOIN USUARIO u 
+            ON c.id_usuario = u.id_usuario
+
+        LEFT JOIN INSCRIBE i
+            ON c.id_curso = i.id_curso
+
         WHERE (c.estado = 'Disponible' OR c.estado = 'Abierto')
-            AND c.id_curso NOT IN (
-                SELECT id_curso
-                FROM INSCRIBE
-                WHERE id_usuario = %s
-            )
+
+        AND c.id_curso NOT IN (
+            SELECT id_curso
+            FROM INSCRIBE
+            WHERE id_usuario = %s
+        )
+
+        GROUP BY c.id_curso
     """
 
     cursor.execute(query, (id_alumno,))
     cursos = cursor.fetchall()
+
     cursor.close()
     conn.close()
-    return cursos
 
+    return cursos
 
 def obtener_archivos(id_curso):
     conn = get_connection()
@@ -396,3 +412,38 @@ def obtener_metricas_admin():
     cursor.close()
     conn.close()
     return metricas
+
+def dar_baja_curso(id_usuario, id_curso):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+
+        # eliminar inscripción
+        cursor.execute("""
+            DELETE FROM INSCRIBE
+            WHERE id_usuario = %s
+            AND id_curso = %s
+        """, (id_usuario, id_curso))
+
+        # devolver cupo al curso
+        cursor.execute("""
+            UPDATE CURSO
+            SET capacidad = capacidad + 1
+            WHERE id_curso = %s
+        """, (id_curso,))
+
+        conn.commit()
+
+        print("Baja realizada correctamente")
+        return True
+
+    except Exception as e:
+        conn.rollback()
+        print("ERROR:", e)
+        return False
+
+    finally:
+        cursor.close()
+        conn.close()
