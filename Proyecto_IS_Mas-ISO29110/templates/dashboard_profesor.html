@@ -237,11 +237,19 @@
                     <div>
                         <span class="tag">Clase</span>
 
-                        <span class="status-badge {% if curso.estado|lower == 'abierto' or curso.estado|lower == 'disponible' %}status-abierto{% else %}status-cerrado{% endif %}">
-                            {{ curso.estado }}
-                        </span>
+                        <form action="{{ url_for('curso.cambiar_estado_route_handler') }}" method="POST" style="display: inline; float: right; margin-bottom: 0.5rem;">
+                            <input type="hidden" name="id_curso" value="{{ curso.id_curso }}">
+                            <input type="hidden" name="estado_actual" value="{{ curso.estado }}">
 
-                        <h4 style="margin-top: 0.5rem; color: var(--text-dark);">{{ curso.curso_nombre }}</h4>
+                            <button type="submit"
+                                    class="status-badge {% if curso.estado|lower == 'abierto' or curso.estado|lower == 'disponible' %}status-abierto{% else %}status-cerrado{% endif %}"
+                                    style="border: none; cursor: pointer; font-family: inherit; transition: all 0.2s ease;"
+                                    title="Haz clic para cambiar el estado de este curso">
+                                {{ curso.estado }} {% if curso.estado|lower == 'abierto' or curso.estado|lower == 'disponible' %}🔓{% else %}🔒{% endif %}
+                            </button>
+                        </form>
+
+                        <h4 style="margin-top: 0.5rem; color: var(--text-dark); clear: both;">{{ curso.curso_nombre }}</h4>
                         <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.8rem; font-style: italic;">
                             {{ curso.descripcion if curso.descripcion else 'Sin descripción disponible.' }}
                         </p>
@@ -260,25 +268,47 @@
                         </div>
                     </div>
 
-                    <a href="{{ url_for('visualizar_archivo.visualizar_archivos', id_curso=curso.id_curso) }}"
-                       style="
-                            display:inline-block;
-                            padding:0.55rem 0.8rem;
-                            background:var(--green-deep);
-                            color:white;
-                            border-radius:8px;
-                            text-decoration:none;
-                            font-size:0.8rem;
-                            font-weight:600;
-                            width: 100%;
-                            text-align: center;
-                            margin-top: auto;
-                            transition: background 0.2s;
-                       "
-                       onmouseover="this.style.background='var(--green-dark)'"
-                       onmouseout="this.style.background='var(--green-deep)'">
-                        📁 Administrar Materiales
-                    </a>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: auto; width: 100%;">
+
+                        {% if curso.estado|lower == 'cerrado' %}
+                            <a href="{{ url_for('curso.editar_curso_handler', id_curso=curso.id_curso) }}"
+                               style="
+                                    display:inline-block;
+                                    padding:0.55rem 0.8rem;
+                                    background:#FFF3E0;
+                                    color:#E65100;
+                                    border: 1.5px solid #FFE0B2;
+                                    border-radius:8px;
+                                    text-decoration:none;
+                                    font-size:0.8rem;
+                                    font-weight:600;
+                                    text-align: center;
+                                    transition: all 0.2s;
+                               "
+                               onmouseover="this.style.background='#FFE0B2'"
+                               onmouseout="this.style.background='#FFF3E0'">
+                                📝 Editar Borrador
+                            </a>
+                        {% endif %}
+
+                        <a href="{{ url_for('visualizar_archivo.visualizar_archivos', id_curso=curso.id_curso) }}"
+                           style="
+                                display:inline-block;
+                                padding:0.55rem 0.8rem;
+                                background:var(--green-deep);
+                                color:white;
+                                border-radius:8px;
+                                text-decoration:none;
+                                font-size:0.8rem;
+                                font-weight:600;
+                                text-align: center;
+                                transition: background 0.2s;
+                           "
+                           onmouseover="this.style.background='var(--green-dark)'"
+                           onmouseout="this.style.background='var(--green-deep)'">
+                            📁 Administrar Materiales
+                        </a>
+                    </div>
                 </div>
             {% else %}
                 <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--text-light); background: var(--white); border-radius: var(--radius); border: 1.5px dashed var(--green-light);">
