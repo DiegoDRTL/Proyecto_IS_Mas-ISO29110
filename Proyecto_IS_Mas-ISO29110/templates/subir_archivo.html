@@ -171,7 +171,7 @@
             margin-bottom: 25px;
         }
 
-        /* --- Zona de carga de archivos (Dropzone/Picker) --- */
+        /* --- Zona de carga de archivos --- */
         .upload-area {
             border: 2px dashed #cbd5e1;
             border-radius: 12px;
@@ -207,7 +207,6 @@
             color: var(--texto-mutado);
         }
 
-        /* Ocultamos el input por defecto para estilizar la zona completa */
         .input-file-hidden {
             position: absolute;
             top: 0;
@@ -218,7 +217,6 @@
             cursor: pointer;
         }
 
-        /* Nombre del archivo seleccionado */
         .file-name-display {
             margin-top: 15px;
             font-size: 13px;
@@ -277,7 +275,7 @@
         </div>
         <div class="user-menu">
             <span class="user-name">Profesor: <strong>{{ session.get('usuario', 'Docente') }}</strong></span>
-            <a href="{{ url_for('auth.logout') if 'auth.logout' in url_for._self_.url_map._rules_by_endpoint else '#' }}" class="btn-logout">Cerrar sesión</a>
+            <a href="{{ url_for('auth.logout') if 'auth.logout' in url_for.__self__.url_map._rules_by_endpoint else '#' }}" class="btn-logout">Cerrar sesión</a>
         </div>
     </nav>
 
@@ -304,7 +302,7 @@
         <section class="card-formulario">
             <h2>Subir Nuevo Archivo</h2>
             
-            <form action="{{ url_for('archivos.subir_controller') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ url_for('subir_archivo.curso_route_handler', id_curso=request.view_args['id_curso']) }}" method="POST" enctype="multipart/form-data">
                 
                 <div class="upload-area" id="dropzone">
                     <span class="upload-icon">📁</span>
@@ -317,7 +315,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <a href="{{ url_for('archivos.visualizar_controller') if 'archivos.visualizar_controller' in url_for._self_.url_map._rules_by_endpoint else '#' }}" class="btn btn-secondary">
+                    <a href="{{ url_for('visualizar_archivo.visualizar_archivos', id_curso=request.view_args['id_curso']) if 'visualizar_archivo.visualizar_archivos' in url_for.__self__.url_map._rules_by_endpoint else '#' }}" class="btn btn-secondary">
                         Cancelar
                     </a>
                     <button type="submit" class="btn btn-primary">
