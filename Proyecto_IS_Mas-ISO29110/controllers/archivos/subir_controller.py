@@ -19,8 +19,8 @@ def archivo_grande(error):
     flash("El archivo supera el limite de 16MB")
     return redirect(url_for('archivos.visualizar_archivos')), 413
 
-@subirArchivo_bp.route('/archivo/subir', methods=['GET', 'POST'])
-def curso_route_handler():
+@subirArchivo_bp.route('/archivo/subir/<int:id_curso>', methods=['GET', 'POST'])
+def curso_route_handler(id_curso):
     # Protección de ruta: Solo usuarios autorizados (profesores)
     if 'id_usuario' not in session or session.get('rol') not in ['profesor']:
         flash('Acceso no autorizado.', 'error')
@@ -33,7 +33,7 @@ def curso_route_handler():
         
         archivo = request.files['archivo_usuario']
 
-        return procesarSubida(archivo)
+        return procesarSubida(archivo, id_curso)
 
     return iniciarSubirArchivo()
 
@@ -45,13 +45,13 @@ def iniciarSubirArchivo():
     return render_template('subir_archivo.html')
 
 
-def procesarSubida(archivo):
+def procesarSubida(archivo, id_curso):
     if archivo_exists(archivo.filename):
             return manejarErroresValidacion('El nombre del archivo ya se encuentra registrado.')
 
-    exito, mensaje = modelo_gestor.guardar_y_registrar(archivo)
+    exito, mensaje = modelo_gestor.guardar_y_registrar(archivo, id_curso)
 
-    if exito:
+    if exito>-1:
         flash(mensaje, 'realizado')
         return redirect(url_for('archivos.visualizar_archivos'))
     

@@ -304,7 +304,7 @@
         <section class="card-formulario">
             <h2>Subir Nuevo Archivo</h2>
             
-            <form action="{{ url_for('subir_archivo.curso_route_handler') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ url_for('archivos.subir_controller') }}" method="POST" enctype="multipart/form-data">
                 
                 <div class="upload-area" id="dropzone">
                     <span class="upload-icon">📁</span>
@@ -317,7 +317,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <a href="{{ url_for('archivos.visualizar_archivos') if 'archivos.visualizar_archivos' in url_for._self_.url_map._rules_by_endpoint else '#' }}" class="btn btn-secondary">
+                    <a href="{{ url_for('archivos.visualizar_controller') if 'archivos.visualizar_controller' in url_for._self_.url_map._rules_by_endpoint else '#' }}" class="btn btn-secondary">
                         Cancelar
                     </a>
                     <button type="submit" class="btn btn-primary">

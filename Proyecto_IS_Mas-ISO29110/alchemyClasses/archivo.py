@@ -65,7 +65,7 @@ def delete_archivo_db(id_archivo):
         cursor.close()
         conn.close()
 
-def create_archivo(nombre, tipo_extension, fecha_subida, ruta):
+def create_archivo(nombre, tipo_extension, fecha_subida, ruta, id_curso):
     conn = get_connection()
     cursor = conn.cursor()
     try:
@@ -76,10 +76,14 @@ def create_archivo(nombre, tipo_extension, fecha_subida, ruta):
         conn.commit()
         cursor.execute("SELECT LAST_INSERT_ID()")
         id = cursor.fetchone
+        cursor.execute(
+            "IINSERT INTO CURSO_ARCHIVO (id_curso, id_archivo) VALUES (%s, %s)",
+            (id_curso, id)
+        )
         return id
     except Exception as e:
         conn.rollback()
-        return -1
+        return False
     finally:
         cursor.close()
         conn.close()
