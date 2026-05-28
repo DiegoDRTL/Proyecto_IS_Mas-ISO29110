@@ -23,12 +23,12 @@ def home():
     nombre_usuario = session.get('nombre') or session.get('usuario')
     id_actual = session.get('id_usuario')
 
-    # 1. Panel de Administración (ACTUALIZADO)
+    # 1. Panel de Administración
     if rol == 'administrador':
 
         datos_admin = obtener_metricas_admin()
 
-        # 🔄 Consulta dinámica de las últimas 4 sesiones de usuarios en la base de datos
+        # Consulta dinámica de las últimas 4 sesiones de usuarios en la base de datos
         lista_recientes = obtener_usuarios_recientes(limite=4)
 
         return render_template(
@@ -41,7 +41,7 @@ def home():
             cursos_activos=datos_admin['cursos_activos'],
             total_inscripciones=datos_admin['total_inscripciones'],
             total_profesores=datos_admin['total_profesores'],
-            usuarios_recientes=lista_recientes  # 👈 Enviamos la lista real al HTML
+            usuarios_recientes=lista_recientes
         )
 
     # 2. Panel del Profesor
