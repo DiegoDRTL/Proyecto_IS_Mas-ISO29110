@@ -3,41 +3,343 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subir Archivos - Flask MVC</title>
+    <title>EduCursos - Subir Archivo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-principal: #eef7f2;
+            --verde-oscuro: #1b5336;
+            --verde-boton: #2d8a54;
+            --verde-claro-badge: #d1ebd9;
+            --verde-texto-badge: #1e5e3a;
+            --blanco: #ffffff;
+            --texto-oscuro: #2d3748;
+            --texto-mutado: #718096;
+            --rojo-error-bg: #fed7d7;
+            --rojo-error-texto: #c53030;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-principal);
+            color: var(--texto-oscuro);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Barra de Navegación --- */
+        .navbar {
+            background-color: var(--blanco);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--verde-oscuro);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .user-name {
+            color: var(--texto-mutado);
+        }
+
+        .user-name strong {
+            color: var(--texto-oscuro);
+        }
+
+        .btn-logout {
+            background-color: var(--verde-boton);
+            color: var(--blanco);
+            padding: 8px 18px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-logout:hover {
+            background-color: var(--verde-oscuro);
+        }
+
+        /* --- Contenedor Principal --- */
+        .main-container {
+            flex: 1;
+            max-width: 900px;
+            width: 100%;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* --- Banner del Panel --- */
+        .panel-header {
+            background-color: var(--verde-oscuro);
+            color: var(--blanco);
+            padding: 35px 40px;
+            border-radius: 18px;
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(27, 83, 54, 0.15);
+        }
+
+        .panel-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .panel-header p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .badge-rol {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* --- Mensajes Flash --- */
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .alert-error {
+            background-color: var(--rojo-error-bg);
+            color: var(--rojo-error-texto);
+            border-left: 5px solid var(--rojo-error-texto);
+        }
+
+        .alert-realizado {
+            background-color: var(--verde-claro-badge);
+            color: var(--verde-texto-badge);
+            border-left: 5px solid var(--verde-boton);
+        }
+
+        /* --- Tarjeta del Formulario --- */
+        .card-formulario {
+            background-color: var(--blanco);
+            border-radius: 18px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        .card-formulario h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--verde-oscuro);
+            margin-bottom: 25px;
+        }
+
+        /* --- Zona de carga de archivos --- */
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            background-color: #f8fafc;
+            cursor: pointer;
+            transition: border-color 0.2s, background-color 0.2s;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .upload-area:hover {
+            border-color: var(--verde-boton);
+            background-color: #f1f5f9;
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .upload-text {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--texto-oscuro);
+            margin-bottom: 5px;
+        }
+
+        .upload-hint {
+            font-size: 12px;
+            color: var(--texto-mutado);
+        }
+
+        .input-file-hidden {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-name-display {
+            margin-top: 15px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--verde-texto-badge);
+            display: none;
+            background-color: var(--verde-claro-badge);
+            padding: 6px 12px;
+            border-radius: 8px;
+            word-break: break-all;
+        }
+
+        /* --- Acciones del Formulario --- */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: var(--texto-oscuro);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+        }
+
+        .btn-primary {
+            background-color: var(--verde-oscuro);
+            color: var(--blanco);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--verde-boton);
+        }
+    </style>
 </head>
 <body>
 
-    <h2>Subir Documentos o Imágenes</h2>
-
-    <!-- Bloque para mostrar alertas enviadas desde el controlador -->
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <div style="background-color: #f4f4f4; padding: 10px; border-left: 5px solid #007BFF;">
-          {% for message in messages %}
-            <p style="margin: 0;">{{ message }}</p>
-          {% endfor %}
+    <nav class="navbar">
+        <div class="logo-container">
+            <span>🎓</span> EduCursos
         </div>
-      {% endif %}
-    {% endwith %}
+        <div class="user-menu">
+            <span class="user-name">Profesor: <strong>{{ session.get('usuario', 'Docente') }}</strong></span>
+            <a href="{{ url_for('auth.logout') if 'auth.logout' in url_for.__self__.url_map._rules_by_endpoint else '#' }}" class="btn-logout">Cerrar sesión</a>
+        </div>
+    </nav>
 
-    <br>
+    <main class="main-container">
 
-    <!-- El enctype es obligatorio para enviar archivos -->
-    <form action="{{ url_for('controlador_subir') }}" method="POST" enctype="multipart/form-data">
-        
-        <label for="archivo_usuario">Selecciona un archivo (PDF, DOC, JPG, PNG - Máx 16MB):</label>
-        <br><br>
-        
-        <!-- El atributo accept ayuda a filtrar desde el buscador de archivos del cliente -->
-        <input type="file" 
-               id="archivo_usuario" 
-               name="archivo_usuario" 
-               accept=".pdf, .doc, .docx, .jpg, .jpeg, .png" 
-               required>
-        
-        <br><br>
-        <button type="submit">Subir Archivo</button>
-    </form>
+        <section class="panel-header">
+            <h1>Gestión de Archivos</h1>
+            <p>Sube y comparte material didáctico, lecturas o tareas con tus alumnos.</p>
+            <span class="badge-rol">• Profesor</span>
+        </section>
 
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <section class="card-formulario">
+            <h2>Subir Nuevo Archivo</h2>
+            
+            <form action="{{ url_for('subir_archivo.curso_route_handler', id_curso=request.view_args['id_curso']) }}" method="POST" enctype="multipart/form-data">
+                
+                <div class="upload-area" id="dropzone">
+                    <span class="upload-icon">📁</span>
+                    <p class="upload-text">Arrastra tu archivo aquí o haz clic para explorar</p>
+                    <p class="upload-hint">Tamaño máximo permitido: 16 MB</p>
+                    
+                    <input type="file" name="archivo_usuario" id="archivo_usuario" class="input-file-hidden" required>
+                    
+                    <div id="file-name" class="file-name-display"></div>
+                </div>
+
+                <div class="form-actions">
+                    <a href="{{ url_for('visualizar_archivo.visualizar_archivos', id_curso=request.view_args['id_curso']) if 'visualizar_archivo.visualizar_archivos' in url_for.__self__.url_map._rules_by_endpoint else '#' }}" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        Guardar y registrar
+                    </button>
+                </div>
+
+            </form>
+        </section>
+
+    </main>
+
+    <script>
+        const fileInput = document.getElementById('archivo_usuario');
+        const fileNameDisplay = document.getElementById('file-name');
+
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                fileNameDisplay.textContent = "📄 Archivo seleccionado: " + this.files[0].name;
+                fileNameDisplay.style.display = 'inline-block';
+            } else {
+                fileNameDisplay.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

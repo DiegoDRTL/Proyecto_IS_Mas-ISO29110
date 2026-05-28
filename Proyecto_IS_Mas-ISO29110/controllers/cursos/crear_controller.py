@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from pydantic import ValidationError
 
-from alchemyClasses.curso import curso_exists, create_course
+# Agregamos "update_course_status" a tus importaciones de base de datos
+from alchemyClasses.curso import curso_exists, create_course, update_course_status, update_course_data, obtener_por_id
 from Schemas.curso.curso_schemas import Curso_form
 
 crearCurso_bp = Blueprint('curso', __name__)
@@ -18,7 +19,7 @@ def curso_route_handler():
         if accionBoton == 'cancelar':
             return cancelarCreacion()
 
-        # 🛠️ EXTRACCIÓN EXPLÍCITA Y LIMPIEZA DE CAMPOS
+        # Extraccion y limpieza de los campos
         nombre = (request.form.get('nombre') or '').strip()
         capacidad_raw = (request.form.get('capacidad') or '').strip()
         estado = (request.form.get('estado') or '').strip()
@@ -49,6 +50,98 @@ def curso_route_handler():
         return procesarCreacion(datos_procesados)
 
     return iniciarCreacionCurso()
+
+# Cambio dinamico de estado (ABIERTO <=> CERRADO)
+@crearCurso_bp.route('/curso/cambiar-estado', methods=['POST'])
+def cambiar_estado_route_handler():
+    # Validación de seguridad del Rol
+    if 'id_usuario' not in session or session.get('rol') not in ['profesor', 'administrador']:
+        flash('Acceso no autorizado.', 'error')
+        return redirect(url_for('auth.login'))
+
+    id_curso = request.form.get('id_curso')
+    estado_actual = (request.form.get('estado_actual') or '').strip().lower()
+
+    # Determinamos el estado contrario.
+    if estado_actual in ['abierto', 'disponible']:
+        nuevo_estado = 'Cerrado'
+    else:
+        nuevo_estado = 'Abierto'
+
+    if id_curso:
+        # Ejecutamos la consulta en la base de datos
+        exito = update_course_status(id_curso, nuevo_estado)
+
+        if exito:
+            flash(f'El estado del curso #{id_curso} se actualizó a "{nuevo_estado}".', 'realizado')
+        else:
+            flash('Error al intentar cambiar el estado del curso en la base de datos.', 'error')
+    else:
+        flash('No se proporcionó un ID de curso válido.', 'error')
+
+    # Redireccionamos de vuelta al panel de control donde están las tarjetas
+    return redirect(url_for('dashboard.home'))
+
+@crearCurso_bp.route('/curso/editar/<int:id_curso>', methods=['GET'])
+def editar_curso_handler(id_curso):
+    if 'id_usuario' not in session or session.get('rol') not in ['profesor', 'administrador']:
+        flash('Acceso no autorizado.', 'error')
+        return redirect(url_for('auth.login'))
+
+    curso = obtener_por_id(id_curso)
+
+    print("DEBUG CURSO DICT:", curso)
+
+    if not curso or curso['estado'].lower() != 'cerrado':
+        flash('Solo se pueden modificar cursos en estado "Cerrado" (Borrador).', 'error')
+        return redirect(url_for('dashboard.home'))
+
+    # ✨ SOLUCIÓN AL CONFLICTO: Extraemos el nombre correcto del curso
+    # utilizando el campo 'curso_nombre' que almacena tu lógica interna de base de datos
+    if curso and 'curso_nombre' in curso:
+        curso['nombre'] = curso['curso_nombre']
+
+    return render_template('editar_curso.html', curso=curso)
+@crearCurso_bp.route('/curso/actualizar', methods=['POST'])
+def actualizar_curso_backend():
+    if 'id_usuario' not in session or session.get('rol') not in ['profesor', 'administrador']:
+        flash('Acceso no autorizado.', 'error')
+        return redirect(url_for('auth.login'))
+
+    id_curso = request.form.get('id_curso')
+    nombre = (request.form.get('nombre') or '').strip()
+    capacidad_raw = (request.form.get('capacidad') or '').strip()
+    descripcion = (request.form.get('descripcion') or '').strip()
+
+    try:
+        capacidad = int(capacidad_raw) if capacidad_raw.isdigit() else None
+    except ValueError:
+        capacidad = None
+
+    datos_procesados = {
+        'nombre': nombre if nombre != '' else None,
+        'capacidad': capacidad,
+        'estado': 'Cerrado', # Mantiene el estado de borrador/cerrado al editar
+        'descripcion': descripcion if descripcion != '' else None
+    }
+
+    try:
+        # Volvemos a usar Pydantic para garantizar que cumpla las reglas de negocio
+        datos_validados = Curso_form(**datos_procesados)
+
+        exito = update_course_data(id_curso, datos_validados.nombre, datos_validados.capacidad, datos_validados.descripcion)
+
+        if exito:
+            flash('Borrador del curso actualizado correctamente.', 'realizado')
+        else:
+            flash('Error al actualizar los datos en la base de datos.', 'error')
+
+        return redirect(url_for('dashboard.home'))
+
+    except ValidationError as e:
+        error_detalle = e.errors()[0]
+        flash(f"Error en campo '{error_detalle.get('loc')[0]}': {error_detalle.get('msg')}", 'error')
+        return redirect(url_for('curso.editar_curso_handler', id_curso=id_curso))
 
 
 def iniciarCreacionCurso():

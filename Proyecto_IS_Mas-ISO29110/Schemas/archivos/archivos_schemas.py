@@ -14,7 +14,7 @@ class ArchivoModelo:
         return '.' in nombre_archivo and \
             nombre_archivo.rsplit('.', 1)[1].lower() in self.EXTENSIONES_PERMITIDAS
     
-    def guardar_y_registrar(self, archivo_flask):
+    def guardar_y_registrar(self, archivo_flask, id_curso_sd):
         if not archivo_flask or archivo_flask.filename == '':
             return False, "No se selecciono un archivo"
         if not self.extension_valida(archivo_flask.filename):
@@ -32,7 +32,8 @@ class ArchivoModelo:
                 nombre = nombre_original,
                 tipo_extension = extension,
                 fecha_subida = fecha_actual,
-                ruta = ruta_completa
+                ruta = ruta_completa,
+                id_curso= id_curso_sd
             )
 
             if registro_exitoso > 0:

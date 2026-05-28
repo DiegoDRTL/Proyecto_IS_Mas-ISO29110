@@ -1,27 +1,8 @@
-
-import os
-
 import mysql.connector
-
+import os
 from dotenv import load_dotenv
 
-
-
-# Como 'secretos.env.txt' está en la misma carpeta que 'db.py',
-
-# la ruta base debe apuntar al directorio actual de este script.
-
-current_dir = os.path.dirname(os.path.abspath(__file__))
-
-env_path = os.path.join(current_dir, 'secretos.env.txt')
-
-
-
-# Cargamos explícitamente el archivo de entorno
-
-load_dotenv(dotenv_path=env_path)
-
-
+load_dotenv()
 
 def get_connection():
 

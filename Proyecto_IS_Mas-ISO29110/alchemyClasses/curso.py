@@ -145,7 +145,8 @@ def obtener_por_id(id_curso):
 
     cursor.execute("""
         SELECT c.*,
-               u.nombre,
+               c.nombre AS curso_nombre,
+               u.nombre AS profesor_nombre,
                u.apellido_paterno,
                u.apellido_materno
         FROM CURSO c
@@ -444,6 +445,52 @@ def dar_baja_curso(id_usuario, id_curso):
         print("ERROR:", e)
         return False
 
+    finally:
+        cursor.close()
+        conn.close()
+
+def update_course_status(id_curso, nuevo_estado):
+    """Cambia el estado de un curso (ej. de 'Abierto' a 'Cerrado' o viceversa)"""
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            """
+            UPDATE CURSO
+            SET estado = %s
+            WHERE id_curso = %s
+            """,
+            (nuevo_estado, id_curso)
+        )
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        print("ERROR EN BASE DE DATOS AL ACTUALIZAR ESTADO:", e)
+        return False
+    finally:
+        cursor.close()
+        conn.close()
+
+def update_course_data(id_curso, nombre, capacidad, descripcion):
+    """Actualiza los detalles de un curso en fase de borrador"""
+    conn = get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            """
+            UPDATE CURSO
+            SET nombre = %s, capacidad = %s, descripcion = %s
+            WHERE id_curso = %s
+            """,
+            (nombre, capacidad, descripcion, id_curso)
+        )
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        print("ERROR AL ACTUALIZAR DATOS DEL CURSO:", e)
+        return False
     finally:
         cursor.close()
         conn.close()

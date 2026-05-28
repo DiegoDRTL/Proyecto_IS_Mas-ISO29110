@@ -5,11 +5,11 @@ visualizarCurso_bp = Blueprint('course', __name__)
 
 @visualizarCurso_bp.route('/cursos')
 def visualizar_cursos():
-    if 'user_id' not in session:
+    if 'id_usuario' not in session:
         return redirect(url_for('auth.login'))
 
     rol =session.get('rol')
-    id_usuario = session.get('user.id')
+    id_usuario = session.get('id_usuario')
 
     if rol == 'Administrador':
         cursos = curso.obtener_todos()
