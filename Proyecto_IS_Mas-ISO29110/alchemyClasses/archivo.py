@@ -80,6 +80,7 @@ def create_archivo(nombre, tipo_extension, fecha_subida, ruta, id_curso):
             "IINSERT INTO CURSO_ARCHIVO (id_curso, id_archivo) VALUES (%s, %s)",
             (id_curso, id)
         )
+        conn.commit()
         return id
     except Exception as e:
         conn.rollback()
