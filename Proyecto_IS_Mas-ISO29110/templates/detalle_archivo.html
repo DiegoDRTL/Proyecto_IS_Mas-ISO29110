@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle del archivo - EduCursos{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --verde-oscuro: #1b5336;
+        --verde-boton: #2d8a54;
+        --verde-claro-badge: #d1ebd9;
+        --verde-texto-badge: #1e5e3a;
+        --blanco: #ffffff;
+        --texto-oscuro: #2d3748;
+        --texto-mutado: #718096;
+        --bg-principal: #eef7f2;
+        --rojo-suave: #fff5f5;
+        --rojo-texto: #c53030;
+    }
+
+    .main-wrapper {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 20px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .dashboard-hero {
+        background-color: var(--verde-oscuro);
+        color: var(--blanco);
+        padding: 35px 40px;
+        border-radius: 18px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 25px rgba(27, 83, 54, 0.15);
+    }
+
+    .dashboard-hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .dashboard-hero p {
+        font-size: 15px;
+        opacity: 0.9;
+        font-weight: 500;
+    }
+
+    .detail-card {
+        background-color: var(--blanco);
+        border-radius: 18px;
+        padding: 35px 40px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    }
+
+    .tag {
+        display: inline-block;
+        background-color: var(--verde-claro-badge);
+        color: var(--verde-texto-badge);
+        padding: 5px 14px;
+        border-radius: 12px;
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin-bottom: 20px;
+    }
+
+    .detail-card h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 26px;
+        color: var(--texto-oscuro);
+        margin-bottom: 20px;
+    }
+
+    .detail-row {
+        border-top: 1px solid #e2e8f0;
+        padding: 16px 0;
+    }
+
+    .detail-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--texto-mutado);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+    }
+
+    .detail-value {
+        font-size: 15px;
+        color: var(--texto-oscuro);
+        font-weight: 500;
+    }
+
+    .actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 22px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+        background-color: var(--verde-oscuro);
+        color: var(--blanco) !important;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--verde-boton);
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background-color: #f1f5f9;
+        color: var(--texto-oscuro) !important;
+    }
+
+    .btn-secondary:hover {
+        background-color: #e2e8f0;
+        transform: translateY(-1px);
+    }
+</style>
+
+<div class="main-wrapper">
+
+    <div class="dashboard-hero">
+        <h1>📄 Detalle del archivo</h1>
+        <p>{{ curso.nombre }}</p>
+    </div>
+
+    <section class="detail-card">
+
+        <span class="tag">
+            {{ archivo.tipo_extension }}
+        </span>
+
+        <h2>{{ archivo.nombre }}</h2>
+
+        <div class="detail-row">
+            <span class="detail-label">Curso</span>
+            <span class="detail-value">{{ curso.nombre }}</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Fecha de subida</span>
+            <span class="detail-value">{{ archivo.fecha_subida }}</span>
+        </div>
+
+        <div class="detail-row">
+            <span class="detail-label">Tipo de archivo</span>
+            <span class="detail-value">{{ archivo.tipo_extension }}</span>
+        </div>
+
+        {% if archivo.ruta %}
+        <div class="detail-row">
+            <span class="detail-label">Ruta guardada</span>
+            <span class="detail-value">{{ archivo.ruta }}</span>
+        </div>
+        {% endif %}
+
+        <div class="actions">
+            <a href="{{ url_for('visualizar_archivo.visualizar_archivos', id_curso=curso.id_curso) }}" class="btn btn-secondary">
+                ← Volver a archivos
+            </a>
+
+            <a href="{{ url_for('subir_archivo.curso_route_handler', id_curso=curso.id_curso) }}" class="btn btn-primary">
+                ➕ Subir otro archivo
+            </a>
+        </div>
+
+    </section>
+
+</div>
+{% endblock %}
