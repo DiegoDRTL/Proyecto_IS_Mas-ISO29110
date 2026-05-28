@@ -34,7 +34,8 @@ def get_connection():
     """
 
     try:
-
+        print("DB_NAME:", os.getenv('DB_NAME'))
+        
         connection = mysql.connector.connect(
 
             host=os.getenv('DB_HOST', '127.0.0.1'),
