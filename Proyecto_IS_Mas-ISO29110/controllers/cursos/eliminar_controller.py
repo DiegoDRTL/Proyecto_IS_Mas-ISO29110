@@ -20,7 +20,7 @@ def eliminar_curso(id_curso):
         else:
             flash('No se pudo eliminar el curso, intente nuevamente', 'error')
 
-        return redirect(url_for('visualizarCurso.visualizar_cursos'))
+        return redirect(url_for('dashboard.home'))
                     
     else:
         flash('No tienes acceso a esta opcion', 'error')
