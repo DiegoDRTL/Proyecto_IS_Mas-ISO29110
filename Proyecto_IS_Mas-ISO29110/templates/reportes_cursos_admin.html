@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes de Cursos{% endblock %}
+
+{% block content %}
+
+<div style="margin-bottom: 1.5rem;">
+    <a href="{{ url_for('dashboard.home') }}"
+       style="
+            display:inline-block;
+            padding:0.7rem 1.2rem;
+            background:var(--green-deep);
+            color:white;
+            text-decoration:none;
+            border-radius:8px;
+            font-weight:600;
+            font-size:0.9rem;
+            transition:background 0.2s;
+       "
+       onmouseover="this.style.background='var(--green-dark)'"
+       onmouseout="this.style.background='var(--green-deep)'">
+        ⬅️ Volver al Panel Administrador
+    </a>
+</div>
+
+<div style="max-width: 1000px; margin: 2rem auto;">
+
+    <h1 style="
+        color: var(--green-deep);
+        margin-bottom: 2rem;
+        font-family: 'DM Serif Display', serif;
+    ">
+        📊 Reporte de Disponibilidad de Cursos
+    </h1>
+
+    <div style="
+        display:grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap:1rem;
+    ">
+
+        {% for curso in cursos %}
+
+            {% set porcentaje = (curso.total_inscritos / curso.capacidad * 100)|int %}
+
+            <div style="
+                background:white;
+                border-radius:14px;
+                padding:1.3rem;
+                border:1px solid #dfe6df;
+                box-shadow:0 2px 8px rgba(0,0,0,0.05);
+            ">
+
+                <h3 style="margin-bottom:0.4rem;">
+                    {{ curso.curso_nombre }}
+                </h3>
+
+                <p style="font-size:0.9rem; color:#666;">
+                    Profesor:
+                    {{ curso.profesor_nombre }}
+                    {{ curso.apellido_paterno }}
+                </p>
+
+                <p style="margin-top:0.8rem;">
+                    <strong>Estado:</strong>
+                    {{ curso.estado }}
+                </p>
+
+                <p>
+                    <strong>Inscritos:</strong>
+                    {{ curso.total_inscritos }} / {{ curso.capacidad }}
+                </p>
+
+                <div style="
+                    width:100%;
+                    height:10px;
+                    background:#e0e0e0;
+                    border-radius:6px;
+                    overflow:hidden;
+                    margin-top:0.7rem;
+                ">
+
+                    <div style="
+                        width:{{ porcentaje }}%;
+                        height:100%;
+                        background:
+                            {% if porcentaje >= 100 %}
+                                #d9534f
+                            {% elif porcentaje >= 70 %}
+                                #f0ad4e
+                            {% else %}
+                                #5cb85c
+                            {% endif %};
+                    ">
+                    </div>
+
+                </div>
+
+                {% if porcentaje >= 100 %}
+                    <p style="
+                        color:#d9534f;
+                        font-weight:700;
+                        margin-top:0.7rem;
+                    ">
+                        🔴 Curso lleno
+                    </p>
+
+                {% else %}
+                    <p style="
+                        color:#2E7D32;
+                        font-weight:700;
+                        margin-top:0.7rem;
+                    ">
+                        🟢 Cupos disponibles
+                    </p>
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

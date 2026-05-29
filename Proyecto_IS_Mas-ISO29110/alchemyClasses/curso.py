@@ -494,3 +494,40 @@ def update_course_data(id_curso, nombre, capacidad, descripcion):
     finally:
         cursor.close()
         conn.close()
+
+
+def obtener_reporte_cursos():
+
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT
+            c.id_curso,
+            c.nombre AS curso_nombre,
+            c.estado,
+            c.capacidad,
+
+            COUNT(i.id_usuario) AS total_inscritos,
+
+            u.nombre AS profesor_nombre,
+            u.apellido_paterno,
+            u.apellido_materno
+
+        FROM CURSO c
+
+        JOIN USUARIO u
+            ON c.id_usuario = u.id_usuario
+
+        LEFT JOIN INSCRIBE i
+            ON c.id_curso = i.id_curso
+
+        GROUP BY c.id_curso
+    """)
+
+    cursos = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return cursos

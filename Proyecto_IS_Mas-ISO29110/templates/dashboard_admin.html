@@ -262,8 +262,21 @@
         <div class="panel">
             <div class="panel-title">⚡ Acciones rápidas</div>
             <ul class="action-list">
-                <li><span class="icon">👤</span> Gestionar usuarios</li>
-                <li><span class="icon">📊</span> Ver reportes</li>
+                <a href="{{ url_for('gestionar_usuarios.gestionar_usuarios') }}"
+                   style="text-decoration:none; color:inherit;">
+
+                   <li>
+                        <span class="icon">👤</span>
+                        Gestionar usuarios
+                   </li>
+
+                </a>
+                <a href="{{ url_for('reportes_cursos.visualizar_reportes') }}">
+                    <li>
+                        <span class="icon">📊</span>
+                        Visualización de reportes
+                    </li>
+                </a>
                 <li><span class="icon">⚙️</span> Configuración del sistema</li>
                 <li><span class="icon">📧</span> Enviar notificaciones</li>
             </ul>

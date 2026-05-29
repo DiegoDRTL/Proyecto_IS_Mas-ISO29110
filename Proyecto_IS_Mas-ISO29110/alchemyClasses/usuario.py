@@ -63,44 +63,117 @@ def verify_user(id_usuario, contrasena_ingresada):
         cursor.close()
         conn.close()
 
-def create_user(nombre_usuario, a_paterno, a_materno, contrasena, f_nacimiento, rol, correo, telefono):
+def create_user(nombre_usuario, a_paterno, a_materno,
+                contrasena, f_nacimiento,
+                rol, correo, telefono):
+
     conn = get_connection()
     cursor = conn.cursor()
+
     try:
-        # Insertar en la tabla principal: USUARIO
+
+        # =========================
+        # INSERTAR EN USUARIO
+        # =========================
         cursor.execute(
-            "INSERT INTO USUARIO (nombre, apellido_paterno, apellido_materno, contraseña, fecha_nacimiento, rol) VALUES (%s, %s, %s, %s, %s, %s)",
-            (nombre_usuario, a_paterno, a_materno, contrasena, f_nacimiento, rol)
+            """
+            INSERT INTO USUARIO
+            (nombre, apellido_paterno, apellido_materno,
+             contraseña, fecha_nacimiento, rol)
+
+            VALUES (%s, %s, %s, %s, %s, %s)
+            """,
+            (
+                nombre_usuario,
+                a_paterno,
+                a_materno,
+                contrasena,
+                f_nacimiento,
+                rol
+            )
         )
 
-        # Recuperamos el ID que la base de datos le asignó automáticamente a este usuario
         id_usuario = cursor.lastrowid
 
-        # CORREO_USUARIO
+        # =========================
+        # INSERTAR CORREO
+        # =========================
         cursor.execute(
-            "INSERT INTO CORREO_USUARIO (id_usuario, correo) VALUES (%s, %s)",
+            """
+            INSERT INTO CORREO_USUARIO
+            (id_usuario, correo)
+
+            VALUES (%s, %s)
+            """,
             (id_usuario, correo)
         )
 
-        # TELEFONO_USUARIO
+        # =========================
+        # INSERTAR TELEFONO
+        # =========================
         cursor.execute(
-            "INSERT INTO TELEFONO_USUARIO (id_usuario, telefono) VALUES (%s, %s)",
+            """
+            INSERT INTO TELEFONO_USUARIO
+            (id_usuario, telefono)
+
+            VALUES (%s, %s)
+            """,
             (id_usuario, telefono)
         )
 
+        # =========================
+        # INSERTAR SEGÚN EL ROL
+        # =========================
+
+        rol_normalizado = rol.strip().lower()
+
+        if rol_normalizado == 'alumno':
+
+            cursor.execute(
+                """
+                INSERT INTO ALUMNO (id_usuario)
+                VALUES (%s)
+                """,
+                (id_usuario,)
+            )
+
+        elif rol_normalizado == 'profesor':
+
+            cursor.execute(
+                """
+                INSERT INTO PROFESOR (id_usuario)
+                VALUES (%s)
+                """,
+                (id_usuario,)
+            )
+
+        elif rol_normalizado == 'administrador':
+
+            cursor.execute(
+                """
+                INSERT INTO ADMINISTRADOR (id_usuario)
+                VALUES (%s)
+                """,
+                (id_usuario,)
+            )
+
         conn.commit()
+
         return id_usuario
 
     except Exception as e:
-        # Indica en terminal cual fue el error en la BD
+
         print("ERROR DE SQL EN create_user:", e)
+
         conn.rollback()
+
         return False
 
     finally:
+
         cursor.close()
         conn.close()
-
+                        
 def correo_exists(correo):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -189,20 +262,46 @@ def obtener_profesor():
     return profesores
 
 def eliminar_usuario(id_usuario):
+
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
-    try: 
+    cursor = conn.cursor()
+
+    try:
+
         cursor.execute("""
-            DELETE FROM USUARIO 
-            WHERE id_usuario = %s 
+            DELETE FROM INSCRIBE
+            WHERE id_usuario = %s
         """, (id_usuario,))
+
+        cursor.execute("""
+            DELETE FROM ALUMNO
+            WHERE id_usuario = %s
+        """, (id_usuario,))
+
+        cursor.execute("""
+            DELETE FROM PROFESOR
+            WHERE id_usuario = %s
+        """, (id_usuario,))
+
+        cursor.execute("""
+            DELETE FROM ADMINISTRADOR
+            WHERE id_usuario = %s
+        """, (id_usuario,))
+
+        cursor.execute("""
+            DELETE FROM USUARIO
+            WHERE id_usuario = %s
+        """, (id_usuario,))
+
         conn.commit()
-        return True 
+        return True
+
     except Exception as e:
         print("ERROR:", e)
         conn.rollback()
         return False
-    finally: 
+
+    finally:
         cursor.close()
         conn.close()
 
@@ -264,3 +363,89 @@ def obtener_usuarios_recientes(limite=4):
         cursor.close()
         conn.close()
 
+def obtener_todos_usuarios():
+
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+
+        cursor.execute("""
+            SELECT 
+                id_usuario,
+                nombre,
+                apellido_paterno,
+                apellido_materno,
+                rol
+            FROM USUARIO
+            ORDER BY id_usuario ASC
+        """)
+
+        usuarios = cursor.fetchall()
+
+        return usuarios
+
+    except Exception as e:
+
+        print("ERROR:", e)
+        return []
+
+    finally:
+
+        cursor.close()
+        conn.close()
+        
+def actualizar_rol_usuario(id_usuario, nuevo_rol):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+
+        # actualizar rol en USUARIO
+        cursor.execute("""
+            UPDATE USUARIO
+            SET rol = %s
+            WHERE id_usuario = %s
+        """, (nuevo_rol, id_usuario))
+
+        # eliminar de TODAS las tablas de roles
+        cursor.execute("DELETE FROM ALUMNO WHERE id_usuario = %s", (id_usuario,))
+        cursor.execute("DELETE FROM PROFESOR WHERE id_usuario = %s", (id_usuario,))
+        cursor.execute("DELETE FROM ADMINISTRADOR WHERE id_usuario = %s", (id_usuario,))
+
+        # insertar en la tabla correspondiente
+        if nuevo_rol.lower() == 'alumno':
+
+            cursor.execute("""
+                INSERT INTO ALUMNO (id_usuario)
+                VALUES (%s)
+            """, (id_usuario,))
+
+        elif nuevo_rol.lower() == 'profesor':
+
+            cursor.execute("""
+                INSERT INTO PROFESOR (id_usuario)
+                VALUES (%s)
+            """, (id_usuario,))
+
+        elif nuevo_rol.lower() == 'administrador':
+
+            cursor.execute("""
+                INSERT INTO ADMINISTRADOR (id_usuario)
+                VALUES (%s)
+            """, (id_usuario,))
+
+        conn.commit()
+        return True
+
+    except Exception as e:
+
+        print("ERROR:", e)
+        conn.rollback()
+        return False
+
+    finally:
+
+        cursor.close()
+        conn.close()
