@@ -220,7 +220,7 @@
     </div>
 
     <div class="action-bar">
-        <a href="{{ url_for('subir_archivo.curso_route_handler') }}" class="btn-nav btn-nav-primary">
+        <a href="{{ url_for('subir_archivo.curso_route_handler', id_curso=curso.id_curso) }}" class="btn-nav btn-nav-primary">
             <span>➕</span> Subir nuevo archivo
         </a>
         <a href="{{ url_for('archivo.vista_eliminar', id_curso=curso.id_curso) if 'archivo.vista_eliminar' in url_for._self_.url_map._rules_by_endpoint else '#' }}" class="btn-nav btn-nav-danger">
@@ -245,7 +245,7 @@
                     </p>
 
                     <div class="card-actions">
-                        <a href="{{ url_for('archivo.detalle_archivo', id_curso=curso.id_curso, id_archivo=archivo.id_archivo) }}" class="btn-card btn-detalle">
+                        <a href="{{ url_for('visualizar_archivo.detalle_archivo', id_curso=curso.id_curso, id_archivo=archivo.id_archivo) }}" class="btn-card btn-detalle">
                             Ver detalle
                         </a>
                         <a href="{{ url_for('archivo.eliminar_archivo', id_archivo=archivo.id_archivo) if 'archivo.eliminar_archivo' in url_for._self_.url_map._rules_by_endpoint else '#' }}" class="btn-card btn-eliminar-card" title="Eliminar archivo">
