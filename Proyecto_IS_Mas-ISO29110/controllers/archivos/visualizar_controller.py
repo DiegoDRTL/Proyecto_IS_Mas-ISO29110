@@ -30,11 +30,11 @@ def detalle_archivo(id_curso, id_archivo):
     if 'id_usuario' not in session:
         return redirect(url_for('auth.login'))
 
-    curso_actual = obtener_por_curso_por_id(id_curso)
+    curso_actual = obtener_curso_por_id(id_curso)
 
     if not curso_actual:
         flash('Curso no existe', 'error')
-        return redirec(url_for('course.visualizar_cursos'))
+        return redirect(url_for('course.visualizar_cursos'))
 
     archivo = obtener_por_id(id_archivo)
     if not archivo:

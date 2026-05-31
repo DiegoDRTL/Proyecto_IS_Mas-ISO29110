@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}Configuración y Auditoría del Sistema — EduCursos{% endblock %}
+
+{% block nav %}
+    <nav>
+        <div class="nav-brand">🎓 <span>EduCursos</span></div>
+        <div class="nav-links">
+            <span style="color:var(--text-light);font-size:0.85rem;">Admin: <strong style="color:var(--green-dark)">{{ nombre }}</strong></span>
+            <a href="{{ url_for('dashboard.home') }}" class="btn-logout" style="background-color: var(--green-main); color: var(--white); margin-right: 10px;">Volver al Dashboard</a>
+            <a href="{{ url_for('auth.logout') }}" class="btn-logout">Cerrar sesión</a>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        main {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .admin-hero {
+            background: linear-gradient(135deg, var(--green-deep), var(--green-dark));
+            border-radius: var(--radius);
+            padding: 2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            color: var(--white);
+            margin-bottom: 1.5rem;
+            animation: fadeUp 0.5s ease both;
+            box-shadow: 0 8px 30px rgba(29,83,53,0.3);
+        }
+
+        .admin-avatar {
+            width: 72px;
+            height: 72px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            flex-shrink: 0;
+            border: 2px solid rgba(255,255,255,0.25);
+        }
+
+        .admin-hero h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .admin-hero p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .panels-grid-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            animation: fadeUp 0.6s ease both 0.1s;
+        }
+
+        .panel {
+            background: var(--white);
+            border-radius: var(--radius);
+            border: 1.5px solid var(--green-light);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .panel-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.1rem;
+            color: var(--green-deep);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1.5px solid var(--green-light);
+            padding-bottom: 0.7rem;
+        }
+
+        .btn-respaldo {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--green-deep);
+            color: var(--white);
+            padding: 0.7rem 1.5rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.2s;
+            box-shadow: 0 4px 12px rgba(29,83,53,0.15);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-respaldo:hover {
+            background-color: var(--green-dark);
+            transform: translateY(-1px);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 0.5rem;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            text-align: left;
+        }
+
+        .custom-table th {
+            padding: 0.7rem;
+            color: var(--text-light);
+            font-weight: 600;
+            border-bottom: 2px solid var(--green-light);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .custom-table td {
+            padding: 0.8rem 0.7rem;
+            border-bottom: 1px solid var(--green-lightest);
+            color: var(--text-mid);
+        }
+
+        .custom-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .log-user {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .log-date {
+            font-family: monospace;
+            color: var(--text-light);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="admin-hero">
+        <div class="admin-avatar">⚙️</div>
+        <div>
+            <h1>Gestión y Configuración del Sistema</h1>
+            <p>Bienvenido, <strong>{{ nombre }}</strong>. Accede a las herramientas de auditoría y mantenimiento técnico.</p>
+        </div>
+    </div>
+
+    {# Manejo de alertas internas de Flask #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div style="padding: 1rem; margin-bottom: 1.5rem; border-radius: var(--radius); text-align: center; font-size: 0.9rem; font-weight: 500;
+                        background-color: {% if category == 'realizado' or category == 'success' %}#E8F5E9{% else %}#FFEBEE{% endif %};
+                        color: {% if category == 'realizado' or category == 'success' %}#2E7D32{% else %}#C62828{% endif %};
+                        border: 1.5px solid {% if category == 'realizado' or category == 'success' %}#A5D6A7{% else %}#FFCDD2{% endif %};">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="panels-grid-vertical">
+
+        <div class="panel">
+            <div class="panel-title">💾 Respaldos de Base de Datos</div>
+            <p style="font-size: 0.9rem; color: var(--text-mid); margin-bottom: 1.2rem; line-height: 1.5;">
+                Genera un punto de restauración completo y actual del sistema en formato binario estructurado SQL.
+                Este archivo resguarda la integridad de cursos, usuarios inscritos y bitácoras operacionales.
+            </p>
+            <a href="{{ url_for('admin_sistema.descargar_respaldo') }}" class="btn-respaldo">
+                📥 Descargar Respaldo de Base de Datos (.sql)
+            </a>
+        </div>
+
+        <div class="panel">
+            <div class="panel-title">📋 Logs de Auditoría del Sistema</div>
+            <div class="table-container">
+                <table class="custom-table">
+                    <thead>
+                    <tr>
+                        <th>Fecha y Hora</th>
+                        <th>Usuario</th>
+                        <th>Acción Realizada</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if logs %}
+                        {% for log in logs %}
+                            <tr>
+                                <td class="log-date">{{ log.fecha }}</td>
+                                <td class="log-user">{{ log.usuario }}</td>
+                                <td>{{ log.accion }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3" style="text-align: center; padding: 2rem; color: var(--text-light);">
+                                📌 No existen registros de auditoría en este periodo.
+                            </td>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

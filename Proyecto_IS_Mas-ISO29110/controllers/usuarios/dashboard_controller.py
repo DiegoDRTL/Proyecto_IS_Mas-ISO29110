@@ -23,7 +23,7 @@ def home():
     nombre_usuario = session.get('nombre') or session.get('usuario')
     id_actual = session.get('id_usuario')
 
-    # 1. Panel de Administración
+    # Panel de Administración
     if rol == 'administrador':
 
         datos_admin = obtener_metricas_admin()
@@ -44,7 +44,7 @@ def home():
             usuarios_recientes=lista_recientes
         )
 
-    # 2. Panel del Profesor
+    # Panel del Profesor
     if rol == 'profesor':
         # Se obtienen los cursos específicos asignados a este docente
         cursos_docente = obtener_por_usuario(id_actual, rol)
@@ -56,7 +56,7 @@ def home():
             cursos=cursos_docente
         )
 
-    # 3. Panel del Alumno o Usuario general
+    # Panel del Alumno o Usuario general
     # Recuperamos los cursos a los que ya se inscribió este alumno en específico
     cursos_inscritos_alumno = obtener_por_usuario(id_actual, 'alumno')
 

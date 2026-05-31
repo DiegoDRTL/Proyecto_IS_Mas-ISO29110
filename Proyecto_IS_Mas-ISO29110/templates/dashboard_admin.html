@@ -277,7 +277,12 @@
                         Visualización de reportes
                     </li>
                 </a>
-                <li><span class="icon">⚙️</span> Configuración del sistema</li>
+                <a href="{{ url_for('admin_sistema.ver_logs') }}" style="text-decoration: none; color: inherit;">
+                    <li>
+                        <span class="icon">⚙️</span>
+                        Configuración del sistema
+                    </li>
+                </a>
                 <li><span class="icon">📧</span> Enviar notificaciones</li>
             </ul>
         </div>

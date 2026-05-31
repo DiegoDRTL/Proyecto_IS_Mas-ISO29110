@@ -13,7 +13,7 @@ from controllers.archivos.eliminar_controller import eliminarArchivo_bp # Elimin
 from controllers.cursos.inscribir_controller import inscribir_bp # Inscribirse a cursos disponibles
 from controllers.cursos.reportes_cursos_controller import reportes_cursos_bp #Visualiza reportes de cursos para el dashboard de administrador 
 from controllers.usuarios.gestionar_usuarios_controller import gestionar_usuarios_bp #Gestion de usuarios por parte del administrador 
-
+from controllers.usuarios.admin_sistema_controller import admin_sistema_bp # Configuracion del sistema y logs de auditoria para el administrador
 app = Flask(__name__)
 app.secret_key = 'clave_secreta_curso_2024'
 
@@ -27,6 +27,7 @@ app.register_blueprint(registrarUsuario_bp)
 app.register_blueprint(create_bp)
 app.register_blueprint(profesor_bp)
 app.register_blueprint(gestionar_usuarios_bp)
+app.register_blueprint(admin_sistema_bp)
 
 # 2. Gestión de Archivos
 app.register_blueprint(subirArchivo_bp)

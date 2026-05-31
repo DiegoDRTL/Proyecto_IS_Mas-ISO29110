@@ -53,13 +53,27 @@ def create_course(nombre, capacidad, estado, descripcion, id_usuario):
 
         id_generado = cursor.lastrowid
 
+        # INSERTAR O ACTUALIZAR LA BITÁCORA EN LA TABLA SESION
+        # Creamos la cadena con la acción realizada por el profesor
+        mensaje_accion = f"Creó un nuevo curso de idiomas titulado '{nombre}'"
+
+        # insertará la acción, o si el usuario ya existe, actualizará su fila reemplazando el estado viejo con la creación del curso
+        query_auditoria = """
+            INSERT INTO SESION (id_usuario, status)
+            VALUES (%s, %s)
+            ON DUPLICATE KEY UPDATE
+                status = %s,
+                ultima_conexion = CURRENT_TIMESTAMP() \
+                          """
+        cursor.execute(query_auditoria, (id_usuario, mensaje_accion, mensaje_accion))
+
         conn.commit()
 
         return id_generado if id_generado else True
 
     except Exception as e:
         conn.rollback()
-        print("ERROR EN BASE DE DATOS:", e)
+        print("❌ ERROR EN BASE DE DATOS (create_course):", e)
         return None
 
     finally:

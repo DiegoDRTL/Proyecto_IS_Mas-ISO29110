@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from alchemyClasses.usuario import verify_user, registrar_inicio_sesion, registrar_cierre_sesion
+from alchemyClasses.usuario import verify_user, registrar_cierre_sesion
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -22,6 +22,7 @@ def login():
             flash('Por favor completa todos los campos.', 'error')
             return render_template('login.html')
 
+        # verify_user ahora valida las credenciales Y escribe el log en SESION al mismo tiempo
         user = verify_user(id_usuario, contrasena)
 
         if user:
@@ -33,9 +34,6 @@ def login():
 
             # ROL
             session['rol'] = user['rol']
-
-            # REGISTRO DINÁMICO EN LA TABLA SESION (BD)
-            registrar_inicio_sesion(user['id_usuario'])
 
             print('LOGIN EXITOSO')
             print(session)
@@ -50,8 +48,10 @@ def login():
 
 @auth_bp.route('/logout')
 def logout():
+    # Registramos el cierre de sesión antes de limpiar las cookies de Flask
     if 'id_usuario' in session:
         registrar_cierre_sesion(session['id_usuario'])
+
     session.clear()
     flash('Sesión cerrada correctamente.', 'success')
     return redirect(url_for('auth.login'))

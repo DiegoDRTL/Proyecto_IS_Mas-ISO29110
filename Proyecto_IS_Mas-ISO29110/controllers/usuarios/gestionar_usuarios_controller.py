@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 
 from alchemyClasses.usuario import (
     obtener_todos_usuarios,
@@ -34,13 +34,18 @@ def cambiar_rol():
     id_usuario = request.form.get('id_usuario')
     nuevo_rol = request.form.get('nuevo_rol')
 
-    resultado = actualizar_rol_usuario(id_usuario, nuevo_rol)
+    # capturamos el ID del admin para guardar en el auditoria
+    id_admin_activo = session.get('id_usuario')
+
+    # se regresa el ID del admin como tercer argumento para la auditoria
+    resultado = actualizar_rol_usuario(id_usuario, nuevo_rol, id_admin=id_admin_activo)
 
     if resultado:
         flash("Rol actualizado correctamente", "success")
     else:
         flash("No se pudo actualizar el rol", "error")
 
+    # Redirecciona de vuelta a la lista para ver los resultados actualizados
     return redirect(url_for('gestionar_usuarios.gestionar_usuarios'))
 
 
