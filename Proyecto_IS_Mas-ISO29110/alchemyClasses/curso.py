@@ -97,20 +97,20 @@ def obtener_por_usuario(id_usuario, rol):
     if rol_normalizado == 'profesor':
         cursor.execute("""
             SELECT c.id_curso,
-                c.nombre AS curso_nombre,
-                c.estado,
-                c.capacidad,
-                c.descripcion,
-                COUNT(i.id_usuario) AS total_inscritos,
-                u.nombre,
-                u.apellido_paterno,
-                u.apellido_materno
+                   c.nombre AS curso_nombre,
+                   c.estado,
+                   c.capacidad,
+                   c.descripcion,
+                   COUNT(i.id_usuario) AS total_inscritos,
+                   u.nombre,
+                   u.apellido_paterno,
+                   u.apellido_materno
             FROM CURSO c
             JOIN USUARIO u ON c.id_usuario = u.id_usuario
             LEFT JOIN INSCRIBE i ON c.id_curso = i.id_curso
-            WHERE c.id_usuario = %s
+            WHERE c.id_usuario = %s AND c.estado != 'Eliminado'  
             GROUP BY c.id_curso
-        """, (id_usuario,))
+                       """, (id_usuario,))
 
     elif rol_normalizado == 'alumno':
         cursor.execute("""
@@ -345,19 +345,25 @@ def inscribir_alumno(id_usuario, identificador_curso):
     finally:
         cursor.close()
         conn.close()
-        
+
 def deleate_curso(id_curso):
     conn = get_connection()
     cursor = conn.cursor()
     try:
+        # En lugar de DELETE, cambiamos el estado a 'Eliminado'
         cursor.execute(
-            "DELETE FROM CURSO WHERE id_curso='%s'",
+            """
+            UPDATE CURSO
+            SET estado = 'Eliminado'
+            WHERE id_curso = %s
+            """,
             (id_curso,)
         )
         conn.commit()
         return True
     except Exception as e:
         conn.rollback()
+        print("ERROR AL DAR DE BAJA LÓGICA EL CURSO:", e)
         return False
     finally:
         cursor.close()
