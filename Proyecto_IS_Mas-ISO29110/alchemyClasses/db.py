@@ -8,8 +8,8 @@ load_dotenv(path)
 
 def get_connection():
     """
-    Establece y retorna una conexión a MySQL
-    usando las variables definidas en .env
+    Establece y retorna una conexión a la base de datos MySQL
+    utilizando las credenciales de secretos.env.txt
     """
 
     try:
@@ -23,10 +23,7 @@ def get_connection():
             password=os.getenv('DB_PASSWORD'),
             database=os.getenv('DB_NAME')
         )
-
         return connection
-
     except mysql.connector.Error as err:
-
         print(f"Error crítico al conectar a la base de datos: {err}")
         raise err

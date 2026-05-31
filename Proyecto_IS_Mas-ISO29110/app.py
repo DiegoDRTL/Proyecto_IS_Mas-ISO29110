@@ -35,7 +35,7 @@ app.register_blueprint(visualizarArchivo_bp)
 app.register_blueprint(eliminarArchivo_bp)
 
 # 3. Gestión de Cursos
-app.register_blueprint(visualizarCurso_bp, name='visualizar_curso')
+app.register_blueprint(visualizarCurso_bp)
 app.register_blueprint(eliminar_curso_bp, name='eliminar_curso')
 app.register_blueprint(inscribir_bp, name='inscribir_curso')
 app.register_blueprint(crearCurso_bp, name='curso')

@@ -275,7 +275,7 @@
         </div>
         <div class="user-menu">
             <span class="user-name">Profesor: <strong>{{ session.get('usuario', 'Docente') }}</strong></span>
-            <a href="{{ url_for('auth.logout') if 'auth.logout' in url_for.__self__.url_map._rules_by_endpoint else '#' }}" class="btn-logout">Cerrar sesión</a>
+            <a href="{{ url_for('auth.logout') }}" class="btn-logout">Cerrar sesión</a>
         </div>
     </nav>
 
@@ -315,7 +315,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <a href="{{ url_for('visualizar_archivo.visualizar_archivos', id_curso=request.view_args['id_curso']) if 'visualizar_archivo.visualizar_archivos' in url_for.__self__.url_map._rules_by_endpoint else '#' }}" class="btn btn-secondary">
+                    <a href="{{ url_for('visualizar_archivo.visualizar_archivos', id_curso=request.view_args['id_curso']) }}" class="btn btn-secondary">
                         Cancelar
                     </a>
                     <button type="submit" class="btn btn-primary">

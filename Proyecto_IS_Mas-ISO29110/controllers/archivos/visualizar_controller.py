@@ -13,9 +13,8 @@ def visualizar_archivos(id_curso):
     # Validación: Si el curso ya fue eliminado de la BD, curso_actual será None
     curso_actual = obtener_curso_por_id(id_curso)
     if not curso_actual:
-        flash('El curso no existe o ha sido eliminado.', 'error')
-        # Redirige de forma segura al dashboard principal
-        return redirect(url_for('dashboard.home'))
+        flash('Curso no existe', 'error')
+        return redirect(url_for('visualizar_curso.visualizar_cursos'))
 
     archivos = obtener_por_curso(id_curso)
     rol = session.get('rol')
@@ -36,8 +35,8 @@ def detalle_archivo(id_curso, id_archivo):
     curso_actual = obtener_curso_por_id(id_curso)
 
     if not curso_actual:
-        flash('El curso no existe o ha sido eliminado.', 'error')
-        return redirect(url_for('dashboard.home'))
+        flash('Curso no existe', 'error')
+        return redirect(url_for('visualizar_curso.visualizar_cursos'))
 
     archivo = obtener_por_id(id_archivo)
     if not archivo:

@@ -53,12 +53,12 @@ def procesarSubida(archivo, id_curso):
 
     if exito>-1:
         flash(mensaje, 'realizado')
-        return redirect(url_for('archivos.visualizar_archivos'))
-    
+        return redirect(url_for('visualizar_archivo.visualizar_archivos', id_curso=id_curso))
+
     else:
         flash(mensaje, 'error')
-        return redirect(url_for('archivos.visualizar_archivos'))
-    
+        return redirect(url_for('visualizar_archivo.visualizar_archivos', id_curso=id_curso))
+
 
 
 def manejarErroresValidacion(codigoError):

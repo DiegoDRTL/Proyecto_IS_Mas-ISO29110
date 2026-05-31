@@ -248,7 +248,7 @@
                                 <a href="{{ url_for('visualizar_archivo.detalle_archivo', id_curso=curso.id_curso, id_archivo=archivo.id_archivo) }}" class="btn-card btn-detalle">
                                     Ver detalle
                                 </a>
-                                <a href="{{ url_for('eliminar_archivo.eliminar_archivo_route_handler', id_archivo=archivo.id_archivo) }}" class="btn-card btn-eliminar-card" title="Eliminar archivo">
+                                <a href="{{ url_for('eliminar_archivo.archivo_route_handler', id_archivo=archivo.id_archivo) }}" class="btn-card btn-eliminar-card" title="Eliminar archivo">
                                     🗑️
                                 </a>
                             </div>
