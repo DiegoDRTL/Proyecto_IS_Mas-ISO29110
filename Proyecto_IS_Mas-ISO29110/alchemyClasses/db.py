@@ -2,9 +2,8 @@ import os
 import mysql.connector
 from dotenv import load_dotenv
 
-
 # Cargamos explícitamente el archivo de entorno
-load_dotenv(dotenv_path=env_path)
+load_dotenv(env_path)
 
 def get_connection():
     """
