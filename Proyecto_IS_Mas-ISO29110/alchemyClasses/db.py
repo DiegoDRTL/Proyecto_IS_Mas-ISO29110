@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 
 # Cargar variables de entorno
-load_dotenv(ENV_PATH)
+load_dotenv(path)
 
 def get_connection():
     """

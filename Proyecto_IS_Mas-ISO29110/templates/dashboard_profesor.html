@@ -308,6 +308,26 @@
                            onmouseout="this.style.background='var(--green-deep)'">
                             📁 Administrar Materiales
                         </a>
+
+                        <a href="{{ url_for('eliminar_curso.eliminar_curso', id_curso=curso.id_curso) }}"
+                           onclick="return confirm('¿Estás completamente seguro de que deseas eliminar el curso \'{{ curso.curso_nombre }}\'? Esta acción borrará de forma permanente todo su contenido.');"
+                           style="
+                                display:inline-block;
+                                padding:0.55rem 0.8rem;
+                                background:#FFEBEE;
+                                color:#C62828;
+                                border: 1.5px solid #FFCDD2;
+                                border-radius:8px;
+                                text-decoration:none;
+                                font-size:0.8rem;
+                                font-weight:600;
+                                text-align: center;
+                                transition: all 0.2s;
+                           "
+                           onmouseover="this.style.background='#FFCDD2'"
+                           onmouseout="this.style.background='#FFEBEE'">
+                            🗑️ Eliminar Curso
+                        </a>
                     </div>
                 </div>
             {% else %}

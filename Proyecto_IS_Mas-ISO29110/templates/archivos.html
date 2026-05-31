@@ -3,265 +3,265 @@
 {% block title %}Archivos del curso - EduCursos{% endblock %}
 
 {% block content %}
-<style>
-    :root {
-        --verde-oscuro: #1b5336;
-        --verde-boton: #2d8a54;
-        --verde-claro-badge: #d1ebd9;
-        --verde-texto-badge: #1e5e3a;
-        --blanco: #ffffff;
-        --texto-oscuro: #2d3748;
-        --texto-mutado: #718096;
-        --bg-principal: #eef7f2;
-        --rojo-suave: #fff5f5;
-        --rojo-texto: #c53030;
-        --rojo-boton: #e53e3e;
-    }
+    <style>
+        :root {
+            --verde-oscuro: #1b5336;
+            --verde-boton: #2d8a54;
+            --verde-claro-badge: #d1ebd9;
+            --verde-texto-badge: #1e5e3a;
+            --blanco: #ffffff;
+            --texto-oscuro: #2d3748;
+            --texto-mutado: #718096;
+            --bg-principal: #eef7f2;
+            --rojo-suave: #fff5f5;
+            --rojo-texto: #c53030;
+            --rojo-boton: #e53e3e;
+        }
 
-    /* Ajuste del contenedor principal */
-    .main-wrapper {
-        max-width: 1100px;
-        margin: 40px auto;
-        padding: 0 20px;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-    }
+        /* Ajuste del contenedor principal */
+        .main-wrapper {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
-    /* --- Banner / Hero del Curso --- */
-    .dashboard-hero {
-        background-color: var(--verde-oscuro);
-        color: var(--blanco);
-        padding: 35px 40px;
-        border-radius: 18px;
-        margin-bottom: 25px;
-        box-shadow: 0 10px 25px rgba(27, 83, 54, 0.15);
-    }
+        /* --- Banner / Hero del Curso --- */
+        .dashboard-hero {
+            background-color: var(--verde-oscuro);
+            color: var(--blanco);
+            padding: 35px 40px;
+            border-radius: 18px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(27, 83, 54, 0.15);
+        }
 
-    .dashboard-hero h1 {
-        font-family: 'Playfair Display', serif;
-        font-size: 28px;
-        font-weight: 600;
-        margin-bottom: 6px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
+        .dashboard-hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    .dashboard-hero p {
-        font-size: 15px;
-        opacity: 0.9;
-        font-weight: 500;
-    }
+        .dashboard-hero p {
+            font-size: 15px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
 
-    /* --- Barra de Navegación de Acciones --- */
-    .action-bar {
-        display: flex;
-        gap: 15px;
-        margin-bottom: 30px;
-        background-color: var(--blanco);
-        padding: 15px 25px;
-        border-radius: 14px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
-    }
+        /* --- Barra de Navegación de Acciones --- */
+        .action-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            background-color: var(--blanco);
+            padding: 15px 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+        }
 
-    .btn-nav {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.2s ease;
-    }
+        .btn-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
 
-    .btn-nav-primary {
-        background-color: var(--verde-boton);
-        color: var(--blanco) !important;
-    }
+        .btn-nav-primary {
+            background-color: var(--verde-boton);
+            color: var(--blanco) !important;
+        }
 
-    .btn-nav-primary:hover {
-        background-color: var(--verde-oscuro);
-        transform: translateY(-1px);
-    }
+        .btn-nav-primary:hover {
+            background-color: var(--verde-oscuro);
+            transform: translateY(-1px);
+        }
 
-    .btn-nav-danger {
-        background-color: var(--rojo-suave);
-        color: var(--rojo-texto) !important;
-        border: 1px solid rgba(197, 48, 48, 0.2);
-    }
+        .btn-nav-danger {
+            background-color: var(--rojo-suave);
+            color: var(--rojo-texto) !important;
+            border: 1px solid rgba(197, 48, 48, 0.2);
+        }
 
-    .btn-nav-danger:hover {
-        background-color: var(--rojo-texto);
-        color: var(--blanco) !important;
-        transform: translateY(-1px);
-    }
+        .btn-nav-danger:hover {
+            background-color: var(--rojo-texto);
+            color: var(--blanco) !important;
+            transform: translateY(-1px);
+        }
 
-    /* --- Sección de Contenido y Grid --- */
-    .courses-section {
-        margin-top: 20px;
-    }
+        /* --- Sección de Contenido y Grid --- */
+        .courses-section {
+            margin-top: 20px;
+        }
 
-    .course-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 25px;
-    }
+        .course-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
 
-    /* --- Tarjeta de Archivo --- */
-    .course-card {
-        background-color: var(--blanco);
-        border-radius: 16px;
-        padding: 25px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        position: relative;
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
+        /* --- Tarjeta de Archivo --- */
+        .course-card {
+            background-color: var(--blanco);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
 
-    .course-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
-    }
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+        }
 
-    .tag {
-        display: inline-block;
-        background-color: var(--verde-claro-badge);
-        color: var(--verde-texto-badge);
-        padding: 4px 12px;
-        border-radius: 12px;
-        font-size: 11px;
-        text-transform: uppercase;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        margin-bottom: 15px;
-    }
+        .tag {
+            display: inline-block;
+            background-color: var(--verde-claro-badge);
+            color: var(--verde-texto-badge);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
 
-    .course-card h4 {
-        font-family: 'Playfair Display', serif;
-        font-size: 18px;
-        color: var(--texto-oscuro);
-        margin-bottom: 8px;
-        line-height: 1.3;
-        font-weight: 600;
-    }
+        .course-card h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            color: var(--texto-oscuro);
+            margin-bottom: 8px;
+            line-height: 1.3;
+            font-weight: 600;
+        }
 
-    .course-card p {
-        font-size: 13px;
-        color: var(--texto-mutado);
-        margin-bottom: 20px;
-        margin-top: auto; 
-    }
+        .course-card p {
+            font-size: 13px;
+            color: var(--texto-mutado);
+            margin-bottom: 20px;
+            margin-top: auto;
+        }
 
-    /* Contenedor de botones dentro de la tarjeta */
-    .card-actions {
-        display: flex;
-        gap: 10px;
-        width: 100%;
-    }
+        /* Contenedor de botones dentro de la tarjeta */
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
 
-    .btn-card {
-        text-align: center;
-        padding: 10px 14px;
-        border-radius: 10px;
-        font-size: 13px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: background-color 0.2s;
-    }
+        .btn-card {
+            text-align: center;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
 
-    .btn-detalle {
-        flex: 2;
-        background-color: var(--verde-oscuro);
-        color: var(--blanco) !important;
-    }
+        .btn-detalle {
+            flex: 2;
+            background-color: var(--verde-oscuro);
+            color: var(--blanco) !important;
+        }
 
-    .btn-detalle:hover {
-        background-color: var(--verde-boton);
-    }
+        .btn-detalle:hover {
+            background-color: var(--verde-boton);
+        }
 
-    .btn-eliminar-card {
-        flex: 1;
-        background-color: #f1f5f9;
-        color: var(--texto-oscuro) !important;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+        .btn-eliminar-card {
+            flex: 1;
+            background-color: #f1f5f9;
+            color: var(--texto-oscuro) !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    .btn-eliminar-card:hover {
-        background-color: var(--rojo-texto);
-        color: var(--blanco) !important;
-    }
+        .btn-eliminar-card:hover {
+            background-color: var(--rojo-texto);
+            color: var(--blanco) !important;
+        }
 
-    /* --- Estado Vacío --- */
-    .card-vacia {
-        background-color: var(--blanco);
-        border-radius: 16px;
-        padding: 40px;
-        text-align: center;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-    }
+        /* --- Estado Vacío --- */
+        .card-vacia {
+            background-color: var(--blanco);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
 
-    .card-vacia p {
-        color: var(--texto-mutado);
-        font-size: 15px;
-        font-weight: 500;
-    }
-</style>
+        .card-vacia p {
+            color: var(--texto-mutado);
+            font-size: 15px;
+            font-weight: 500;
+        }
+    </style>
 
-<div class="main-wrapper">
+    <div class="main-wrapper">
 
-    <div class="dashboard-hero">
-        <h1>📂 Archivos del curso</h1>
-        <p>{{ curso.nombre }}</p>
-    </div>
+        <div class="dashboard-hero">
+            <h1>📂 Archivos del curso</h1>
+            <p>{{ curso.nombre }}</p>
+        </div>
 
-    <div class="action-bar">
-        <a href="{{ url_for('subir_archivo.curso_route_handler', id_curso=curso.id_curso) }}" class="btn-nav btn-nav-primary">
-            <span>➕</span> Subir nuevo archivo
-        </a>
-        <a href="{{ url_for('archivo.vista_eliminar', id_curso=curso.id_curso) if 'archivo.vista_eliminar' in url_for._self_.url_map._rules_by_endpoint else '#' }}" class="btn-nav btn-nav-danger">
-            <span>🗑️</span> Gestionar eliminaciones
-        </a>
-    </div>
+        <div class="action-bar">
+            <a href="{{ url_for('subir_archivo.curso_route_handler', id_curso=curso.id_curso) }}" class="btn-nav btn-nav-primary">
+                <span>➕</span> Subir nuevo archivo
+            </a>
+            <a href="{{ url_for('dashboard.home') }}" class="btn-nav btn-nav-danger">
+                <span>📚</span> Volver a cursos
+            </a>
+        </div>
 
-    <div class="courses-section">
-        {% if archivos %}
-            <div class="course-list">
-                {% for archivo in archivos %}
-                <div class="course-card">
-                    
+        <div class="courses-section">
+            {% if archivos %}
+                <div class="course-list">
+                    {% for archivo in archivos %}
+                        <div class="course-card">
+
                     <span class="tag">
                         {{ archivo.tipo_extension }}
                     </span>
 
-                    <h4>{{ archivo.nombre }}</h4>
+                            <h4>{{ archivo.nombre }}</h4>
 
-                    <p>
-                        Fecha subida: {{ archivo.fecha_subida }}
-                    </p>
+                            <p>
+                                Fecha subida: {{ archivo.fecha_subida }}
+                            </p>
 
-                    <div class="card-actions">
-                        <a href="{{ url_for('visualizar_archivo.detalle_archivo', id_curso=curso.id_curso, id_archivo=archivo.id_archivo) }}" class="btn-card btn-detalle">
-                            Ver detalle
-                        </a>
-                        <a href="{{ url_for('archivo.eliminar_archivo', id_archivo=archivo.id_archivo) if 'archivo.eliminar_archivo' in url_for._self_.url_map._rules_by_endpoint else '#' }}" class="btn-card btn-eliminar-card" title="Eliminar archivo">
-                            🗑️
-                        </a>
-                    </div>
+                            <div class="card-actions">
+                                <a href="{{ url_for('visualizar_archivo.detalle_archivo', id_curso=curso.id_curso, id_archivo=archivo.id_archivo) }}" class="btn-card btn-detalle">
+                                    Ver detalle
+                                </a>
+                                <a href="{{ url_for('eliminar_archivo.eliminar_archivo_route_handler', id_archivo=archivo.id_archivo) }}" class="btn-card btn-eliminar-card" title="Eliminar archivo">
+                                    🗑️
+                                </a>
+                            </div>
 
+                        </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="card-vacia">
-                <p>No hay archivos disponibles en este curso todavía.</p>
-            </div>
-        {% endif %}
-    </div>
+            {% else %}
+                <div class="card-vacia">
+                    <p>No hay archivos disponibles en este curso todavía.</p>
+                </div>
+            {% endif %}
+        </div>
 
-</div>
+    </div>
 {% endblock %}
