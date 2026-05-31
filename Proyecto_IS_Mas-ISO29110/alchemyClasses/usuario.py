@@ -418,12 +418,16 @@ def obtener_todos_usuarios():
         conn.close()
 
 def actualizar_rol_usuario(id_usuario, nuevo_rol, id_admin=None):
+    if not nuevo_rol:
+        return False
+    nuevo_rol = str(nuevo_rol).strip().lower()
+
     conn = get_connection()
     # Usamos dictionary=True para poder leer de forma limpia el nombre del afectado
     cursor = conn.cursor(dictionary=True)
 
     try:
-        # OBTENER EL NOMBRE COMPLETO DEL AFECTADO ANTES DE HACER CAMBIOS
+        # OBTENER EL NOMBRE COMPLETO ANTES DE HACER CAMBIOS
         cursor.execute("""
                        SELECT nombre, apellido_paterno, apellido_materno
                        FROM USUARIO WHERE id_usuario = %s
@@ -435,43 +439,26 @@ def actualizar_rol_usuario(id_usuario, nuevo_rol, id_admin=None):
         else:
             nombre_completo = f"ID {id_usuario}"
 
-        # Actualizar rol en la tabla madre USUARIO
+        # Actualizar rol en la tabla USUARIO
         cursor.execute("""
-            UPDATE USUARIO
-            SET rol = %s
-            WHERE id_usuario = %s
+                       UPDATE USUARIO
+                       SET rol = %s
+                       WHERE id_usuario = %s
                        """, (nuevo_rol, id_usuario))
 
-        # Eliminar de TODAS las tablas relacionales de roles
-        cursor.execute("DELETE FROM ALUMNO WHERE id_usuario = %s", (id_usuario,))
-        cursor.execute("DELETE FROM PROFESOR WHERE id_usuario = %s", (id_usuario,))
-        cursor.execute("DELETE FROM ADMINISTRADOR WHERE id_usuario = %s", (id_usuario,))
-
-        # Insertar en la tabla correspondiente de especialización
-        if nuevo_rol.lower() == 'alumno':
-            cursor.execute("""
-                INSERT INTO ALUMNO (id_usuario)
-                VALUES (%s)
-                           """, (id_usuario,))
-
-        elif nuevo_rol.lower() == 'profesor':
-            cursor.execute("""
-                INSERT INTO PROFESOR (id_usuario)
-                VALUES (%s)
-                           """, (id_usuario,))
-
-        elif nuevo_rol.lower() == 'administrador':
-            cursor.execute("""
-                INSERT INTO ADMINISTRADOR (id_usuario)
-                VALUES (%s)
-                           """, (id_usuario,))
+        # En lugar de eliminar físicamente rompiendo restricciones FK, insertamos con IGNORE
+        # en la nueva tabla de especialización correspondiente.
+        if nuevo_rol == 'alumno':
+            cursor.execute("INSERT IGNORE INTO ALUMNO (id_usuario) VALUES (%s)", (id_usuario,))
+        elif nuevo_rol == 'profesor':
+            cursor.execute("INSERT IGNORE INTO PROFESOR (id_usuario) VALUES (%s)", (id_usuario,))
+        elif nuevo_rol == 'administrador':
+            cursor.execute("INSERT IGNORE INTO ADMINISTRADOR (id_usuario) VALUES (%s)", (id_usuario,))
 
         # DETERMINAR A QUIÉN LE PERTENECE ESTE EVENTO
-        # Si pasamos id_admin, se le asigna a él; si no, se guarda en el registro del afectado
         id_log_dueno = id_admin if id_admin else id_usuario
-        mensaje_detalle = f"Modificó el rol de {nombre_completo} a '{nuevo_rol.lower()}'"
+        mensaje_detalle = f"Modificó el rol de {nombre_completo} a '{nuevo_rol}'"
 
-        # Insertar directo en la tabla SESION (con ON DUPLICATE KEY UPDATE para tu historial cíclico)
         query_auditoria = """
             INSERT INTO SESION (id_usuario, status)
             VALUES (%s, %s)
@@ -481,7 +468,6 @@ def actualizar_rol_usuario(id_usuario, nuevo_rol, id_admin=None):
                           """
         cursor.execute(query_auditoria, (id_log_dueno, mensaje_detalle, mensaje_detalle))
 
-        # Confirmamos la transacción completa de forma segura
         conn.commit()
         return True
 
@@ -494,17 +480,19 @@ def actualizar_rol_usuario(id_usuario, nuevo_rol, id_admin=None):
         cursor.close()
         conn.close()
 
+
 def registrar_auditoria_sesion(id_usuario, accion_detalle):
     """Guarda la acción detallada aprovechando el nuevo tamaño VARCHAR(255)."""
     conn = get_connection()
     cursor = conn.cursor()
     try:
+
         query = """
-                INSERT INTO SESION (id_usuario, status)
-                VALUES (%s, %s)
-                ON DUPLICATE KEY UPDATE
-                    status = %s,
-                    ultima_conexion = CURRENT_TIMESTAMP \
+            INSERT INTO SESION (id_usuario, status)
+            VALUES (%s, %s)
+            ON DUPLICATE KEY UPDATE
+                status = %s,
+                ultima_conexion = CURRENT_TIMESTAMP \
                 """
         cursor.execute(query, (id_usuario, accion_detalle, accion_detalle))
         conn.commit()
