@@ -336,7 +336,7 @@ def registrar_inicio_sesion(id_usuario):
         conn.commit()
         return True
     except Exception as e:
-        print("❌ ERROR EN registrar_inicio_sesion:", e)
+        print("ERROR EN registrar_inicio_sesion:", e)
         return False
     finally:
         cursor.close()
@@ -358,7 +358,7 @@ def registrar_cierre_sesion(id_usuario):
         conn.commit()
         return True
     except Exception as e:
-        print("❌ ERROR EN registrar_cierre_sesion:", e)
+        print("ERROR EN registrar_cierre_sesion:", e)
         return False
     finally:
         cursor.close()
@@ -472,7 +472,7 @@ def actualizar_rol_usuario(id_usuario, nuevo_rol, id_admin=None):
         return True
 
     except Exception as e:
-        print("❌ ERROR EN actualizar_rol_usuario:", e)
+        print("ERROR EN actualizar_rol_usuario:", e)
         conn.rollback()
         return False
 
@@ -498,7 +498,7 @@ def registrar_auditoria_sesion(id_usuario, accion_detalle):
         conn.commit()
         return True
     except Exception as e:
-        print("❌ ERROR EN registrar_auditoria_sesion:", e)
+        print("ERROR EN registrar_auditoria_sesion:", e)
         return False
     finally:
         cursor.close()
