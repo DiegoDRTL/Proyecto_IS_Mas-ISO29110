@@ -158,8 +158,12 @@ def obtener_por_id(id_curso):
     cursor = conn.cursor(dictionary=True)
 
     cursor.execute("""
-        SELECT c.*,
-               c.nombre AS curso_nombre,
+        SELECT c.id_curso,
+               c.nombre,
+               c.estado,
+               c.capacidad,
+               c.descripcion,
+               c.id_usuario,
                u.nombre AS profesor_nombre,
                u.apellido_paterno,
                u.apellido_materno

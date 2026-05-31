@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, session
 from alchemyClasses import curso
 
-visualizarCurso_bp = Blueprint('course', __name__)
+visualizarCurso_bp = Blueprint('visualizar_curso', __name__)
 
 @visualizarCurso_bp.route('/cursos')
 def visualizar_cursos():

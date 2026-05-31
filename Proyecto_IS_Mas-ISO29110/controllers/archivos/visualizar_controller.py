@@ -13,7 +13,7 @@ def visualizar_archivos(id_curso):
     curso_actual = obtener_curso_por_id(id_curso)
     if not curso_actual:
         flash('Curso no existe', 'error')
-        return redirect(url_for('course.visualizar_cursos'))
+        return redirect(url_for('visualizar_curso.visualizar_cursos'))
 
     archivos = obtener_por_curso(id_curso)
     rol = session.get('rol')
@@ -34,7 +34,7 @@ def detalle_archivo(id_curso, id_archivo):
 
     if not curso_actual:
         flash('Curso no existe', 'error')
-        return redirect(url_for('course.visualizar_cursos'))
+        return redirect(url_for('visualizar_curso.visualizar_cursos'))
 
     archivo = obtener_por_id(id_archivo)
     if not archivo:
