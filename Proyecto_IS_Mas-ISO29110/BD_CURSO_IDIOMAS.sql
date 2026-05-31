@@ -65,7 +65,7 @@ CREATE TABLE CORREO_USUARIO (
 -- =====================
 CREATE TABLE SESION (
   id_usuario INT PRIMARY KEY,
-  status VARCHAR(20),
+  status VARCHAR(255),
   FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario)
   ON DELETE CASCADE
   ON UPDATE CASCADE
