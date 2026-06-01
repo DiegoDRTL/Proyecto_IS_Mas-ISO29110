@@ -6,7 +6,6 @@ duplicados y la persistencia en la base de datos a través de SQLAlchemy.
 """
 
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-# from werkzeug.security import generate_password_hash | Para fines practicos descartamos esta paqueteria y dejamos la contrasena como un string simple
 from pydantic import ValidationError
 
 # Importación de las funciones del modelo
@@ -47,27 +46,22 @@ def procesarRegistro():
     Pasa los datos crudos del formulario a un esquema de Pydantic (User_form)
     para su validación. Verifica que el correo no esté registrado y crea
     el usuario en la base de datos con la contraseña en texto plano.
-
-    Maneja excepciones de validación de Pydantic y errores generales del servidor
-    notificándolos a través de mensajes flash.
     """
     try:
+        # Extraemos los datos del formulario directamente para asegurar su lectura
         datos_raw = request.form.to_dict()
         datos_validados = User_form(**datos_raw)
 
         if correo_exists(datos_validados.correo):
             return manejarErrorValidacion('El correo electrónico ya está registrado.')
 
-        # password_encriptada = generate_password_hash(datos_validados.contrasena) | Encriptacion comentada para evitar que rebase el espacio asignado en la BD
-
-        # La contrasena se guarda en texto plano
         registro_exitoso = create_user(
             nombre_usuario=datos_validados.nombre,
             a_paterno=datos_validados.apellido_paterno,
             a_materno=datos_validados.apellido_materno,
             contrasena=datos_validados.contrasena,
             f_nacimiento=datos_validados.fecha_nacimiento,
-            rol='usuario',
+            rol='alumno',
             correo=datos_validados.correo,
             telefono=datos_validados.telefono
         )
@@ -75,7 +69,8 @@ def procesarRegistro():
         if not registro_exitoso:
             return manejarErrorValidacion('Error al guardar en la base de datos. Intente nuevamente.')
 
-        flash('Registro exitoso. Por favor inicia sesión.', 'realizado')
+        # Cambiado a 'error' o 'success' según manejes los estilos CSS de tus alertas flash
+        flash('Registro exitoso. Por favor inicia sesión.', 'success')
         return redirect(url_for('auth.login'))
 
     except ValidationError as e:
@@ -84,16 +79,12 @@ def procesarRegistro():
         return manejarErrorValidacion(f"Error en el campo '{campo}': {msg}")
 
     except Exception as e:
-        print(f"❌ Error interno en el controlador: {e}")
+        print(f"Error interno en el controlador: {e}")
         return manejarErrorValidacion("Error interno del servidor al procesar el registro.")
 
 
 def manejarErrorValidacion(mensaje):
-    """Muestra un mensaje de error mediante flash y vuelve a renderizar el registro.
-
-    Args:
-        mensaje (str): El texto explicativo del error que se le mostrará al usuario.
-    """
+    """Muestra un mensaje de error mediante flash y vuelve a renderizar el registro."""
     flash(mensaje, 'error')
     return render_template('register.html')
 

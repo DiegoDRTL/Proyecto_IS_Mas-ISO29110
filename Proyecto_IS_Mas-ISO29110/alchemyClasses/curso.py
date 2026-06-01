@@ -368,20 +368,18 @@ def deleate_curso(id_curso):
     conn = get_connection()
     cursor = conn.cursor()
     try:
-        # En lugar de DELETE, cambiamos el estado a 'Eliminado'
-        cursor.execute(
-            """
-            UPDATE CURSO
-            SET estado = 'Eliminado'
-            WHERE id_curso = %s
-            """,
-            (id_curso,)
-        )
+        # Eliminamos primero los registros de las tablas hijas para evitar conflictos de integridad
+        cursor.execute("DELETE FROM INSCRIBE WHERE id_curso = %s", (id_curso,))
+        cursor.execute("DELETE FROM CURSO_ARCHIVO WHERE id_curso = %s", (id_curso,))
+
+        # borramos el curso de la tabla principal de forma segura
+        cursor.execute("DELETE FROM CURSO WHERE id_curso = %s", (id_curso,))
+
         conn.commit()
         return True
     except Exception as e:
         conn.rollback()
-        print("ERROR AL DAR DE BAJA LÓGICA EL CURSO:", e)
+        print("ERROR AL ELIMINAR EL CURSO Y SUS RELACIONES:", e)
         return False
     finally:
         cursor.close()

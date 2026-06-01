@@ -150,7 +150,7 @@
 
         .course-card p {
             font-size: 13px;
-            color: var(--texto-mutado);
+            color: var(--texto-mutated);
             margin-bottom: 20px;
             margin-top: auto;
         }
@@ -220,9 +220,13 @@
         </div>
 
         <div class="action-bar">
-            <a href="{{ url_for('subir_archivo.curso_route_handler', id_curso=curso.id_curso) }}" class="btn-nav btn-nav-primary">
-                <span>➕</span> Subir nuevo archivo
-            </a>
+            {# 🌟 ROL BLINDADO: El botón de subir archivo se oculta si el usuario es alumno #}
+            {% if session.get('rol') and session['rol']|lower != 'alumno' %}
+                <a href="{{ url_for('subir_archivo.curso_route_handler', id_curso=curso.id_curso) }}" class="btn-nav btn-nav-primary">
+                    <span>➕</span> Subir nuevo archivo
+                </a>
+            {% endif %}
+
             <a href="{{ url_for('dashboard.home') }}" class="btn-nav btn-nav-danger">
                 <span>📚</span> Volver a cursos
             </a>
@@ -234,9 +238,9 @@
                     {% for archivo in archivos %}
                         <div class="course-card">
 
-                    <span class="tag">
-                        {{ archivo.tipo_extension }}
-                    </span>
+                            <span class="tag">
+                                {{ archivo.tipo_extension }}
+                            </span>
 
                             <h4>{{ archivo.nombre }}</h4>
 
@@ -248,9 +252,13 @@
                                 <a href="{{ url_for('visualizar_archivo.detalle_archivo', id_curso=curso.id_curso, id_archivo=archivo.id_archivo) }}" class="btn-card btn-detalle">
                                     Ver detalle
                                 </a>
-                                <a href="{{ url_for('eliminar_archivo.archivo_route_handler', id_archivo=archivo.id_archivo) }}" class="btn-card btn-eliminar-card" title="Eliminar archivo">
-                                    🗑️
-                                </a>
+
+                                {# 🌟 ROL BLINDADO: El botón de eliminar archivo se oculta por completo para los alumnos #}
+                                {% if session.get('rol') and session['rol']|lower != 'alumno' %}
+                                    <a href="{{ url_for('eliminar_archivo.archivo_route_handler', id_archivo=archivo.id_archivo) }}" class="btn-card btn-eliminar-card" title="Eliminar archivo">
+                                        🗑️
+                                    </a>
+                                {% endif %}
                             </div>
 
                         </div>

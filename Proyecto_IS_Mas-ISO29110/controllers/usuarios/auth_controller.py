@@ -14,16 +14,16 @@ def login():
         return redirect(url_for('dashboard.home'))
 
     if request.method == 'POST':
-
-        id_usuario = request.form.get('id_usuario', '').strip()
+        identificador = request.form.get('identificador', '').strip()
         contrasena = request.form.get('contrasena', '').strip()
 
-        if not id_usuario or not contrasena:
+        # Validamos que no vengan vacíos
+        if not identificador or not contrasena:
             flash('Por favor completa todos los campos.', 'error')
             return render_template('login.html')
 
-        # verify_user ahora valida las credenciales Y escribe el log en SESION al mismo tiempo
-        user = verify_user(id_usuario, contrasena)
+        # Pasamos el identificador (puede ser el ID numérico o el correo electrónico)
+        user = verify_user(identificador, contrasena)
 
         if user:
             # SESIÓN PRINCIPAL EN FLASK COOKIES

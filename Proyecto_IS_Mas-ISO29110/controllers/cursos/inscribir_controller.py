@@ -43,7 +43,6 @@ def dar_baja():
         return redirect(url_for('auth.login'))
 
     try:
-
         id_usuario = session['id_usuario']
         id_curso = request.form.get('id_curso')
 

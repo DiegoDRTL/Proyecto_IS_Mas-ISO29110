@@ -37,38 +37,35 @@ def get_rol_usuarios():
     conn.close()
     return usuarios
 
-def verify_user(id_usuario, contrasena_ingresada):
-    """
-    Busca al usuario en la base de datos, compara la contraseña
-    e inserta de forma automática el log de auditoría en la tabla SESION.
-    """
+def verify_user(identificador, contrasena_ingresada):
+    """Busca al usuario por su ID o por su correo directamente en la tabla USUARIO."""
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True) # Usamos dictionary=True para acceder por nombre de columna
+    cursor = conn.cursor(dictionary=True)
     try:
-        # Buscamos al usuario por su ID o por su nombre de usuario en la tabla USUARIO
-        query = "SELECT id_usuario, nombre, contraseña, rol FROM USUARIO WHERE id_usuario = %s"
-        cursor.execute(query, (id_usuario,))
+        query = """
+                SELECT id_usuario, nombre, contraseña AS contrasena, rol, correo, telefono
+                FROM USUARIO
+                WHERE id_usuario = %s OR correo = %s \
+                """
+        cursor.execute(query, (identificador, identificador))
         user = cursor.fetchone()
 
-        # Si el usuario existe y la contraseña de la BD coincide con la ingresada
-        if user and user['contraseña'] == contrasena_ingresada:
-
-            # REGISTRO DE AUDITORÍA
+        # Validamos de forma segura usando la clave 'contrasena'
+        if user and user['contrasena'] == contrasena_ingresada:
             try:
-                # Usamos una consulta directa para no romper el cursor actual
                 query_auditoria = """
-                    INSERT INTO SESION (id_usuario, status)
-                    VALUES (%s, 'Inició Sesión en el Sistema')
-                    ON DUPLICATE KEY UPDATE
-                       status = 'Inició Sesión en el Sistema',
-                       ultima_conexion = CURRENT_TIMESTAMP \
+                                  INSERT INTO SESION (id_usuario, status)
+                                  VALUES (%s, 'Inició Sesión en el Sistema')
+                                      ON DUPLICATE KEY UPDATE
+                                                           status = 'Inició Sesión en el Sistema',
+                                                           ultima_conexion = CURRENT_TIMESTAMP \
                                   """
                 cursor.execute(query_auditoria, (user['id_usuario'],))
                 conn.commit()
             except Exception as ex_auditoria:
                 print(f"No se pudo guardar el log de inicio de sesión: {ex_auditoria}")
-                # No hacemos return False aquí para que el usuario sí pueda entrar al sistema incluso si falla el registro de la auditoria
-            return user  # Retorna el diccionario con los datos del usuario para la sesión
+
+            return user
 
         return None
     except Exception as e:
@@ -86,17 +83,15 @@ def create_user(nombre_usuario, a_paterno, a_materno,
     cursor = conn.cursor()
 
     try:
-
-        # =========================
-        # INSERTAR EN USUARIO
-        # =========================
+        # ====================================================================
+        # 1. INSERTAR EN USUARIO (Ahora con columnas de correo y teléfono)
+        # ====================================================================
         cursor.execute(
             """
             INSERT INTO USUARIO
             (nombre, apellido_paterno, apellido_materno,
-             contraseña, fecha_nacimiento, rol)
-
-            VALUES (%s, %s, %s, %s, %s, %s)
+             contraseña, fecha_nacimiento, rol, correo, telefono)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (
                 nombre_usuario,
@@ -104,46 +99,20 @@ def create_user(nombre_usuario, a_paterno, a_materno,
                 a_materno,
                 contrasena,
                 f_nacimiento,
-                rol
+                rol,
+                correo,
+                telefono
             )
         )
 
         id_usuario = cursor.lastrowid
 
-        # =========================
-        # INSERTAR CORREO
-        # =========================
-        cursor.execute(
-            """
-            INSERT INTO CORREO_USUARIO
-            (id_usuario, correo)
-
-            VALUES (%s, %s)
-            """,
-            (id_usuario, correo)
-        )
-
-        # =========================
-        # INSERTAR TELEFONO
-        # =========================
-        cursor.execute(
-            """
-            INSERT INTO TELEFONO_USUARIO
-            (id_usuario, telefono)
-
-            VALUES (%s, %s)
-            """,
-            (id_usuario, telefono)
-        )
-
-        # =========================
-        # INSERTAR SEGÚN EL ROL
-        # =========================
-
+        # ====================================================================
+        # 2. INSERTAR SEGÚN EL ROL (Especialización)
+        # ====================================================================
         rol_normalizado = rol.strip().lower()
 
         if rol_normalizado == 'alumno':
-
             cursor.execute(
                 """
                 INSERT INTO ALUMNO (id_usuario)
@@ -153,7 +122,6 @@ def create_user(nombre_usuario, a_paterno, a_materno,
             )
 
         elif rol_normalizado == 'profesor':
-
             cursor.execute(
                 """
                 INSERT INTO PROFESOR (id_usuario)
@@ -163,7 +131,6 @@ def create_user(nombre_usuario, a_paterno, a_materno,
             )
 
         elif rol_normalizado == 'administrador':
-
             cursor.execute(
                 """
                 INSERT INTO ADMINISTRADOR (id_usuario)
@@ -173,7 +140,12 @@ def create_user(nombre_usuario, a_paterno, a_materno,
             )
 
         conn.commit()
-        registrar_auditoria_sesion(id_usuario, f"Creó un nuevo usuario con rol '{rol}'")
+
+        try:
+            registrar_auditoria_sesion(id_usuario, f"Creó un nuevo usuario con rol '{rol}'")
+        except Exception as e_auditoria:
+            print(f"Advertencia al registrar auditoría: {e_auditoria}")
+
         return id_usuario
 
     except Exception as e:
@@ -182,15 +154,15 @@ def create_user(nombre_usuario, a_paterno, a_materno,
         return False
 
     finally:
-
         cursor.close()
         conn.close()
-                        
+
 def correo_exists(correo):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT id_usuario FROM CORREO_USUARIO WHERE correo = %s", (correo,))
+        # Buscamos el correo directamente en la tabla unificada USUARIO
+        cursor.execute("SELECT id_usuario FROM USUARIO WHERE correo = %s", (correo,))
         user = cursor.fetchone()
         return user is not None
     finally:
@@ -446,8 +418,6 @@ def actualizar_rol_usuario(id_usuario, nuevo_rol, id_admin=None):
                        WHERE id_usuario = %s
                        """, (nuevo_rol, id_usuario))
 
-        # En lugar de eliminar físicamente rompiendo restricciones FK, insertamos con IGNORE
-        # en la nueva tabla de especialización correspondiente.
         if nuevo_rol == 'alumno':
             cursor.execute("INSERT IGNORE INTO ALUMNO (id_usuario) VALUES (%s)", (id_usuario,))
         elif nuevo_rol == 'profesor':
@@ -576,7 +546,7 @@ def obtener_logs_auditoria(limite=15):
 
         return resultados
     except Exception as e:
-        print("❌ ERROR EN obtener_logs_auditoria TRIPLE COMPLETA:", e)
+        print("ERROR EN obtener_logs_auditoria TRIPLE COMPLETA:", e)
         return []
     finally:
         cursor.close()

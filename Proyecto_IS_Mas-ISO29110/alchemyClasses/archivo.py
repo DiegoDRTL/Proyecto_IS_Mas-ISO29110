@@ -108,3 +108,46 @@ def get_archivo_by_name(nombre):
 
 def archivo_exists(nombre):
     return get_archivo_by_name(nombre) is not None
+
+from alchemyClasses.db import get_connection
+
+def obtener_archivos(id_curso, id_usuario):
+    """Obtiene los archivos de un curso únicamente si el alumno está inscrito en él."""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT a.*
+        FROM ARCHIVO a
+        JOIN CURSO_ARCHIVO ca ON a.id_archivo = ca.id_archivo
+        JOIN INSCRIBE i ON ca.id_curso = i.id_curso
+        WHERE ca.id_curso = %s AND i.id_usuario = %s
+    """, (id_curso, id_usuario))
+
+    archivos = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return archivos
+
+
+def obtener_ultimos_archivos_inscritos(id_usuario, limite=4):
+    """Obtiene los últimos archivos subidos globalmente, filtrando solo
+    aquellos de los cursos donde el alumno se encuentra inscrito."""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT a.*, c.nombre AS curso_nombre, ca.id_curso
+        FROM ARCHIVO a
+        JOIN CURSO_ARCHIVO ca ON a.id_archivo = ca.id_archivo
+        JOIN CURSO c ON ca.id_curso = c.id_curso
+        JOIN INSCRIBE i ON c.id_curso = i.id_curso
+        WHERE i.id_usuario = %s
+        ORDER BY a.fecha_subida DESC
+        LIMIT %s
+    """, (id_usuario, limite))
+
+    archivos = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return archivos

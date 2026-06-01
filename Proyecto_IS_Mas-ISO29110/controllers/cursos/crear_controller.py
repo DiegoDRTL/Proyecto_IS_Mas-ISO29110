@@ -25,7 +25,7 @@ def curso_route_handler():
         estado = (request.form.get('estado') or '').strip()
         descripcion = (request.form.get('descripcion') or '').strip()
 
-        # 📋 IMPRESIÓN DE DEPURACIÓN EN TERMINAL
+        # IMPRESIÓN DE DEPURACIÓN EN TERMINAL
         print("======== DATOS RECIBIDOS DEL FORMULARIO ========")
         print(f"Nombre extraído: '{nombre}'")
         print(f"Capacidad extraída: '{capacidad_raw}'")
@@ -96,7 +96,6 @@ def editar_curso_handler(id_curso):
         flash('Solo se pueden modificar cursos en estado "Cerrado" (Borrador).', 'error')
         return redirect(url_for('dashboard.home'))
 
-    # ✨ SOLUCIÓN AL CONFLICTO: Extraemos el nombre correcto del curso
     # utilizando el campo 'curso_nombre' que almacena tu lógica interna de base de datos
     if curso and 'curso_nombre' in curso:
         curso['nombre'] = curso['curso_nombre']

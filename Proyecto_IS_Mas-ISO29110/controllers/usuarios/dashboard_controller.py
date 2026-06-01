@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, session, redirect, url_for
 from alchemyClasses.curso import obtener_todos, obtener_por_usuario, obtener_disponibles, obtener_metricas_admin
 from alchemyClasses.usuario import obtener_usuarios_recientes
-
+from alchemyClasses.archivo import obtener_ultimos_archivos_inscritos
 dashboard_bp = Blueprint('dashboard', __name__)
 
 def login_required(f):
@@ -65,11 +65,15 @@ def home():
     # Recuperamos el catálogo total de cursos con estado 'Disponible' para que pueda elegir nuevos
     cursos_disponibles_plataforma = obtener_disponibles(id_actual)
 
+    # Llamamos a la función de tu archivo 'archivo.py'
+    ultimos_archivos_alumno = obtener_ultimos_archivos_inscritos(id_actual, limite=3)
+
     return render_template(
         'dashboard_alumno.html',
         nombre=nombre_usuario,
         rol=rol,
-        mis_cursos=cursos_inscritos_alumno,  # Se mapea con el panel 1 del HTML
-        cursos=cursos_disponibles_plataforma,  # Se mapea con el panel 2 del HTML
-        inscritos_ids=inscritos_ids
+        mis_cursos=cursos_inscritos_alumno,   # Se mapea con el panel 1 del HTML
+        cursos=cursos_disponibles_plataforma, # Se mapea con el panel 2 del HTML
+        inscritos_ids=inscritos_ids,
+        ultimos_archivos=ultimos_archivos_alumno
     )
