@@ -68,23 +68,38 @@ def delete_archivo_db(id_archivo):
 def create_archivo(nombre, tipo_extension, fecha_subida, ruta, id_curso):
     conn = get_connection()
     cursor = conn.cursor()
+
     try:
         cursor.execute(
-            "INSERT INTO ARCHIVO (nombre, tipo_extension, fecha_subida, ruta) VALUES (%s, %s, %s)",
+            """
+            INSERT INTO ARCHIVO
+            (nombre, tipo_extension, fecha_subida, ruta)
+            VALUES (%s, %s, %s, %s)
+            """,
             (nombre, tipo_extension, fecha_subida, ruta)
         )
-        conn.commit()
-        cursor.execute("SELECT LAST_INSERT_ID()")
-        id = cursor.fetchone
+
+        id_archivo = cursor.lastrowid
+
         cursor.execute(
-            "IINSERT INTO CURSO_ARCHIVO (id_curso, id_archivo) VALUES (%s, %s)",
-            (id_curso, id)
+            """
+            INSERT INTO CURSO_ARCHIVO
+            (id_curso, id_archivo)
+            VALUES (%s, %s)
+            """,
+            (id_curso, id_archivo)
         )
+
         conn.commit()
-        return id
+        
+        print("ERROR EN create_archivo:", e)
+        return id_archivo
+
     except Exception as e:
         conn.rollback()
+        print("ERROR EN create_archivo:", e)
         return False
+
     finally:
         cursor.close()
         conn.close()
