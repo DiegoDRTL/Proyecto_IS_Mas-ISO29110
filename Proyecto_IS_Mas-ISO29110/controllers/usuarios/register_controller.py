@@ -98,7 +98,7 @@ def procesarRegistro():
             return manejarErrorValidacion('Error al guardar en la base de datos. Intente nuevamente.')
 
         # Cambiado a 'error' o 'success' según manejes los estilos CSS de tus alertas flash
-        flash('Registro exitoso. Por favor inicia sesión.', 'success')
+        flash(f'Registro exitoso. ID de usuario asignado: {registro_exitoso}', 'success')
         return redirect(url_for('auth.login'))
 
     except ValidationError as e:
