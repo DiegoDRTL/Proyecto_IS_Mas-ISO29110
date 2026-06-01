@@ -1,3 +1,11 @@
+"""
+Conexion con la Base de datos
+
+Este Modelo se encarga de conectar la base de datos con el sistema.
+Hace uso de un archivo .env que contiene la contraseña, usuario y nombre de la BD
+para guardar los secretos.
+"""
+
 import mysql.connector
 import os
 

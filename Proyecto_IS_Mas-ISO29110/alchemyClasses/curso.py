@@ -1,6 +1,10 @@
 from alchemyClasses.db import get_connection
 
 def get_curso_by_id(id_curso):
+    """
+    Pendiente
+    Obtiene toda la informacion del id curso ingresado
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -18,6 +22,9 @@ def get_curso_by_id(id_curso):
 
 
 def get_curso_by_name(nombre):
+    """
+    Obtiene toda la informacion de un curso usando su nombre
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -35,9 +42,16 @@ def get_curso_by_name(nombre):
 
 
 def curso_exists(nombre):
+    """
+    Comprueba si ya existe en la BD un curso con el mismo nombre ingresado
+    """
     return get_curso_by_name(nombre) is not None
 
 def create_course(nombre, capacidad, estado, descripcion, id_usuario):
+    """
+    Con la informacion ingresada se registra un nuevo curso en la BD
+    Devuelve el ID del curso en caso de exito
+    """
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -81,6 +95,10 @@ def create_course(nombre, capacidad, estado, descripcion, id_usuario):
         conn.close()
 
 def obtener_todos():
+    """
+    Obtiene la informacion de todos los cursos en el sistema
+    Regresa la informacion en formato de diccionario
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -103,6 +121,11 @@ def obtener_todos():
 
 
 def obtener_por_usuario(id_usuario, rol):
+    """
+    Regresa la informacion de los cursos segun el usuario que lo solicite
+    En caso de ser alumnos: regresa los cursos a los que esta inscrito
+    En caso de ser profesor: regresa los cursos que imparte
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -154,6 +177,10 @@ def obtener_por_usuario(id_usuario, rol):
     return cursos
 
 def obtener_por_id(id_curso):
+    """
+    Pendiente
+    Obtiene toda la informacion del id curso ingresado
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -182,6 +209,9 @@ def obtener_por_id(id_curso):
 
 
 def obtener_disponibles(id_alumno):
+    """
+    Regresa los cursos que todavia tienen cupo y no los tenga registrados el alumno con el ID ingresado
+    """
 
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -228,6 +258,10 @@ def obtener_disponibles(id_alumno):
     return cursos
 
 def obtener_archivos(id_curso):
+    """
+    Pendiente
+    Regresa una lista con los archivos que se encuentran en el curso
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -248,6 +282,9 @@ def obtener_archivos(id_curso):
 
 
 def alumno_existe(id_usuario):
+    """
+    Pendiente
+    """
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -265,6 +302,10 @@ def alumno_existe(id_usuario):
 
 
 def alumno_inscrito(id_usuario, id_curso):
+    """
+    Pendiente
+    Comprueba si el alumno con id ingresado ya se encuentra en el curso con id ingresado
+    """
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -284,6 +325,10 @@ def alumno_inscrito(id_usuario, id_curso):
 
 
 def curso_disponible(id_curso):
+    """
+    Pendiente
+    Conprueba si la capacidad actual del curso es menor al su limite
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -317,6 +362,9 @@ def curso_disponible(id_curso):
 
 
 def inscribir_alumno(id_usuario, identificador_curso):
+    """
+    Inscribe al alumno con el id dado en el curso que solicito
+    """
 
     if not alumno_existe(id_usuario):
         print("El alumno no existe")
@@ -365,6 +413,9 @@ def inscribir_alumno(id_usuario, identificador_curso):
         conn.close()
 
 def deleate_curso(id_curso):
+    """
+    Elimina toda la informacion de la BD del curso del ID dado
+    """
     conn = get_connection()
     cursor = conn.cursor()
     try:
@@ -386,6 +437,10 @@ def deleate_curso(id_curso):
         conn.close()
 
 def obtener_metricas_admin():
+    """
+    Obtiene un conteo con informacion importante para el administrador
+    Devuelve la cantidad de usuarios, cursos (activos e inactivos), inscripciones realizadas y profesores del sistema
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -437,6 +492,9 @@ def obtener_metricas_admin():
     return metricas
 
 def dar_baja_curso(id_usuario, id_curso):
+    """
+    Elimina la inscripcion de un alumno al curso con el id insertado
+    """
 
     conn = get_connection()
     cursor = conn.cursor()
@@ -519,6 +577,9 @@ def update_course_data(id_curso, nombre, capacidad, descripcion):
 
 
 def obtener_reporte_cursos():
+    """
+    Obtiene los registros con valores actuales de los cursos dentro sistema
+    """
 
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)

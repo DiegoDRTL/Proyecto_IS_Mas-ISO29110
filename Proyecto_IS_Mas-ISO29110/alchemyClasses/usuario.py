@@ -2,6 +2,7 @@ from alchemyClasses.db import get_connection
 
 
 def get_user(id_usuario):
+    """Dado el Id de un usuario regresa toda la informacion de ese usuario"""
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM USUARIO WHERE id_usuario = %s", (id_usuario,))
@@ -10,25 +11,8 @@ def get_user(id_usuario):
     conn.close()
     return user
 
-def get_correo(id_usuario):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT correo FROM CORREO_USUARIO WHERE id_usuario = %s", (id_usuario,))
-    correo = cursor.fetchone()
-    cursor.close()
-    conn.close()
-    return correo
-
-def get_telefono(id_usuario):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT telefono FROM TELEFONO_USUARIO WHERE id_usuario = %s", (id_usuario,))
-    telefono = cursor.fetchone()
-    cursor.close()
-    conn.close()
-    return telefono
-
 def get_rol_usuarios():
+    """Pendiente"""
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM USUARIO WHERE rol = 'usuario'")
@@ -78,6 +62,10 @@ def verify_user(identificador, contrasena_ingresada):
 def create_user(nombre_usuario, a_paterno, a_materno,
                 contrasena, f_nacimiento,
                 rol, correo, telefono):
+    """
+    Con los valores ingresados registra en la base de datos a un nuevo usuario.
+    Regresa el Id con el que quedo registrado en caso de exito
+    """
 
     conn = get_connection()
     cursor = conn.cursor()
@@ -141,6 +129,9 @@ def create_user(nombre_usuario, a_paterno, a_materno,
 
         conn.commit()
 
+        # ====================================================================
+        # 3. Registra en auditoria la accion realizada (visible para el Administrador)
+        # ====================================================================
         try:
             registrar_auditoria_sesion(id_usuario, f"Creó un nuevo usuario con rol '{rol}'")
         except Exception as e_auditoria:
@@ -158,6 +149,9 @@ def create_user(nombre_usuario, a_paterno, a_materno,
         conn.close()
 
 def correo_exists(correo):
+    """
+    Comprueba si el correo ingresado ya se encuentra registrado por otro usuario
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -170,6 +164,10 @@ def correo_exists(correo):
         conn.close()
 
 def deleate_user(id_usuario):
+    """
+    pendiente
+    Dado un ID de usuario se elimina toda la informacion del usuario en cuestion
+    """
     conn = get_connection()
     cursor = conn.cursor()
     try:
@@ -188,6 +186,9 @@ def deleate_user(id_usuario):
         conn.close()
 
 def assign_rol(id_usuario, rol):
+    """
+    Pendiente
+    """
     conn = get_connection()
     cursor = conn.cursor()
     user = get_user(id_usuario)
@@ -219,6 +220,9 @@ def assign_rol(id_usuario, rol):
 
 
 def user_exists(nombre_usuario):
+    """
+    Comprueba si ya existe un usuario con el mismo nombre que se ingresa
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -233,6 +237,10 @@ def user_exists(nombre_usuario):
 #Parte para Caso Uso: Eliminar Profesor
 
 def obtener_profesor():
+    """
+    Pendiente
+    Regresa toda la informacion de los usuario con el rol Profesor
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("""
@@ -247,7 +255,9 @@ def obtener_profesor():
     return profesores
 
 def eliminar_usuario(id_usuario):
-
+    """
+    Dado un ID de usuario se elimina toda la informacion del usuario en cuestion
+    """
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -358,6 +368,10 @@ def obtener_usuarios_recientes(limite=4):
         conn.close()
 
 def obtener_todos_usuarios():
+    """
+    Pendiente
+    Se obtiene la informacion de todos los usuario registrados en el sistema
+    """
 
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -390,6 +404,11 @@ def obtener_todos_usuarios():
         conn.close()
 
 def actualizar_rol_usuario(id_usuario, nuevo_rol, id_admin=None):
+    """
+    Pendiente
+    Actualiza el rol de un usuario por uno nuevo
+    A su vez se guarda un registro del administrador que realizo esta accion
+    """
     if not nuevo_rol:
         return False
     nuevo_rol = str(nuevo_rol).strip().lower()

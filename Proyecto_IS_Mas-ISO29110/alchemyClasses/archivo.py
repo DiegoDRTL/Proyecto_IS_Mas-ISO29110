@@ -1,6 +1,9 @@
 from alchemyClasses.db import get_connection
 
 def get_archivo(id_archivo):
+    """
+    Obtiene la informacion del archivo con el ID insertado
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM ARCHIVO WHERE id_archivo = %s", (id_archivo,))
@@ -66,6 +69,10 @@ def delete_archivo_db(id_archivo):
         conn.close()
 
 def create_archivo(nombre, tipo_extension, fecha_subida, ruta, id_curso):
+    """
+    Con la informacion insertada se registra un nuevo archivo en la BD
+    En caso de exito regresa el ID donde se guardo la informacion del archivo
+    """
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -105,6 +112,10 @@ def create_archivo(nombre, tipo_extension, fecha_subida, ruta, id_curso):
         conn.close()
 
 def get_archivo_by_name(nombre):
+    """
+    Pendiente
+    Regresa la informacion de un archivo por su nombre
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -122,9 +133,11 @@ def get_archivo_by_name(nombre):
 
 
 def archivo_exists(nombre):
+    """
+    Comprueba si ya existe en la BD un archivo con el mismo nombre insertado
+    """
     return get_archivo_by_name(nombre) is not None
 
-from alchemyClasses.db import get_connection
 
 def obtener_archivos(id_curso, id_usuario):
     """Obtiene los archivos de un curso únicamente si el alumno está inscrito en él."""
