@@ -1,15 +1,28 @@
+"""Módulo de controladores para la eliminación segura de archivos adjuntos.
+
+Este módulo define el Blueprint `eliminar_archivo` y gestiona el flujo de control
+para la baja de recursos multimedia vinculados a los cursos, regulando tanto la
+confirmación previa del usuario en la interfaz como la llamada a la persistencia.
+"""
+
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-
-# Importamos las funciones del modelo recién estructuradas
 from alchemyClasses.archivo import get_archivo, delete_archivo_db
-
-# Definimos el blueprint para la gestión de archivos
 eliminarArchivo_bp = Blueprint('eliminar_archivo', __name__)
 
 @eliminarArchivo_bp.route('/archivo/eliminar/<int:id_archivo>', methods=['GET', 'POST'])
 def archivo_route_handler(id_archivo):
-    """
-    Manejador de ruta principal que deriva el flujo según el método HTTP.
+    """Manejador de ruta principal que deriva el flujo según el método HTTP.
+
+    Valida preventivamente que el cliente cuente con una sesión activa en el
+    servidor. Si la petición es POST, extrae la intención del formulario para
+    procesar la confirmación; si es GET, despacha la solicitud de renderizado.
+
+    Args:
+        id_archivo (int): Identificador único del archivo que se desea gestionar.
+
+    Returns:
+        Response: Redirección a la pantalla de autenticación si no hay sesión,
+            o la delegación del flujo a las funciones secundarias del módulo.
     """
     # Protección de ruta: Validar sesión activa
     if 'id_usuario' not in session:
@@ -24,9 +37,18 @@ def archivo_route_handler(id_archivo):
 
 
 def solicitarEliminacion(id_archivo):
-    """
-    Muestra la vista de confirmación antes de proceder al borrado.
-    Verifica que el recurso realmente exista antes de pintar la pantalla.
+    """Muestra la vista de confirmación en la interfaz antes de borrar.
+
+    Consulta al modelo para comprobar la existencia real del recurso. Si el
+    archivo es localizado, sirve la plantilla de confirmación inyectándole los
+    metadatos del archivo correspondiente.
+
+    Args:
+        id_archivo (int): Identificador numérico del registro del archivo.
+
+    Returns:
+        Response: Plantilla HTML 'eliminar_archivo.html' si el recurso existe,
+            o redirección al inicio mediante el manejador de excepciones.
     """
     archivo = get_archivo(id_archivo)
     if not archivo:
@@ -36,9 +58,20 @@ def solicitarEliminacion(id_archivo):
 
 
 def procesarConfirmacionDeUsuario(id_archivo, accionBoton):
-    """
-    Determina el camino a seguir basándose en la decisión final del usuario
-    en el formulario (Confirmar / Cancelar).
+    """Evalúa la acción del formulario basándose en la decisión del usuario.
+
+    Intervienen dos caminos posibles de ejecución: si el usuario presiona
+    'cancelar', el proceso aborta devolviendo un aviso; si presiona
+    'confirmar', se autoriza la llamada al motor de eliminación física.
+
+    Args:
+        id_archivo (int): Identificador numérico del archivo en cuestión.
+        accionBoton (str | None): Cadena de texto recuperada del input 'accion'
+            del formulario enviado en el POST.
+
+    Returns:
+        Response: Redirección al home con estado informativo si se cancela,
+            o la ejecución de la baja definitiva en la base de datos.
     """
     if accionBoton == 'cancelar':
         flash('Eliminación del archivo cancelada.', 'info')
@@ -51,8 +84,18 @@ def procesarConfirmacionDeUsuario(id_archivo, accionBoton):
 
 
 def ejecutarBorradoOPuntoFisico(id_archivo):
-    """
-    Se conecta con el modelo para ejecutar la sentencia de borrado de forma segura.
+    """Conecta con la capa de datos para suprimir el registro de forma segura.
+
+    Realiza una doble validación de consistencia asegurando que el archivo no
+    haya sido eliminado por otro subproceso en paralelo y, posteriormente,
+    invoca la rutina SQL encargada de eliminar el registro de la base de datos.
+
+    Args:
+        id_archivo (int): Clave primaria del archivo a suprimir.
+
+    Returns:
+        Response: Redirección al dashboard con un mensaje flash de éxito tras la
+            operación, o reenvío al gestor de fallas ante percances de ejecución.
     """
     try:
         # Doble verificación de existencia previa
@@ -75,9 +118,17 @@ def ejecutarBorradoOPuntoFisico(id_archivo):
 
 
 def manejarExcepcionBorado(codigoError):
-    """
-    Centraliza el control de fallas lógicas o de infraestructura en el proceso de borrado,
-    notificando al usuario.
+    """Centraliza e intercepta los fallos lógicos surgidos durante el proceso.
+
+    Notifica al usuario mediante alertas visuales (flash) la razón exacta por
+    la cual no pudo completarse el borrado, impidiendo el quiebre abrupto de
+    la aplicación web y redirigiéndolo al área principal de forma segura.
+
+    Args:
+        codigoError (str): Mensaje o código de error descriptivo del incidente.
+
+    Returns:
+        Response: Redirección al endpoint de inicio del dashboard.
     """
     flash(codigoError, 'error')
     return redirect(url_for('dashboard.home'))
