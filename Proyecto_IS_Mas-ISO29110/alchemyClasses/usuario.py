@@ -165,7 +165,7 @@ def correo_exists(correo):
 
 def deleate_user(id_usuario):
     """
-    pendiente
+    Pendiente
     Dado un ID de usuario se elimina toda la informacion del usuario en cuestion
     """
     conn = get_connection()

@@ -36,7 +36,7 @@ def archivo_grande(error):
             el código de estado HTTP 413.
     """
     flash("El archivo supera el limite de 16MB")
-    return redirect(url_for('archivos.visualizar_archivos')), 413
+    return redirect(url_for('visualizar_archivo.visualizar_archivos')), 413
 
 
 @subirArchivo_bp.route('/archivo/subir/<int:id_curso>', methods=['GET', 'POST'])
