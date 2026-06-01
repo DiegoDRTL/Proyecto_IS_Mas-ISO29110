@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, session, flash
 from alchemyClasses.archivo import obtener_por_curso, obtener_por_id
 from alchemyClasses.curso import obtener_por_id as obtener_curso_por_id
+from flask import send_file
 
 
 visualizarArchivo_bp = Blueprint('visualizar_archivo', __name__)
@@ -50,4 +51,21 @@ def detalle_archivo(id_curso, id_archivo):
         archivo=archivo,
         curso=curso_actual,
         rol=rol
+    )
+    
+@visualizarArchivo_bp.route('/archivo/ver/<int:id_archivo>')
+def ver_archivo(id_archivo):
+
+    if 'id_usuario' not in session:
+        return redirect(url_for('auth.login'))
+
+    archivo = obtener_por_id(id_archivo)
+
+    if not archivo:
+        flash('Archivo no encontrado', 'error')
+        return redirect(url_for('visualizar_curso.visualizar_cursos'))
+
+    return send_file(
+        archivo['ruta'],
+        as_attachment=False
     )

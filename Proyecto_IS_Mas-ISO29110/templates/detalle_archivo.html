@@ -167,8 +167,16 @@
 
         {% if archivo.ruta %}
         <div class="detail-row">
-            <span class="detail-label">Ruta guardada</span>
-            <span class="detail-value">{{ archivo.ruta }}</span>
+            <span class="detail-label">Archivo</span>
+
+            <a
+                href="{{ url_for('visualizar_archivo.ver_archivo',
+                         id_archivo=archivo.id_archivo) }}"
+                target="_blank"
+                class="btn btn-primary"
+            >
+                📄 Abrir archivo
+            </a>
         </div>
         {% endif %}
 
