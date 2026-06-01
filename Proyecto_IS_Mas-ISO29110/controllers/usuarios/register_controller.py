@@ -1,8 +1,11 @@
-"""Módulo de autenticación para el registro de nuevos usuarios en la aplicación.
+"""
+Módulo de registro de usuarios.
 
-Este módulo define el Blueprint 'register' y gestiona el flujo de registro,
-incluyendo la validación de datos con Pydantic, la verificación de correos
-duplicados y la persistencia en la base de datos a través de SQLAlchemy.
+Este controlador gestiona el proceso de registro de nuevos usuarios en el
+sistema, incluyendo la validación de datos, creación de cuentas, manejo de
+errores y control del flujo de registro.
+
+Permite iniciar, procesar o cancelar el registro de usuarios.
 """
 
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
@@ -17,11 +20,18 @@ registrarUsuario_bp = Blueprint('register', __name__)
 
 @registrarUsuario_bp.route('/register', methods=['GET', 'POST'])
 def register():
-    """Gestiona la ruta principal de registro de usuarios.
+    """Gestiona el proceso de registro de nuevos usuarios.
 
-    Redirige al dashboard si el usuario ya está autenticado. Si la petición
-    es POST, evalúa si se canceló la acción o si se debe procesar el formulario.
-    Si es GET, inicia el renderizado del formulario.
+    Redirige al dashboard si el usuario ya se encuentra autenticado.
+    Si la solicitud es POST, evalúa si la acción corresponde a una
+    cancelación del registro o al procesamiento del formulario de
+    creación de usuario. En caso de ser GET, muestra la vista inicial
+    del formulario de registro.
+
+    Returns:
+        Response: Redirección al dashboard si el usuario ya está
+            autenticado, procesamiento del registro si es POST o
+            renderizado del formulario de registro si es GET.
     """
     if 'id_usuario' in session:
         return redirect(url_for('dashboard.home'))
@@ -34,18 +44,36 @@ def register():
 
     return iniciarProcesoRegistro()
 
-
 def iniciarProcesoRegistro():
-    """Renderiza la plantilla del formulario de registro para peticiones GET."""
+    """Muestra el formulario de registro de usuarios.
+
+    Renderiza la plantilla correspondiente al formulario de registro,
+    utilizado cuando el usuario accede mediante una solicitud GET.
+
+    Returns:
+        Response: Plantilla del formulario de registro de usuarios.
+    """
     return render_template('register.html')
 
-
 def procesarRegistro():
-    """Procesa, valida y almacena los datos enviados en el formulario de registro.
+    """Procesa la creación de un nuevo usuario en el sistema.
 
-    Pasa los datos crudos del formulario a un esquema de Pydantic (User_form)
-    para su validación. Verifica que el correo no esté registrado y crea
-    el usuario en la base de datos con la contraseña en texto plano.
+    Valida los datos enviados desde el formulario de registro mediante
+    un esquema Pydantic. Verifica que el correo no esté previamente
+    registrado y, si la validación es exitosa, crea el usuario en la
+    base de datos. También gestiona errores de validación y errores
+    internos del servidor.
+
+    Returns:
+        Response: Redirección al login cuando el registro es exitoso o
+            respuesta generada por el manejador de errores en caso de
+            fallo de validación o error interno.
+
+    Raises:
+        ValidationError: Puede ocurrir durante la validación del esquema
+            ``User_form``. Es capturada y manejada internamente.
+        Exception: Cualquier otro error inesperado durante el proceso de
+            registro es capturado y gestionado.
     """
     try:
         # Extraemos los datos del formulario directamente para asegurar su lectura
@@ -82,14 +110,33 @@ def procesarRegistro():
         print(f"Error interno en el controlador: {e}")
         return manejarErrorValidacion("Error interno del servidor al procesar el registro.")
 
-
 def manejarErrorValidacion(mensaje):
-    """Muestra un mensaje de error mediante flash y vuelve a renderizar el registro."""
+    """Gestiona errores de validación durante el registro de usuarios.
+
+    Muestra un mensaje de error al usuario mediante el sistema de
+    notificaciones flash y vuelve a renderizar la vista de registro
+    para permitir corregir los datos ingresados.
+
+    Args:
+        mensaje (str): Mensaje descriptivo del error ocurrido durante
+            el proceso de registro.
+
+    Returns:
+        Response: Plantilla del formulario de registro con el mensaje
+            de error correspondiente.
+    """
     flash(mensaje, 'error')
     return render_template('register.html')
 
-
 def cancelarRegistro():
-    """Cancela el proceso actual de registro y redirige a la pantalla de login."""
+    """Cancela el proceso de registro de usuario.
+
+    Muestra un mensaje informando que el registro fue cancelado y
+    redirige al usuario a la pantalla de inicio de sesión.
+
+    Returns:
+        Response: Redirección a la vista de login después de cancelar
+            el registro.
+    """
     flash('Registro cancelado.', 'info')
     return redirect(url_for('auth.login'))

@@ -1,3 +1,27 @@
+"""
+Módulo de gestión de cursos del sistema.
+
+Este controlador maneja todo el ciclo de vida de los cursos dentro de la
+plataforma, incluyendo su creación, edición, actualización, cambio de estado
+y validación de datos.
+
+Funciones principales del módulo:
+
+- Creación de cursos con validación mediante Pydantic.
+- Cambio de estado entre "Abierto" y "Cerrado".
+- Edición de cursos únicamente en estado permitido.
+- Actualización de información de cursos existentes.
+- Manejo de errores de validación y mensajes al usuario.
+- Control de acceso basado en sesión y roles (profesor y administrador).
+
+El módulo interactúa con la capa de base de datos a través de funciones
+como creación, actualización, consulta y verificación de existencia de cursos,
+asegurando la integridad de los datos antes de persistirlos.
+
+También gestiona el flujo de la interfaz de usuario mediante renderizado de
+plantillas y redirecciones según el estado de la operación.
+"""
+
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from pydantic import ValidationError
 
@@ -9,6 +33,24 @@ crearCurso_bp = Blueprint('curso', __name__)
 
 @crearCurso_bp.route('/curso/crear', methods=['GET', 'POST'])
 def curso_route_handler():
+    """Gestiona la creación de cursos mediante solicitudes GET y POST.
+
+    Verifica que el usuario tenga una sesión activa y cuente con los
+    permisos necesarios para crear cursos. En solicitudes POST procesa
+    los datos enviados desde el formulario, realiza la limpieza y
+    validación básica de los campos, y delega la creación del curso a la
+    función correspondiente. En solicitudes GET inicia el flujo de
+    creación de cursos.
+
+    Returns:
+        Response: Respuesta HTTP correspondiente al resultado de la
+            operación solicitada, ya sea redirección, procesamiento de
+            creación o renderizado de la vista de creación.
+
+    Raises:
+        ValueError: Puede ocurrir durante la conversión del campo
+            capacidad a entero, aunque es manejada internamente.
+    """
     if 'id_usuario' not in session or session.get('rol') not in ['profesor', 'administrador']:
         flash('Acceso no autorizado.', 'error')
         return redirect(url_for('auth.login'))
@@ -25,7 +67,7 @@ def curso_route_handler():
         estado = (request.form.get('estado') or '').strip()
         descripcion = (request.form.get('descripcion') or '').strip()
 
-        # IMPRESIÓN DE DEPURACIÓN EN TERMINAL
+        # 📋 IMPRESIÓN DE DEPURACIÓN EN TERMINAL
         print("======== DATOS RECIBIDOS DEL FORMULARIO ========")
         print(f"Nombre extraído: '{nombre}'")
         print(f"Capacidad extraída: '{capacidad_raw}'")
@@ -51,9 +93,22 @@ def curso_route_handler():
 
     return iniciarCreacionCurso()
 
-# Cambio dinamico de estado (ABIERTO <=> CERRADO)
 @crearCurso_bp.route('/curso/cambiar-estado', methods=['POST'])
 def cambiar_estado_route_handler():
+    """Cambia el estado de un curso entre abierto y cerrado.
+
+    Verifica que el usuario tenga una sesión activa y los permisos
+    necesarios para realizar la operación. Obtiene el identificador
+    del curso y su estado actual desde el formulario, determina el
+    nuevo estado correspondiente y actualiza la información en la
+    base de datos. Finalmente, informa el resultado mediante mensajes
+    flash y redirige al panel principal.
+
+    Returns:
+        Response: Redirección al panel principal después de procesar
+            la solicitud, independientemente del resultado de la
+            operación.
+    """
     # Validación de seguridad del Rol
     if 'id_usuario' not in session or session.get('rol') not in ['profesor', 'administrador']:
         flash('Acceso no autorizado.', 'error')
@@ -84,6 +139,23 @@ def cambiar_estado_route_handler():
 
 @crearCurso_bp.route('/curso/editar/<int:id_curso>', methods=['GET'])
 def editar_curso_handler(id_curso):
+    """Muestra la vista de edición de un curso específico.
+
+    Verifica que el usuario tenga una sesión activa y cuente con los
+    permisos necesarios para editar cursos. Recupera la información
+    del curso a partir de su identificador y valida que se encuentre
+    en estado "Cerrado", ya que únicamente los cursos en dicho estado
+    pueden ser modificados. Posteriormente adapta el nombre del curso
+    para su uso en la plantilla y renderiza la vista de edición.
+
+    Args:
+        id_curso (int): Identificador único del curso que se desea editar.
+
+    Returns:
+        Response: Plantilla de edición del curso cuando la operación es
+            válida, o una redirección al inicio de sesión o al panel
+            principal en caso de error o falta de permisos.
+    """
     if 'id_usuario' not in session or session.get('rol') not in ['profesor', 'administrador']:
         flash('Acceso no autorizado.', 'error')
         return redirect(url_for('auth.login'))
@@ -101,8 +173,29 @@ def editar_curso_handler(id_curso):
         curso['nombre'] = curso['curso_nombre']
 
     return render_template('editar_curso.html', curso=curso)
+
 @crearCurso_bp.route('/curso/actualizar', methods=['POST'])
 def actualizar_curso_backend():
+    """Actualiza la información de un curso existente.
+
+    Verifica que el usuario tenga una sesión activa y cuente con los
+    permisos necesarios para realizar modificaciones. Obtiene los datos
+    enviados desde el formulario, realiza la conversión y limpieza de los
+    campos recibidos, valida la información mediante un modelo Pydantic
+    y actualiza los datos del curso en la base de datos. En caso de que
+    la validación falle, informa el error al usuario y lo redirige a la
+    vista de edición correspondiente.
+
+    Returns:
+        Response: Redirección al panel principal cuando la actualización
+            se realiza o procesa correctamente, o redirección a la vista
+            de edición si ocurre un error de validación.
+
+    Raises:
+        ValidationError: Puede producirse durante la validación de los
+            datos mediante el modelo ``Curso_form``. La excepción es
+            capturada y gestionada internamente.
+    """
     if 'id_usuario' not in session or session.get('rol') not in ['profesor', 'administrador']:
         flash('Acceso no autorizado.', 'error')
         return redirect(url_for('auth.login'))
@@ -142,13 +235,45 @@ def actualizar_curso_backend():
         flash(f"Error en campo '{error_detalle.get('loc')[0]}': {error_detalle.get('msg')}", 'error')
         return redirect(url_for('curso.editar_curso_handler', id_curso=id_curso))
 
-
 def iniciarCreacionCurso():
+    """Muestra la vista para la creación de un nuevo curso.
+
+    Obtiene el nombre del usuario autenticado desde la sesión y lo
+    envía a la plantilla correspondiente para personalizar la interfaz
+    de creación de cursos.
+
+    Returns:
+        Response: Plantilla de creación de curso renderizada con la
+            información del usuario actual.
+    """
     nombre_usuario = session.get('nombre') or session.get('usuario')
     return render_template('crear_curso.html', nombre=nombre_usuario)
 
-
 def procesarCreacion(datosCurso):
+    """Procesa la creación de un nuevo curso.
+
+    Valida los datos recibidos mediante un modelo Pydantic, verifica que
+    no exista previamente un curso con el mismo nombre y registra el
+    nuevo curso en la base de datos. Además, gestiona los mensajes de
+    éxito o error correspondientes y redirige al usuario según el
+    resultado de la operación.
+
+    Args:
+        datosCurso (dict): Diccionario que contiene los datos del curso
+            previamente procesados y preparados para validación.
+
+    Returns:
+        Response: Redirección al panel principal cuando la creación es
+            exitosa o respuesta generada por el manejador de errores en
+            caso de validación fallida o error interno.
+
+    Raises:
+        ValidationError: Puede producirse durante la validación de los
+            datos mediante el modelo ``Curso_form``. La excepción es
+            capturada y gestionada internamente.
+        Exception: Cualquier excepción no controlada durante el proceso
+            de creación es capturada y gestionada internamente.
+    """
     try:
         # Alimentamos a Pydantic con los campos explícitamente limpios y tipados
         datos_validados = Curso_form(**datosCurso)
@@ -187,12 +312,34 @@ def procesarCreacion(datosCurso):
         print(f"Error detectado en el controlador de cursos: {e}")
         return manejarErroresValidacion("Error interno del servidor al procesar la creación del curso.")
 
-
 def manejarErroresValidacion(codigoError):
+    """Gestiona los errores de validación durante la creación de cursos.
+
+    Muestra un mensaje de error al usuario mediante el sistema de
+    notificaciones flash y vuelve a renderizar la vista de creación
+    de cursos conservando la información del usuario autenticado.
+
+    Args:
+        codigoError (str): Mensaje descriptivo del error que será
+            mostrado al usuario.
+
+    Returns:
+        Response: Plantilla de creación de curso renderizada junto con
+            el mensaje de error correspondiente.
+    """
     flash(codigoError, 'error')
     nombre_usuario = session.get('nombre') or session.get('usuario')
     return render_template('crear_curso.html', nombre=nombre_usuario)
 
 def cancelarCreacion():
+    """Cancela el proceso de creación de un curso.
+
+    Informa al usuario que la operación de creación fue cancelada y lo
+    redirige al panel principal de la aplicación.
+
+    Returns:
+        Response: Redirección al panel principal después de cancelar la
+            creación del curso.
+    """
     flash('Creación del curso cancelada.', 'success')
     return redirect(url_for('dashboard.home'))

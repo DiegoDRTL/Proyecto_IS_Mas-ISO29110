@@ -1,3 +1,13 @@
+"""
+Módulo de dashboard principal del sistema.
+
+Este controlador gestiona la visualización del panel principal del sistema,
+adaptando la información mostrada según el rol del usuario autenticado.
+
+Incluye dashboards diferenciados para administradores, profesores y alumnos,
+mostrando métricas, cursos asignados, cursos disponibles y actividades recientes.
+"""
+
 from flask import Blueprint, render_template, session, redirect, url_for
 from alchemyClasses.curso import obtener_todos, obtener_por_usuario, obtener_disponibles, obtener_metricas_admin
 from alchemyClasses.usuario import obtener_usuarios_recientes
@@ -5,21 +15,48 @@ from alchemyClasses.archivo import obtener_ultimos_archivos_inscritos
 dashboard_bp = Blueprint('dashboard', __name__)
 
 def login_required(f):
-    """Decorador personalizado para proteger rutas que requieren autenticación."""
+    """Protege rutas que requieren autenticación de usuario.
+
+    Este decorador verifica si existe un usuario autenticado en la
+    sesión actual. Si no hay sesión activa, redirige al usuario a la
+    página de inicio de sesión. En caso contrario, permite la ejecución
+    de la función decorada.
+
+    Args:
+        f (Callable): Función de vista que será protegida por el
+            decorador de autenticación.
+
+    Returns:
+        Callable: Función envuelta que valida la sesión antes de
+            ejecutar la lógica original.
+    """
     from functools import wraps
+
     @wraps(f)
     def decorated(*args, **kwargs):
         if 'id_usuario' not in session:
             return redirect(url_for('auth.login'))
         return f(*args, **kwargs)
-    return decorated
 
+    return decorated
 
 @dashboard_bp.route('/dashboard')
 @login_required
 def home():
-    """Ruta única que carga el panel de control correspondiente según el rol del usuario."""
-    rol = str(session.get('rol')).strip().lower() # Normalizamos para evitar fallos por mayúsculas
+    """Muestra el panel de control principal según el rol del usuario.
+
+    Esta función determina el rol del usuario autenticado y carga la
+    vista correspondiente del dashboard. Dependiendo del rol, muestra
+    información específica para administradores, profesores o alumnos,
+    incluyendo métricas del sistema, cursos asignados o cursos
+    disponibles.
+
+    Returns:
+        Response: Plantilla del dashboard correspondiente al rol del
+            usuario autenticado, con los datos necesarios para su
+            visualización.
+    """
+    rol = str(session.get('rol')).strip().lower()  # Normalizamos para evitar fallos por mayúsculas
     nombre_usuario = session.get('nombre') or session.get('usuario')
     id_actual = session.get('id_usuario')
 
