@@ -96,10 +96,8 @@ def create_archivo(nombre, tipo_extension, fecha_subida, ruta, id_curso):
             """,
             (id_curso, id_archivo)
         )
-
+ 
         conn.commit()
-        
-        print("ERROR EN create_archivo:", e)
         return id_archivo
 
     except Exception as e:

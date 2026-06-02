@@ -492,28 +492,17 @@ def obtener_metricas_admin():
     return metricas
 
 def dar_baja_curso(id_usuario, id_curso):
-    """
-    Elimina la inscripcion de un alumno al curso con el id insertado
-    """
 
     conn = get_connection()
     cursor = conn.cursor()
 
     try:
 
-        # eliminar inscripción
         cursor.execute("""
             DELETE FROM INSCRIBE
             WHERE id_usuario = %s
             AND id_curso = %s
         """, (id_usuario, id_curso))
-
-        # devolver cupo al curso
-        cursor.execute("""
-            UPDATE CURSO
-            SET capacidad = capacidad + 1
-            WHERE id_curso = %s
-        """, (id_curso,))
 
         conn.commit()
 

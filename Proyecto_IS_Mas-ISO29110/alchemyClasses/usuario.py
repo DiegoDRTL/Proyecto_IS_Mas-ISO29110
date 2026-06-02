@@ -405,46 +405,102 @@ def obtener_todos_usuarios():
 
 def actualizar_rol_usuario(id_usuario, nuevo_rol, id_admin=None):
     """
-    Pendiente
-    Actualiza el rol de un usuario por uno nuevo
-    A su vez se guarda un registro del administrador que realizo esta accion
+    Actualiza el rol de un usuario por uno nuevo.
+    Además registra la acción realizada por el administrador.
     """
+
     if not nuevo_rol:
         return False
+
     nuevo_rol = str(nuevo_rol).strip().lower()
 
     conn = get_connection()
-    # Usamos dictionary=True para poder leer de forma limpia el nombre del afectado
     cursor = conn.cursor(dictionary=True)
 
     try:
-        # OBTENER EL NOMBRE COMPLETO ANTES DE HACER CAMBIOS
+
+        # Obtener información del usuario
         cursor.execute("""
-                       SELECT nombre, apellido_paterno, apellido_materno
-                       FROM USUARIO WHERE id_usuario = %s
-                       """, (id_usuario,))
+            SELECT nombre, apellido_paterno, apellido_materno, rol
+            FROM USUARIO
+            WHERE id_usuario = %s
+        """, (id_usuario,))
+
         usuario_afectado = cursor.fetchone()
 
-        if usuario_afectado:
-            nombre_completo = f"{usuario_afectado['nombre']} {usuario_afectado['apellido_paterno']} {usuario_afectado['apellido_materno']}".strip()
+        if not usuario_afectado:
+            return False
+
+        nombre_completo = (
+            f"{usuario_afectado['nombre']} "
+            f"{usuario_afectado['apellido_paterno']} "
+            f"{usuario_afectado['apellido_materno']}"
+        ).strip()
+
+        rol_actual = usuario_afectado['rol']
+
+        # Si es profesor y tiene cursos asignados no permitimos el cambio
+        if rol_actual == 'profesor' and nuevo_rol != 'profesor':
+
+            cursor.execute("""
+                SELECT COUNT(*) AS total
+                FROM CURSO
+                WHERE id_usuario = %s
+            """, (id_usuario,))
+
+            total_cursos = cursor.fetchone()['total']
+
+            if total_cursos > 0:
+                print("No se puede cambiar el rol: el profesor tiene cursos asignados")
+                return False
+
+        # Eliminar al usuario de todas las tablas de roles
+        cursor.execute(
+            "DELETE FROM ALUMNO WHERE id_usuario = %s",
+            (id_usuario,)
+        )
+
+        cursor.execute(
+            "DELETE FROM PROFESOR WHERE id_usuario = %s",
+            (id_usuario,)
+        )
+
+        cursor.execute(
+            "DELETE FROM ADMINISTRADOR WHERE id_usuario = %s",
+            (id_usuario,)
+        )
+
+        # Insertarlo en la tabla correspondiente al nuevo rol
+        if nuevo_rol == 'alumno':
+            cursor.execute(
+                "INSERT INTO ALUMNO (id_usuario) VALUES (%s)",
+                (id_usuario,)
+            )
+
+        elif nuevo_rol == 'profesor':
+            cursor.execute(
+                "INSERT INTO PROFESOR (id_usuario) VALUES (%s)",
+                (id_usuario,)
+            )
+
+        elif nuevo_rol == 'administrador':
+            cursor.execute(
+                "INSERT INTO ADMINISTRADOR (id_usuario) VALUES (%s)",
+                (id_usuario,)
+            )
+
         else:
-            nombre_completo = f"ID {id_usuario}"
+            print("Rol inválido")
+            return False
 
         # Actualizar rol en la tabla USUARIO
         cursor.execute("""
-                       UPDATE USUARIO
-                       SET rol = %s
-                       WHERE id_usuario = %s
-                       """, (nuevo_rol, id_usuario))
+            UPDATE USUARIO
+            SET rol = %s
+            WHERE id_usuario = %s
+        """, (nuevo_rol, id_usuario))
 
-        if nuevo_rol == 'alumno':
-            cursor.execute("INSERT IGNORE INTO ALUMNO (id_usuario) VALUES (%s)", (id_usuario,))
-        elif nuevo_rol == 'profesor':
-            cursor.execute("INSERT IGNORE INTO PROFESOR (id_usuario) VALUES (%s)", (id_usuario,))
-        elif nuevo_rol == 'administrador':
-            cursor.execute("INSERT IGNORE INTO ADMINISTRADOR (id_usuario) VALUES (%s)", (id_usuario,))
-
-        # DETERMINAR A QUIÉN LE PERTENECE ESTE EVENTO
+        # Registrar acción en la auditoría
         id_log_dueno = id_admin if id_admin else id_usuario
         mensaje_detalle = f"Modificó el rol de {nombre_completo} a '{nuevo_rol}'"
 
@@ -453,9 +509,13 @@ def actualizar_rol_usuario(id_usuario, nuevo_rol, id_admin=None):
             VALUES (%s, %s)
             ON DUPLICATE KEY UPDATE
                 status = %s,
-                ultima_conexion = CURRENT_TIMESTAMP \
-                          """
-        cursor.execute(query_auditoria, (id_log_dueno, mensaje_detalle, mensaje_detalle))
+                ultima_conexion = CURRENT_TIMESTAMP
+        """
+
+        cursor.execute(
+            query_auditoria,
+            (id_log_dueno, mensaje_detalle, mensaje_detalle)
+        )
 
         conn.commit()
         return True
@@ -468,7 +528,6 @@ def actualizar_rol_usuario(id_usuario, nuevo_rol, id_admin=None):
     finally:
         cursor.close()
         conn.close()
-
 
 def registrar_auditoria_sesion(id_usuario, accion_detalle):
     """Guarda la acción detallada aprovechando el nuevo tamaño VARCHAR(255)."""

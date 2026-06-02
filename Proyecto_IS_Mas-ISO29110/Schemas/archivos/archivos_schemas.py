@@ -91,10 +91,10 @@ class ArchivoModelo:
                 id_curso= id_curso_sd
             )
 
-            if registro_exitoso > 0:
+            if registro_exitoso:
                 return True, f"Guardado con exito y guardado en BD con fecha {fecha_actual}"
 
             else:
-                return False, f"Guardado con exito pero no se pudo subir a la BD"
+                return False, "No se pudo registrar en la BD"
         except Exception as e:
             return False, f"Error al procesar el archivo: {str(e)}"
