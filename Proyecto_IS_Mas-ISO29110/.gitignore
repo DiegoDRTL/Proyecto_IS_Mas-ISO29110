@@ -19,5 +19,8 @@ __pycache__/
 # Archivos de sistema
 .DS_Store
 
+# Carpeta donde se alojan los documentos subidos al sistema
+subidas/
+
 # Archivos de prueba
 prueba.py
