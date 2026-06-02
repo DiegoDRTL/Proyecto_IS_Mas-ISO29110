@@ -23,20 +23,24 @@ modelo_gestor = ArchivoModelo(CARPETA_DESTINO)
 
 @subirArchivo_bp.errorhandler(413)
 def archivo_grande(error):
-    """Captura el error HTTP 413 cuando el archivo excede la cuota del servidor.
+    """Gestiona archivos que exceden el tamaño máximo permitido.
 
-    Intercepta las excepciones del payload del request de Flask cuando el archivo
-    subido supera el umbral configurado de transferencia (ej. MAX_CONTENT_LENGTH).
+    Captura la excepción HTTP 413 generada por Flask cuando el usuario
+    intenta subir un archivo cuyo tamaño supera el límite configurado
+    por la aplicación. Muestra un mensaje de error mediante el sistema
+    de notificaciones flash y redirige al usuario al dashboard principal.
 
     Args:
-        error (Exception): Instancia de la excepción HTTP arrojada por Flask.
+        error (Exception): Excepción HTTP 413 generada por Flask al
+            detectar que el tamaño del archivo excede el límite
+            permitido.
 
     Returns:
-        tuple: Redirección forzada a la vista de los archivos adjuntos junto con
-            el código de estado HTTP 413.
+        Response: Redirección al dashboard principal con un mensaje
+            informando que el archivo supera el tamaño máximo permitido.
     """
-    flash("El archivo supera el limite de 16MB")
-    return redirect(url_for('visualizar_archivo.visualizar_archivos')), 413
+    flash("El archivo supera el límite permitido de 16 MB.", "error")
+    return redirect(url_for('dashboard.home'))
 
 
 @subirArchivo_bp.route('/archivo/subir/<int:id_curso>', methods=['GET', 'POST'])
