@@ -11,7 +11,7 @@ asegurando que los datos ingresados sean consistentes antes de ser almacenados.
 """
 
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from alchemyClasses.usuario import assign_rol, get_rol_usuarios, get_telefono, get_correo
+from alchemyClasses.usuario import assign_rol, get_rol_usuarios
 
 #definicion del blueprint
 create_bp = Blueprint('create', __name__)
