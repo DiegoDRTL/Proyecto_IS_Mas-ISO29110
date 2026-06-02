@@ -1,9 +1,19 @@
+"""
+Modelos de cursos
+
+Este modelo incluye todas las funciones que mandan a llamar los controladore de curso
+"""
 from alchemyClasses.db import get_connection
 
 def get_curso_by_id(id_curso):
     """
-    Pendiente
-    Obtiene toda la informacion del id curso ingresado
+    Obtiene toda la informacion del curso con el id ingresado
+
+    Args:
+        id_curso (int): Clave primaria del curso del cual se obtendra la informacion.
+
+    Returns:
+        Response: La informacion del curso en formato de diccionario.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -24,6 +34,12 @@ def get_curso_by_id(id_curso):
 def get_curso_by_name(nombre):
     """
     Obtiene toda la informacion de un curso usando su nombre
+
+    Args:
+        nombre (str): Nombre del curso del cual se obtendra la informacion.
+
+    Returns:
+        Response: La informacion del curso en formato de diccionario.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -44,6 +60,9 @@ def get_curso_by_name(nombre):
 def curso_exists(nombre):
     """
     Comprueba si ya existe en la BD un curso con el mismo nombre ingresado
+
+    Returns:
+        Response: True en caso de existir un curso con el mismo nombre en la BD.
     """
     return get_curso_by_name(nombre) is not None
 
@@ -51,6 +70,16 @@ def create_course(nombre, capacidad, estado, descripcion, id_usuario):
     """
     Con la informacion ingresada se registra un nuevo curso en la BD
     Devuelve el ID del curso en caso de exito
+
+    Args:
+        nombre (str): Nombre con el que se va a registrar el curso en la BD.
+        capacidad (int): Capacidad maxima que impuso el profesor para su curso
+        estado (str): Estado actual del curso (Abierto o Cerrado)
+        descripcion (str): Descripcion del curso proporcionada por el profesor
+        id_usuario (int): Clave primaria del profesor que crea el curso
+
+    Returns:
+        Response: True en caso de registrar con exito el curso en la BD, False en caso contrario.
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -97,7 +126,9 @@ def create_course(nombre, capacidad, estado, descripcion, id_usuario):
 def obtener_todos():
     """
     Obtiene la informacion de todos los cursos en el sistema
-    Regresa la informacion en formato de diccionario
+
+    Returns:
+        Response: La informacion de los cursos en formato de diccionario.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -123,8 +154,14 @@ def obtener_todos():
 def obtener_por_usuario(id_usuario, rol):
     """
     Regresa la informacion de los cursos segun el usuario que lo solicite
-    En caso de ser alumnos: regresa los cursos a los que esta inscrito
-    En caso de ser profesor: regresa los cursos que imparte
+
+    Args:
+        id_usuario (int): Clave primaria del usuario del cual se obtendra sus cursos.
+        rol (str): Cadena de texto con el rol del usuario.
+
+    Returns:
+        Response: En caso de ser alumnos: regresa los cursos a los que esta inscrito
+                  En caso de ser profesor: regresa los cursos que imparte
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -178,8 +215,13 @@ def obtener_por_usuario(id_usuario, rol):
 
 def obtener_por_id(id_curso):
     """
-    Pendiente
-    Obtiene toda la informacion del id curso ingresado
+    Obtiene toda la informacion del curso con el id ingresado
+
+    Args:
+        id_curso (int): Clave primaria del curso del cual se obtendra la informacion.
+
+    Returns:
+        Response: La informacion del curso en formato de diccionario.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -211,6 +253,12 @@ def obtener_por_id(id_curso):
 def obtener_disponibles(id_alumno):
     """
     Regresa los cursos que todavia tienen cupo y no los tenga registrados el alumno con el ID ingresado
+
+    Args:
+        id_alumno (int): Clave primaria del alumno para obtener los cursos a los que se puede inscribir.
+
+    Returns:
+        Response: La informacion de los curso en formato de diccionario.
     """
 
     conn = get_connection()
@@ -259,8 +307,13 @@ def obtener_disponibles(id_alumno):
 
 def obtener_archivos(id_curso):
     """
-    Pendiente
     Regresa una lista con los archivos que se encuentran en el curso
+
+    Args:
+        id_curso (int): Clave primaria del curso del cual se obtendra sus archivos.
+
+    Returns:
+        Response: La informacion de los archivos del curso en formato de diccionario.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -283,7 +336,13 @@ def obtener_archivos(id_curso):
 
 def alumno_existe(id_usuario):
     """
-    Pendiente
+    Comprueba si el alumno del id ingresado se encuentra en el sistema
+
+    Args:
+        id_usuario (int): Clave primaria del usuario a verificar si existe.
+
+    Returns:
+        Response: True en caso de que exista el usuario en el sistema, False en caso contrario.
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -303,8 +362,14 @@ def alumno_existe(id_usuario):
 
 def alumno_inscrito(id_usuario, id_curso):
     """
-    Pendiente
     Comprueba si el alumno con id ingresado ya se encuentra en el curso con id ingresado
+
+    Args:
+        id_usuario (int): Clave primaria del usuario a verificar si se encuentra en el curso.
+        id_curso (int): Clave primaria del curso a verificar.
+
+    Returns:
+        Response: True en caso de que el usuario se encuentre en el curso, False en caso contrario.
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -326,8 +391,13 @@ def alumno_inscrito(id_usuario, id_curso):
 
 def curso_disponible(id_curso):
     """
-    Pendiente
     Conprueba si la capacidad actual del curso es menor al su limite
+
+    Args:
+        id_curso (int): Clave primaria del curso a verificar si aun tiene cupo.
+
+    Returns:
+        Response: True en caso de que aun tenga cupo el curso, False en caso contrario.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -364,6 +434,13 @@ def curso_disponible(id_curso):
 def inscribir_alumno(id_usuario, identificador_curso):
     """
     Inscribe al alumno con el id dado en el curso que solicito
+
+    Args:
+        id_usuario (int): Clave primaria del usuario que se va a inscribor en el curso.
+        identificador_curso (int): Clave primaria del curso al que se va a registrar el usuario.
+
+    Returns:
+        Response: True si la inscripcion al curso es exitoso, False en cualquier otro caso.
     """
 
     if not alumno_existe(id_usuario):
@@ -415,6 +492,12 @@ def inscribir_alumno(id_usuario, identificador_curso):
 def deleate_curso(id_curso):
     """
     Elimina toda la informacion de la BD del curso del ID dado
+
+    Args:
+        id_curso (int): Clave primaria del curso a eliminar de la BD.
+
+    Returns:
+        Response: True en caso de haber eliminado con exito el curso, False en cualquier otro caso.
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -439,7 +522,11 @@ def deleate_curso(id_curso):
 def obtener_metricas_admin():
     """
     Obtiene un conteo con informacion importante para el administrador
-    Devuelve la cantidad de usuarios, cursos (activos e inactivos), inscripciones realizadas y profesores del sistema
+    Devuelve la cantidad de usuarios, cursos (activos e inactivos)
+    inscripciones realizadas y profesores del sistema
+
+    Returns:
+        Response: Diccionario con los datos del sistema.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -492,6 +579,16 @@ def obtener_metricas_admin():
     return metricas
 
 def dar_baja_curso(id_usuario, id_curso):
+    """
+    Funcion que dado un usuario se elimina su inscripcion del curso correspondiente
+
+    Args:
+        id_usuario (int): Clave primaria del usario que se va a dar de baja.
+        id_curso (int): Clave primaria del curso del que se va a dar de baja el usuario.
+
+    Returns:
+        Response: True si se elimino la inscripcion del usuario, False en caso contrario.
+    """
 
     conn = get_connection()
     cursor = conn.cursor()
@@ -519,7 +616,16 @@ def dar_baja_curso(id_usuario, id_curso):
         conn.close()
 
 def update_course_status(id_curso, nuevo_estado):
-    """Cambia el estado de un curso (ej. de 'Abierto' a 'Cerrado' o viceversa)"""
+    """
+    Cambia el estado de un curso (ej. de 'Abierto' a 'Cerrado' o viceversa)
+    
+    Args:
+        id_curso (int): Clave primaria del curso al que se le cambiara su estado.
+        nuevo_estado (str): Estado al que sera cambiado el curso
+
+    Returns:
+        Response: True en caso de que el cambio de estado sea exitoso, False en caso contrario.
+    """
     conn = get_connection()
     cursor = conn.cursor()
     try:
@@ -542,7 +648,19 @@ def update_course_status(id_curso, nuevo_estado):
         conn.close()
 
 def update_course_data(id_curso, nombre, capacidad, descripcion):
-    """Actualiza los detalles de un curso en fase de borrador"""
+    """
+    Actualiza los detalles de un curso en fase de borrador
+
+    Args:
+        id_curso (int): Clave primaria del curso al que se le van a hacer modificaciones
+        nombre (str): Nombre con el que se va a actualizar el curso en la BD.
+        capacidad (int): Capacidad maxima actualizada que impuso el profesor para su curso
+        descripcion (str): Descripcion actualizada del curso proporcionada por el profesor
+
+    Returns:
+        Response: True en caso de que la actualizacion del curso sea exitosa en la BD
+                  False en caso contrario.
+    """
     conn = get_connection()
     cursor = conn.cursor()
     try:
@@ -568,6 +686,9 @@ def update_course_data(id_curso, nombre, capacidad, descripcion):
 def obtener_reporte_cursos():
     """
     Obtiene los registros con valores actuales de los cursos dentro sistema
+
+    Returns:
+        Response: La informacion de los curso del sistema en formato de diccionario.
     """
 
     conn = get_connection()

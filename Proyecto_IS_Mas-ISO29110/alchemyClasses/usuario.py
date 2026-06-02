@@ -1,8 +1,21 @@
+"""
+Modelos de usuarios
+
+Este Modelo incluye todas las funciones que mandan a llamar los controladores de usuario
+"""
 from alchemyClasses.db import get_connection
 
 
 def get_user(id_usuario):
-    """Dado el Id de un usuario regresa toda la informacion de ese usuario"""
+    """
+    Dado el Id de un usuario regresa toda la informacion de ese usuario
+    
+    Args:
+        id_usuario (int): Clave primaria del Usuario del cual se obtendra la informacion.
+
+    Returns:
+        Response: La informacion del usuario en formato de diccionario.
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM USUARIO WHERE id_usuario = %s", (id_usuario,))
@@ -12,7 +25,12 @@ def get_user(id_usuario):
     return user
 
 def get_rol_usuarios():
-    """Pendiente"""
+    """
+    Obtiene de la BD todas la ocurrencias con rol de usuario
+
+    Returns:
+        Response: La informacion de los usuarios en formato de diccionario.
+    """
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM USUARIO WHERE rol = 'usuario'")
@@ -22,7 +40,18 @@ def get_rol_usuarios():
     return usuarios
 
 def verify_user(identificador, contrasena_ingresada):
-    """Busca al usuario por su ID o por su correo directamente en la tabla USUARIO."""
+    """
+    Busca al usuario por su ID o por su correo directamente en la tabla USUARIO y comprueba si su
+    contraseña conincide con la ingresada en la BD.
+    
+    Args:
+        identificador (int, str): Clave primaria o correo del Usuario del cual se obtendra la informacion.
+        contrasena_ingresada (str): Cadena de texto con la contraseña del usuario
+
+    Returns:
+        Response: En caso de coincidir las contraseñas manda la informacion del usuario en
+                  formato de diccionario, en caso contrario regresa None.
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -65,6 +94,19 @@ def create_user(nombre_usuario, a_paterno, a_materno,
     """
     Con los valores ingresados registra en la base de datos a un nuevo usuario.
     Regresa el Id con el que quedo registrado en caso de exito
+
+    Args:
+        nombre_usuario(str): Nombre con el que se registra el usuario
+        a_paterno (str): Apellido paterno del usuario
+        a_materno (str): Apellido materno del usuario
+        contrasena (str): Contraseña con la que queda registrado el usuario
+        f_nacimiento (date): Fecha de nacimiento en su formato MM/DD/AAAA
+        rol (str): Rol con el que se registra el usuario
+        correo (str): correo que inserto el usuario
+        telefono (str): Telefono que inserto el usuario
+
+    Returns:
+        Response: En caso de exito regresa el ID registrado en la BD, en otro caso regresa False.
     """
 
     conn = get_connection()
@@ -151,6 +193,13 @@ def create_user(nombre_usuario, a_paterno, a_materno,
 def correo_exists(correo):
     """
     Comprueba si el correo ingresado ya se encuentra registrado por otro usuario
+
+    Args:
+        Correo (str): Direccion de correo para comprobar si existe en la BD.
+
+    Returns:
+        Response: Regresa True en caso de haber encontrado un usuario con el correo ingresado
+        False en otro caso.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -165,8 +214,13 @@ def correo_exists(correo):
 
 def deleate_user(id_usuario):
     """
-    Pendiente
     Dado un ID de usuario se elimina toda la informacion del usuario en cuestion
+
+    Args:
+        id_usuario (int): Clave primaria del Usuario del cual se eliminara su informacion.
+
+    Returns:
+        Response: True si se pudo eliminar de la BD, False en otro caso.
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -187,7 +241,15 @@ def deleate_user(id_usuario):
 
 def assign_rol(id_usuario, rol):
     """
-    Pendiente
+    Actualiza el rol de un usuario por uno nuevo.
+
+    Args:
+        id_usuario (int): Clave primaria del Usuario al cual se le cambiara su rol.
+        rol (str): Cadena de texto con el nuevo rol que se va a asignar.
+
+    Returns:
+        Response: True si se pudo cambiar el rol del usuario objetivo
+                  False en caso contrario.
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -222,6 +284,12 @@ def assign_rol(id_usuario, rol):
 def user_exists(nombre_usuario):
     """
     Comprueba si ya existe un usuario con el mismo nombre que se ingresa
+
+    Args:
+        nombre_usuario (str): Nombre del usuario para verificar si ya existe alguien con ese nombre en la BD
+
+    Returns:
+        Response: True en caso de encontrar alguna coincidencia, False en caso contrario.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -238,8 +306,10 @@ def user_exists(nombre_usuario):
 
 def obtener_profesor():
     """
-    Pendiente
     Regresa toda la informacion de los usuario con el rol Profesor
+
+    Returns:
+        Response: La informacion de los profesores en formato de diccionario.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -257,6 +327,12 @@ def obtener_profesor():
 def eliminar_usuario(id_usuario):
     """
     Dado un ID de usuario se elimina toda la informacion del usuario en cuestion
+
+    Args:
+        id_usuario (int): Clave primaria del Usuario a eliminar.
+
+    Returns:
+        Response: True en caso de eliminar con exito al usuario de la BD, False en caso contrario.
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -302,7 +378,15 @@ def eliminar_usuario(id_usuario):
 
 # Control de historial
 def registrar_inicio_sesion(id_usuario):
-    """Actualiza el estado de la sesión registrando el ingreso al sistema."""
+    """
+    Actualiza el estado de la sesión registrando el ingreso al sistema.
+    
+    Args:
+        id_usuario (int): Clave primaria del Usuario que inicio sesion.
+
+    Returns:
+        Response: True en caso de registrar el inicio de sesion en la BD, False en caso contrario.
+    """
     conn = get_connection()
     cursor = conn.cursor()
     try:
@@ -325,7 +409,15 @@ def registrar_inicio_sesion(id_usuario):
         conn.close()
 
 def registrar_cierre_sesion(id_usuario):
-    """Cambia el estado de la sesión en la base de datos al salir del sistema."""
+    """
+    Cambia el estado de la sesión en la base de datos al salir del sistema.
+    
+    Args:
+        id_usuario (int): Clave primaria del Usuario que cerro sesion.
+
+    Returns:
+        Response: True en caso de registrar em la BD el cierre de sesion, False en caso contrario.
+    """
     conn = get_connection()
     cursor = conn.cursor()
     try:
@@ -347,7 +439,15 @@ def registrar_cierre_sesion(id_usuario):
         conn.close()
 
 def obtener_usuarios_recientes(limite=4):
-    """Recupera los últimos usuarios registrados que interactuaron con el sistema."""
+    """
+    Recupera los últimos usuarios registrados que interactuaron con el sistema.
+    
+    Args:
+        limite (int): Cantidad maxima de usuarios a los que se les va a obtener la informacion.
+
+    Returns:
+        Response: Diccionario con los ultimos 4 usuarios que interactuaron con el sistema.
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -369,8 +469,10 @@ def obtener_usuarios_recientes(limite=4):
 
 def obtener_todos_usuarios():
     """
-    Pendiente
     Se obtiene la informacion de todos los usuario registrados en el sistema
+
+    Returns:
+        Response: Diccionario con la informacion de todos los usuarios en el sistema.
     """
 
     conn = get_connection()
@@ -407,6 +509,15 @@ def actualizar_rol_usuario(id_usuario, nuevo_rol, id_admin=None):
     """
     Actualiza el rol de un usuario por uno nuevo.
     Además registra la acción realizada por el administrador.
+
+    Args:
+        id_usuario (int): Clave primaria del Usuario al cual se le cambiara su rol.
+        nuevo_rol (str): Cadena de texto con el nuevo rol que se va a asignar.
+        id_admin (int): Clave primaria del Administrador que realiza la accion
+
+    Returns:
+        Response: True si se pudo cambiar el rol del usuario objetivo
+                  False en caso contrario.
     """
 
     if not nuevo_rol:
@@ -530,7 +641,16 @@ def actualizar_rol_usuario(id_usuario, nuevo_rol, id_admin=None):
         conn.close()
 
 def registrar_auditoria_sesion(id_usuario, accion_detalle):
-    """Guarda la acción detallada aprovechando el nuevo tamaño VARCHAR(255)."""
+    """
+    Guarda la acción detallada aprovechando el nuevo tamaño VARCHAR(255).
+    
+    Args:
+        id_usuario (int): Clave primaria del Usuario que realizo una accion en el sistema.
+        accion_detalle (str): Accion que realizo el usuario
+
+    Returns:
+        Response: True en caso de registrar en la BD la accion del usuario, False en caso contrario.
+    """
     conn = get_connection()
     cursor = conn.cursor()
     try:
@@ -556,6 +676,12 @@ def obtener_logs_auditoria(limite=15):
     """
     Recupera la bitácora unificada definitiva garantizando la visibilidad
     y orden de sesiones, creación de cursos y registros de usuarios.
+
+    Args:
+        limite (int): Cantidad maxima de usuarios a los que se les va a obtener la informacion.
+
+    Returns:
+        Response: Diccionario con las ultimas 15 acciones realizadas en el sistema.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)

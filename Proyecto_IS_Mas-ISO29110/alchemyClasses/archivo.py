@@ -1,8 +1,19 @@
+"""
+Modelos de archivos
+
+Este modelo incluye todas las funciones que mandan a llamar los controladores de archivo
+"""
 from alchemyClasses.db import get_connection
 
 def get_archivo(id_archivo):
     """
     Obtiene la informacion del archivo con el ID insertado
+
+    Args:
+        id_archivo (int): Clave primaria del archivo del cual se obtendra la informacion.
+
+    Returns:
+        Response: La informacion del archivo en formato de diccionario.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -13,7 +24,15 @@ def get_archivo(id_archivo):
     return archivo
 
 def obtener_por_curso(id_curso):
-    """Se obtienen los archivos de un curso seleccionado"""
+    """
+    Se obtienen los archivos de un curso seleccionado
+    
+    Args:
+        id_curso (int): Clave primaria del curso del cual se obtendra sus archivos.
+
+    Returns:
+        Response: La informacion de los archivos del curso en formato de diccionario.
+    """
     conn = get_connection()
     coursor = conn.cursor(dictionary=True)
     coursor.execute("""
@@ -27,7 +46,15 @@ def obtener_por_curso(id_curso):
     return archivos
 
 def obtener_por_id(id_archivo):
-    """Detalles de un archivo seleccionado"""
+    """
+    Detalles de un archivo seleccionado
+    
+    Args:
+        id_archivo (int): Clave primaria del archivo del cual se obtendra la informacion.
+
+    Returns:
+        Response: La informacion del archivo en formato de diccionario.
+    """
     conn = get_connection()
     coursor = conn.cursor(dictionary=True)
     coursor.execute("""
@@ -39,7 +66,16 @@ def obtener_por_id(id_archivo):
     return archivo
 
 def verifica_pertenece_curso(id_archivo, id_curso):
-    """Verifica pertenencia de un archivo en un curso"""
+    """
+    Verifica pertenencia de un archivo en un curso
+    
+    Args:
+        id_archivo (int): Clave primaria del archivo a verificar si se encuentra en el curso.
+        id_curso (int): Clave primaria del curso a verificar.
+
+    Returns:
+        Response: True en caso de que exista el archivo en el curso, False en caso contrario.
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("""
@@ -54,6 +90,13 @@ def verifica_pertenece_curso(id_archivo, id_curso):
 def delete_archivo_db(id_archivo):
     """
     Realiza la baja o borrado físico del registro del archivo en la base de datos.
+
+    Args:
+        id_archivo (int): Clave primaria del archivo que se va a eliminar de la BD.
+
+    Returns:
+        Response: True en caso de que se haya eliminado con exito el archivo de la BD
+                  False en caso contrario.
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -71,7 +114,17 @@ def delete_archivo_db(id_archivo):
 def create_archivo(nombre, tipo_extension, fecha_subida, ruta, id_curso):
     """
     Con la informacion insertada se registra un nuevo archivo en la BD
-    En caso de exito regresa el ID donde se guardo la informacion del archivo
+    
+    Args:
+        nombre (str): Nombre con el que queda registrado el archivo en la BD
+        tipo_extension (str): Tipo de extension del archivo a subir
+        fecha_subida (date): fecha actual en la que se registro el archivo en formato MM/DD/AAAA
+        ruta (str): direccion fisica en la que se encuentra alojado el archivo
+        id_curso (int): Clave primaria del curso donde se sube el archivo
+
+    Returns:
+        Response: En caso de que el registro sea exitoso regresa el ID con el que se registro en la BD,
+                  False en caso contrario.
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -111,8 +164,13 @@ def create_archivo(nombre, tipo_extension, fecha_subida, ruta, id_curso):
 
 def get_archivo_by_name(nombre):
     """
-    Pendiente
     Regresa la informacion de un archivo por su nombre
+
+    Args:
+        nombre (str): Nombre del archivo del cual se obtendra la informacion.
+
+    Returns:
+        Response: La informacion del archivo en formato de diccionario.
     """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -133,12 +191,27 @@ def get_archivo_by_name(nombre):
 def archivo_exists(nombre):
     """
     Comprueba si ya existe en la BD un archivo con el mismo nombre insertado
+
+    Args:
+        nombre (str): Nombre del archivo a verificar.
+
+    Returns:
+        Response: True en caso de existir un archivo con el mismo nombre en la BD, False en caso contrario.
     """
     return get_archivo_by_name(nombre) is not None
 
 
 def obtener_archivos(id_curso, id_usuario):
-    """Obtiene los archivos de un curso únicamente si el alumno está inscrito en él."""
+    """
+    Obtiene los archivos de un curso únicamente si el usuario está inscrito en él.
+    
+    Args:
+        id_curso (int): Clave primaria del curso del que se van a obtener los archivos.
+        id_usuario (int): Clave primaria del usuario inscrito en el curso.
+
+    Returns:
+        Response: La informacion de los archivos en el curso en formato de diccionario.
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -157,8 +230,18 @@ def obtener_archivos(id_curso, id_usuario):
 
 
 def obtener_ultimos_archivos_inscritos(id_usuario, limite=4):
-    """Obtiene los últimos archivos subidos globalmente, filtrando solo
-    aquellos de los cursos donde el alumno se encuentra inscrito."""
+    """
+    Obtiene los últimos archivos subidos globalmente, filtrando solo
+    aquellos de los cursos donde el alumno se encuentra inscrito.
+    
+    Args:
+        id_usuario (int): Clave primaria del usuario del que se obtendran los ultimos
+                          4 archivos que se subieron a los cursos a los que esta inscrito.
+        limite (int): Numero limite de archivos que se obtendran en la respuesta
+
+    Returns:
+        Response: La informacion de los ultimos 4 archivos subidos en los cursos inscritos.
+    """
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
