@@ -7,6 +7,7 @@ confirmación previa del usuario en la interfaz como la llamada a la persistenci
 
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from alchemyClasses.archivo import get_archivo, delete_archivo_db
+import os
 eliminarArchivo_bp = Blueprint('eliminar_archivo', __name__)
 
 @eliminarArchivo_bp.route('/archivo/eliminar/<int:id_archivo>', methods=['GET', 'POST'])
@@ -102,6 +103,11 @@ def ejecutarBorradoOPuntoFisico(id_archivo):
         archivo_existente = get_archivo(id_archivo)
         if not archivo_existente:
             return manejarExcepcionBorado("No se pudo realizar la acción porque el archivo no existe.")
+
+        if os.path.exists(archivo_existente['ruta']):
+            os.remove(archivo_existente['ruta'])
+        else:
+            return manejarExcepcionBorado("Error al eliminar fisicamente el archivo, no fue posible acceder a la ruta")
 
         # Llamada a la función SQL
         borrado_exitoso = delete_archivo_db(id_archivo)
